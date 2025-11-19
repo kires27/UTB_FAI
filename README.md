@@ -85,5 +85,3 @@ Spusťte skript s názvem ```run_local_test.sh```.
 
 ### Pro uživatele systému Windows:
 Spusťte skript s názvem ```run_local_test.bat```.
-
-

@@ -1,0 +1,159 @@
+[14:34:32][PluginLoader][WARNING] Plugins directory not found.
+[14:34:32][NATTCore][INFO] NATT CORE initialization done
+Version: 1.7.0 
+Configuration path: https://gitlab.com/ap5vs/test-config/web-crawler-config/-/raw/main/test-config-5.yaml?ref_type=heads
+Configuration loading mode: FROM URL
+[14:34:32][NATTCore][INFO] Working directory path: /mnt/kire/Personal/UTB FAI - assignments/31 VS/web-crawler1
+[14:34:32][NATTCore][INFO] Start loading of the configuration file ...
+[14:34:33][NetworkIO][INFO] Yaml data has been loaded from network location (https://gitlab.com/ap5vs/test-config/web-crawler-config/-/raw/main/test-config-5.yaml?ref_type=heads)
+[14:34:33][NATTCore][INFO] Configuration loading done
+[14:34:33][NATTCore][INFO] Start building test structure according to the configuration ...
+[14:34:33][NATTCore][INFO] Test structure ...
+[14:34:33][NATTCore][INFO] Test structure building done
+[14:34:33][NATTCore][INFO] Start test executing ...
+[14:34:33][TestReportGenerator][INFO] Extenet reports generated. Final report will be saved to file: test_report.html
+[14:34:33][NATTCore][INFO] Starts execution on the root keyword  ...
+[14:34:33][TestSuiteKw][INFO] Test case 'Test utb.cz s hloubkou 0' starts executing now
+[14:34:33][MessageBuffer][INFO] Message buffer created for module with name: default
+[14:34:33][WaitUntilKw][INFO] Waiting for action. Actions count: 1, Time out: 13000 ms
+[14:34:34][ExternalProgramRunner][INFO] (default) Run external app with command: java -jar app/build/libs/app-all.jar https://www.utb.cz/en/ 0 0
+[14:34:34][ProcessManager][INFO] New PID (22138) added to file
+[14:34:34][ProcessManager][INFO] PID (22138) removed from file
+[14:34:34][ExternalProgramRunner][WARNING] (default) External application ends with error: 1
+[14:34:34][ExternalProgramRunner][WARNING] (default) Error message from external application: Error: Unable to access jarfile app/build/libs/app-all.jar
+
+[14:34:46][WaitUntilKw][WARNING] Timeout.. Action was not invoked!
+[14:34:46][MessageBuffer][INFO] Message buffer created for module with name: module-1
+[14:34:46][WebCrawler][INFO] (module-1) Webcrawler is running now. Start URL: https://www.utb.cz/en/
+[14:34:46][WebCrawler][INFO] (module-1) Job finished [elapsed time: 0.201 s]
+[14:34:46][MessageBuffer][INFO] Message added to buffer [ Mod: module-1 | Tag: word-1 ] Content: 'the;79'
+[14:34:46][MessageBuffer][INFO] Message added to buffer [ Mod: module-1 | Tag: word-2 ] Content: 'of;78'
+[14:34:46][MessageBuffer][INFO] Message added to buffer [ Mod: module-1 | Tag: word-3 ] Content: 'and;68'
+[14:34:46][MessageBuffer][INFO] Message added to buffer [ Mod: module-1 | Tag: word-4 ] Content: 'to;50'
+[14:34:46][MessageBuffer][INFO] Message added to buffer [ Mod: module-1 | Tag: word-5 ] Content: 'for;28'
+[14:34:46][MessageBuffer][INFO] Message added to buffer [ Mod: module-1 | Tag: word-6 ] Content: 'cookie;28'
+[14:34:46][MessageBuffer][INFO] Message added to buffer [ Mod: module-1 | Tag: word-7 ] Content: 'is;26'
+[14:34:46][MessageBuffer][INFO] Message added to buffer [ Mod: module-1 | Tag: word-8 ] Content: 'by;25'
+[14:34:46][MessageBuffer][INFO] Message added to buffer [ Mod: module-1 | Tag: word-9 ] Content: 'cookies;21'
+[14:34:46][MessageBuffer][INFO] Message added to buffer [ Mod: module-1 | Tag: word-10 ] Content: 'Faculty;20'
+[14:34:46][MessageBuffer][INFO] Message added to buffer [ Mod: module-1 | Tag: word-11 ] Content: 'Centre;20'
+[14:34:46][MessageBuffer][INFO] Message added to buffer [ Mod: module-1 | Tag: word-12 ] Content: 'user;17'
+[14:34:46][MessageBuffer][INFO] Message added to buffer [ Mod: module-1 | Tag: word-13 ] Content: 'in;17'
+[14:34:46][MessageBuffer][INFO] Message added to buffer [ Mod: module-1 | Tag: word-14 ] Content: 'used;16'
+[14:34:46][MessageBuffer][INFO] Message added to buffer [ Mod: module-1 | Tag: word-15 ] Content: 'TBU;16'
+[14:34:46][MessageBuffer][INFO] Message added to buffer [ Mod: module-1 | Tag: word-16 ] Content: 'on;16'
+[14:34:46][MessageBuffer][INFO] Message added to buffer [ Mod: module-1 | Tag: word-17 ] Content: 'The;15'
+[14:34:46][MessageBuffer][INFO] Message added to buffer [ Mod: module-1 | Tag: word-18 ] Content: 'are;14'
+[14:34:46][MessageBuffer][INFO] Message added to buffer [ Mod: module-1 | Tag: word-19 ] Content: 'set;14'
+[14:34:46][MessageBuffer][INFO] Message added to buffer [ Mod: module-1 | Tag: word-20 ] Content: 'University;14'
+[14:34:46][TestSuiteKw][ERROR] Test suite 'Testování Web crawleru pro hloubku 0' - Test case 'Test utb.cz s hloubkou 0' failed
+[14:34:46][MessageBuffer][INFO] Message buffer cleared
+[14:34:47][TestSuiteKw][INFO] Test case 'Test jlcpcb.com s hloubkou 0' starts executing now
+[14:34:47][WaitUntilKw][INFO] Waiting for action. Actions count: 1, Time out: 13000 ms
+[14:34:48][ExternalProgramRunner][INFO] (default) Run external app with command: java -jar app/build/libs/app-all.jar https://jlcpcb.com/ 0 0
+[14:34:48][ProcessManager][INFO] New PID (22228) added to file
+[14:34:48][ProcessManager][INFO] PID (22228) removed from file
+[14:34:48][ExternalProgramRunner][WARNING] (default) External application ends with error: 1
+[14:34:48][ExternalProgramRunner][WARNING] (default) Error message from external application: Error: Unable to access jarfile app/build/libs/app-all.jar
+
+[14:35:00][WaitUntilKw][WARNING] Timeout.. Action was not invoked!
+[14:35:00][WebCrawler][INFO] (module-1) Webcrawler is running now. Start URL: https://jlcpcb.com/
+[14:35:01][WebCrawler][INFO] (module-1) Job finished [elapsed time: 0.601 s]
+[14:35:01][MessageBuffer][INFO] Message added to buffer [ Mod: module-1 | Tag: word-1 ] Content: 'PCB;36'
+[14:35:01][MessageBuffer][INFO] Message added to buffer [ Mod: module-1 | Tag: word-2 ] Content: 'to;30'
+[14:35:01][MessageBuffer][INFO] Message added to buffer [ Mod: module-1 | Tag: word-3 ] Content: 'and;29'
+[14:35:01][MessageBuffer][INFO] Message added to buffer [ Mod: module-1 | Tag: word-4 ] Content: 'JLCPCB;21'
+[14:35:01][MessageBuffer][INFO] Message added to buffer [ Mod: module-1 | Tag: word-5 ] Content: 'PCBs;19'
+[14:35:01][MessageBuffer][INFO] Message added to buffer [ Mod: module-1 | Tag: word-6 ] Content: 'for;17'
+[14:35:01][MessageBuffer][INFO] Message added to buffer [ Mod: module-1 | Tag: word-7 ] Content: 'Now;15'
+[14:35:01][MessageBuffer][INFO] Message added to buffer [ Mod: module-1 | Tag: word-8 ] Content: '&;14'
+[14:35:01][MessageBuffer][INFO] Message added to buffer [ Mod: module-1 | Tag: word-9 ] Content: 'the;12'
+[14:35:01][MessageBuffer][INFO] Message added to buffer [ Mod: module-1 | Tag: word-10 ] Content: 'From;12'
+[14:35:01][MessageBuffer][INFO] Message added to buffer [ Mod: module-1 | Tag: word-11 ] Content: '2025;12'
+[14:35:01][MessageBuffer][INFO] Message added to buffer [ Mod: module-1 | Tag: word-12 ] Content: 'Quote;11'
+[14:35:01][MessageBuffer][INFO] Message added to buffer [ Mod: module-1 | Tag: word-13 ] Content: '-;10'
+[14:35:01][MessageBuffer][INFO] Message added to buffer [ Mod: module-1 | Tag: word-14 ] Content: 'Time:;10'
+[14:35:01][MessageBuffer][INFO] Message added to buffer [ Mod: module-1 | Tag: word-15 ] Content: 'Flexible;10'
+[14:35:01][MessageBuffer][INFO] Message added to buffer [ Mod: module-1 | Tag: word-16 ] Content: 'Build;10'
+[14:35:01][MessageBuffer][INFO] Message added to buffer [ Mod: module-1 | Tag: word-17 ] Content: 'your;9'
+[14:35:01][MessageBuffer][INFO] Message added to buffer [ Mod: module-1 | Tag: word-18 ] Content: '5;9'
+[14:35:01][MessageBuffer][INFO] Message added to buffer [ Mod: module-1 | Tag: word-19 ] Content: 'with;9'
+[14:35:01][MessageBuffer][INFO] Message added to buffer [ Mod: module-1 | Tag: word-20 ] Content: 'Free;9'
+[14:35:01][TestSuiteKw][ERROR] Test suite 'Testování Web crawleru pro hloubku 0' - Test case 'Test jlcpcb.com s hloubkou 0' failed
+[14:35:01][MessageBuffer][INFO] Message buffer cleared
+[14:35:01][MessageBuffer][INFO] Message buffer cleared
+[14:35:01][TestSuiteKw][INFO] Test case 'Test wokwi.com s hloubkou 1' starts executing now
+[14:35:01][WaitUntilKw][INFO] Waiting for action. Actions count: 1, Time out: 70000 ms
+[14:35:03][ExternalProgramRunner][INFO] (default) Run external app with command: java -jar app/build/libs/app-all.jar https://wokwi.com/ 1 0
+[14:35:03][ProcessManager][INFO] New PID (22310) added to file
+[14:35:03][ProcessManager][INFO] PID (22310) removed from file
+[14:35:03][ExternalProgramRunner][WARNING] (default) External application ends with error: 1
+[14:35:03][ExternalProgramRunner][WARNING] (default) Error message from external application: Error: Unable to access jarfile app/build/libs/app-all.jar
+
+[14:36:11][WaitUntilKw][WARNING] Timeout.. Action was not invoked!
+[14:36:11][WebCrawler][INFO] (module-1) Webcrawler is running now. Start URL: https://wokwi.com/
+[14:36:14][WebCrawler][INFO] (module-1) Job finished [elapsed time: 2.503 s]
+[14:36:14][MessageBuffer][INFO] Message added to buffer [ Mod: module-1 | Tag: word-1 ] Content: ';1466'
+[14:36:14][MessageBuffer][INFO] Message added to buffer [ Mod: module-1 | Tag: word-2 ] Content: 'the;886'
+[14:36:14][MessageBuffer][INFO] Message added to buffer [ Mod: module-1 | Tag: word-3 ] Content: '0x00,;812'
+[14:36:14][MessageBuffer][INFO] Message added to buffer [ Mod: module-1 | Tag: word-4 ] Content: 'to;607'
+[14:36:14][MessageBuffer][INFO] Message added to buffer [ Mod: module-1 | Tag: word-5 ] Content: 'and;581'
+[14:36:14][MessageBuffer][INFO] Message added to buffer [ Mod: module-1 | Tag: word-6 ] Content: 'of;488'
+[14:36:14][MessageBuffer][INFO] Message added to buffer [ Mod: module-1 | Tag: word-7 ] Content: '=;323'
+[14:36:14][MessageBuffer][INFO] Message added to buffer [ Mod: module-1 | Tag: word-8 ] Content: 'for;293'
+[14:36:14][MessageBuffer][INFO] Message added to buffer [ Mod: module-1 | Tag: word-9 ] Content: '//;278'
+[14:36:14][MessageBuffer][INFO] Message added to buffer [ Mod: module-1 | Tag: word-10 ] Content: 'or;266'
+[14:36:14][MessageBuffer][INFO] Message added to buffer [ Mod: module-1 | Tag: word-11 ] Content: 'in;258'
+[14:36:14][MessageBuffer][INFO] Message added to buffer [ Mod: module-1 | Tag: word-12 ] Content: 'your;251'
+[14:36:14][MessageBuffer][INFO] Message added to buffer [ Mod: module-1 | Tag: word-13 ] Content: 'a;229'
+[14:36:14][MessageBuffer][INFO] Message added to buffer [ Mod: module-1 | Tag: word-14 ] Content: 'you;225'
+[14:36:14][MessageBuffer][INFO] Message added to buffer [ Mod: module-1 | Tag: word-15 ] Content: '{;216'
+[14:36:14][MessageBuffer][INFO] Message added to buffer [ Mod: module-1 | Tag: word-16 ] Content: '-;183'
+[14:36:14][MessageBuffer][INFO] Message added to buffer [ Mod: module-1 | Tag: word-17 ] Content: '};171'
+[14:36:14][MessageBuffer][INFO] Message added to buffer [ Mod: module-1 | Tag: word-18 ] Content: 'with;163'
+[14:36:14][MessageBuffer][INFO] Message added to buffer [ Mod: module-1 | Tag: word-19 ] Content: 'our;138'
+[14:36:14][MessageBuffer][INFO] Message added to buffer [ Mod: module-1 | Tag: word-20 ] Content: 'Wokwi;134'
+[14:36:14][TestSuiteKw][ERROR] Test suite 'Testování Web crawleru pro hloubku 1' - Test case 'Test wokwi.com s hloubkou 1' failed
+[14:36:14][MessageBuffer][INFO] Message buffer cleared
+[14:36:15][TestSuiteKw][INFO] Test case 'Test jlcpcb.com s hloubkou 1' starts executing now
+[14:36:15][WaitUntilKw][INFO] Waiting for action. Actions count: 1, Time out: 70000 ms
+[14:36:16][ExternalProgramRunner][INFO] (default) Run external app with command: java -jar app/build/libs/app-all.jar https://jlcpcb.com/ 1 0
+[14:36:16][ProcessManager][INFO] New PID (22664) added to file
+[14:36:16][ProcessManager][INFO] PID (22664) removed from file
+[14:36:16][ExternalProgramRunner][WARNING] (default) External application ends with error: 1
+[14:36:16][ExternalProgramRunner][WARNING] (default) Error message from external application: Error: Unable to access jarfile app/build/libs/app-all.jar
+
+[14:37:25][WaitUntilKw][WARNING] Timeout.. Action was not invoked!
+[14:37:25][WebCrawler][INFO] (module-1) Webcrawler is running now. Start URL: https://jlcpcb.com/
+[14:37:30][Parser][WARNING] Failed to parse web page 'https://www.instagram.com/jlcpcb'
+[14:37:31][WebCrawler][INFO] (module-1) Job finished [elapsed time: 6.214 s]
+[14:37:31][MessageBuffer][INFO] Message added to buffer [ Mod: module-1 | Tag: word-1 ] Content: 'the;2231'
+[14:37:31][MessageBuffer][INFO] Message added to buffer [ Mod: module-1 | Tag: word-2 ] Content: 'and;2036'
+[14:37:31][MessageBuffer][INFO] Message added to buffer [ Mod: module-1 | Tag: word-3 ] Content: 'to;1772'
+[14:37:31][MessageBuffer][INFO] Message added to buffer [ Mod: module-1 | Tag: word-4 ] Content: 'of;1044'
+[14:37:31][MessageBuffer][INFO] Message added to buffer [ Mod: module-1 | Tag: word-5 ] Content: 'PCB;911'
+[14:37:31][MessageBuffer][INFO] Message added to buffer [ Mod: module-1 | Tag: word-6 ] Content: 'for;844'
+[14:37:31][MessageBuffer][INFO] Message added to buffer [ Mod: module-1 | Tag: word-7 ] Content: 'is;796'
+[14:37:31][MessageBuffer][INFO] Message added to buffer [ Mod: module-1 | Tag: word-8 ] Content: 'a;779'
+[14:37:31][MessageBuffer][INFO] Message added to buffer [ Mod: module-1 | Tag: word-9 ] Content: 'in;737'
+[14:37:31][MessageBuffer][INFO] Message added to buffer [ Mod: module-1 | Tag: word-10 ] Content: 'your;589'
+[14:37:31][MessageBuffer][INFO] Message added to buffer [ Mod: module-1 | Tag: word-11 ] Content: 'you;552'
+[14:37:31][MessageBuffer][INFO] Message added to buffer [ Mod: module-1 | Tag: word-12 ] Content: 'or;545'
+[14:37:31][MessageBuffer][INFO] Message added to buffer [ Mod: module-1 | Tag: word-13 ] Content: 'JLCPCB;533'
+[14:37:31][MessageBuffer][INFO] Message added to buffer [ Mod: module-1 | Tag: word-14 ] Content: 'with;523'
+[14:37:31][MessageBuffer][INFO] Message added to buffer [ Mod: module-1 | Tag: word-15 ] Content: 'PCBs;489'
+[14:37:31][MessageBuffer][INFO] Message added to buffer [ Mod: module-1 | Tag: word-16 ] Content: '-;410'
+[14:37:31][MessageBuffer][INFO] Message added to buffer [ Mod: module-1 | Tag: word-17 ] Content: 'on;406'
+[14:37:31][MessageBuffer][INFO] Message added to buffer [ Mod: module-1 | Tag: word-18 ] Content: 'are;401'
+[14:37:31][MessageBuffer][INFO] Message added to buffer [ Mod: module-1 | Tag: word-19 ] Content: 'be;387'
+[14:37:31][MessageBuffer][INFO] Message added to buffer [ Mod: module-1 | Tag: word-20 ] Content: 'How;331'
+[14:37:31][TestSuiteKw][ERROR] Test suite 'Testování Web crawleru pro hloubku 1' - Test case 'Test jlcpcb.com s hloubkou 1' failed
+[14:37:31][MessageBuffer][INFO] Message buffer cleared
+[14:37:32][MessageBuffer][INFO] Message buffer cleared
+[14:37:32][MessageBuffer][INFO] Message buffer cleared
+[14:37:32][NATTCore][INFO] Test executing finished
+[14:37:32][NATTCore][INFO] Start generating test report
+[14:37:32][TestReportGenerator][INFO] Report saved to file
+[14:37:32][NATTCore][WARNING] Failed test cases: "Test utb.cz s hloubkou 0", "Test jlcpcb.com s hloubkou 0", "Test wokwi.com s hloubkou 1", "Test jlcpcb.com s hloubkou 1"
+[14:37:32][NATTCore][INFO] Final score: 0.000000
+[14:37:32][NATTCore][ERROR] Testing done. Leaving status: FAILED
