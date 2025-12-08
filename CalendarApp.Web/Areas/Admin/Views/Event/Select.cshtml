@@ -1,0 +1,44 @@
+@model IEnumerable<CalendarApp.Domain.Entities.Event>
+@{
+    ViewData["Title"] = "Events";
+}
+
+<h1>Calendar Events</h1>
+
+<p>
+    <a asp-action="Create" class="btn btn-primary">Create New Event</a>
+</p>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Title</th>
+            <th>Description</th>
+            <th>Start Time</th>
+            <th>End Time</th>
+            <th>Location</th>
+            <th>Owner</th>
+            <th>Visibility</th>
+            <th>Status</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@Html.DisplayFor(modelItem => item.Title)</td>
+                <td>@Html.DisplayFor(modelItem => item.Description)</td>
+                <td>@item.StartTime.ToString("MM/dd/yyyy HH:mm")</td>
+                <td>@item.EndTime.ToString("MM/dd/yyyy HH:mm")</td>
+                <td>@Html.DisplayFor(modelItem => item.Location)</td>
+                <td>@item.Owner?.FullName</td>
+                <td>@Html.DisplayFor(modelItem => item.Visibility)</td>
+                <td>@Html.DisplayFor(modelItem => item.Status)</td>
+                <td>
+                    <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger btn-sm">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

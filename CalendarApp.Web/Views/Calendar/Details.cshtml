@@ -1,0 +1,130 @@
+@model CalendarApp.Domain.Entities.Event
+@using CalendarApp.Domain.Entities
+@using System.Security.Claims
+@{
+    ViewData["Title"] = "Event Details";
+}
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h3 class="mb-0">@Model.Title</h3>
+                    <span class="badge" style="background-color: @Model.Color;">@Model.Status</span>
+                </div>
+                <div class="card-body">
+                    @if (!string.IsNullOrEmpty(Model.Description))
+                    {
+                        <p class="card-text">@Model.Description</p>
+                    }
+
+                    <div class="row mb-3">
+                        <div class="col-sm-3"><strong>Start Time:</strong></div>
+                        <div class="col-sm-9">@Model.StartTime.ToString("f")</div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-sm-3"><strong>End Time:</strong></div>
+                        <div class="col-sm-9">@Model.EndTime.ToString("f")</div>
+                    </div>
+
+                    @if (!string.IsNullOrEmpty(Model.Location))
+                    {
+                        <div class="row mb-3">
+                            <div class="col-sm-3"><strong>Location:</strong></div>
+                            <div class="col-sm-9">@Model.Location</div>
+                        </div>
+                    }
+
+                    <div class="row mb-3">
+                        <div class="col-sm-3"><strong>All Day:</strong></div>
+                        <div class="col-sm-9">@(Model.AllDay ? "Yes" : "No")</div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-sm-3"><strong>Visibility:</strong></div>
+                        <div class="col-sm-9">@Model.Visibility</div>
+                    </div>
+
+                    @if (Model.IsRecurring && !string.IsNullOrEmpty(Model.RecurrenceRule))
+                    {
+                        <div class="row mb-3">
+                            <div class="col-sm-3"><strong>Recurring:</strong></div>
+                            <div class="col-sm-9">Yes (@Model.RecurrenceRule)</div>
+                        </div>
+                    }
+
+                    @if (Model.ReminderTime.HasValue)
+                    {
+                        <div class="row mb-3">
+                            <div class="col-sm-3"><strong>Reminder:</strong></div>
+                            <div class="col-sm-9">@Model.ReminderTime.Value.ToString("f")</div>
+                        </div>
+                    }
+
+                    <div class="row mb-3">
+                        <div class="col-sm-3"><strong>Created:</strong></div>
+                        <div class="col-sm-9">@Model.CreatedAt.ToString("f")</div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-sm-3"><strong>Updated:</strong></div>
+                        <div class="col-sm-9">@Model.UpdatedAt.ToString("f")</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Attendees</h5>
+                </div>
+                <div class="card-body">
+                    @if (Model.EventAttendees != null && Model.EventAttendees.Any())
+                    {
+                        <ul class="list-group list-group-flush">
+                            @foreach (var attendee in Model.EventAttendees)
+                            {
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <strong>@attendee.User.FullName</strong>
+                                        <br>
+                                        <small class="text-muted">@attendee.User.Email</small>
+                                    </div>
+                                    <div>
+                                        <span class="badge bg-@(attendee.Status == AttendeeStatus.Accepted ? "success" : 
+                                                         attendee.Status == AttendeeStatus.Declined ? "danger" : 
+                                                         attendee.Status == AttendeeStatus.Tentative ? "warning" : "secondary")">
+                                            @attendee.Status
+                                        </span>
+                                        @if (attendee.Role == AttendeeRole.Owner)
+                                        {
+                                            <span class="badge bg-primary">Owner</span>
+                                        }
+                                    </div>
+                                </li>
+                            }
+                        </ul>
+                    }
+                    else
+                    {
+                        <p class="text-muted">No attendees</p>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-3">
+        <div class="col">
+            <a href="@Url.Action("Index", "Calendar")" class="btn btn-secondary">Back to Calendar</a>
+            @if (User.IsInRole("Admin") || Model.OwnerId == int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!))
+            {
+                <a href="@Url.Action("Edit", "Event", new { area = "Admin", id = Model.Id })" 
+                   class="btn btn-primary">Edit Event</a>
+            }
+        </div>
+    </div>
+</div>
