@@ -1,23 +1,28 @@
 <template>
-  <ion-page>
-    <ion-header>
-      <ion-toolbar>
-        <ion-title>Tab 3</ion-title>
-      </ion-toolbar>
-    </ion-header>
-    <ion-content :fullscreen="true">
-      <ion-header collapse="condense">
-        <ion-toolbar>
-          <ion-title size="large">Tab 3</ion-title>
-        </ion-toolbar>
-      </ion-header>
+	<ion-page>
+		<PhotoGrid @maximize-photo="openPhotoViewer" />
 
-      <ExploreContainer name="Tab 3 page" />
-    </ion-content>
-  </ion-page>
+		<MediaViewer :is-open="isPhotoViewerOpen" :photo-path="selectedPhotoPath" @update:is-open="closePhotoViewer" />
+	</ion-page>
 </template>
 
 <script setup lang="ts">
-import { IonPage, IonHeader, IonToolbar, IonTitle, IonContent } from '@ionic/vue';
-import ExploreContainer from '@/components/ExploreContainer.vue';
+import { ref } from 'vue';
+import { IonPage } from '@ionic/vue';
+import PhotoGrid from '@/components/PhotoGrid.vue';
+import MediaViewer from '@/components/MediaViewer.vue';
+import { UserPhoto } from '@/types';
+
+const isPhotoViewerOpen = ref(false);
+const selectedPhotoPath = ref('');
+
+const openPhotoViewer = (photo: UserPhoto) => {
+	selectedPhotoPath.value = photo.filepath;
+	isPhotoViewerOpen.value = true;
+};
+
+const closePhotoViewer = () => {
+	isPhotoViewerOpen.value = false;
+	selectedPhotoPath.value = '';
+};
 </script>

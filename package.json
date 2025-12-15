@@ -1,5 +1,5 @@
 {
-  "name": "photo-gallery",
+  "name": "daily-collector",
   "private": true,
   "version": "0.0.1",
   "type": "module",
@@ -9,10 +9,11 @@
     "preview": "vite preview",
     "test:e2e": "cypress run",
     "test:unit": "vitest",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "android": "ionic cap run android"
   },
   "dependencies": {
-    "@capacitor/android": "7.4.4",
+    "@capacitor/android": "^7.4.4",
     "@capacitor/app": "7.1.0",
     "@capacitor/camera": "^7.0.2",
     "@capacitor/core": "7.4.4",
@@ -29,6 +30,7 @@
     "vue-router": "^4.2.0"
   },
   "devDependencies": {
+    "@capacitor/assets": "^3.0.5",
     "@capacitor/cli": "7.4.4",
     "@vitejs/plugin-legacy": "^5.0.0",
     "@vitejs/plugin-vue": "^4.0.0",
