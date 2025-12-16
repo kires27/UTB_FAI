@@ -29,8 +29,8 @@ namespace CalendarApp.Infrastructure.Database
                 entity.Property(u => u.UserName).IsRequired().HasMaxLength(50);
                 entity.Property(u => u.Email).IsRequired().HasMaxLength(100);
                 entity.Property(u => u.FullName).HasMaxLength(100);
-                entity.Property(u => u.CreatedAt).HasDefaultValueSql("CURRENT_TIMESTAMP");
-                entity.Property(u => u.UpdatedAt).HasDefaultValueSql("CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP");
+                entity.Property(u => u.CreatedAt).HasColumnType("datetime").HasDefaultValueSql("CURRENT_TIMESTAMP");
+                entity.Property(u => u.UpdatedAt).HasColumnType("datetime").HasDefaultValueSql("CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP");
                 entity.HasIndex(u => u.UserName).IsUnique();
                 entity.HasIndex(u => u.Email).IsUnique();
             });
@@ -46,8 +46,8 @@ namespace CalendarApp.Infrastructure.Database
                 entity.Property(e => e.Color).HasMaxLength(7);
                 entity.Property(e => e.Visibility).HasConversion<string>();
                 entity.Property(e => e.Status).HasConversion<string>();
-                entity.Property(e => e.CreatedAt).HasDefaultValueSql("CURRENT_TIMESTAMP");
-                entity.Property(e => e.UpdatedAt).HasDefaultValueSql("CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP");
+                entity.Property(e => e.CreatedAt).HasColumnType("datetime").HasDefaultValueSql("CURRENT_TIMESTAMP");
+                entity.Property(e => e.UpdatedAt).HasColumnType("datetime").HasDefaultValueSql("CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP");
                 entity.HasOne(e => e.Owner).WithMany(u => u.OwnedEvents).HasForeignKey(e => e.OwnerId);
             });
 
@@ -58,8 +58,8 @@ namespace CalendarApp.Infrastructure.Database
                 entity.HasKey(ea => new { ea.EventId, ea.UserId });
                 entity.Property(ea => ea.Status).HasConversion<string>();
                 entity.Property(ea => ea.Role).HasConversion<string>();
-                entity.Property(ea => ea.CreatedAt).HasDefaultValueSql("CURRENT_TIMESTAMP");
-                entity.Property(ea => ea.UpdatedAt).HasDefaultValueSql("CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP");
+                entity.Property(ea => ea.CreatedAt).HasColumnType("datetime").HasDefaultValueSql("CURRENT_TIMESTAMP");
+                entity.Property(ea => ea.UpdatedAt).HasColumnType("datetime").HasDefaultValueSql("CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP");
                 entity.HasOne(ea => ea.Event).WithMany(e => e.EventAttendees).HasForeignKey(ea => ea.EventId);
                 entity.HasOne(ea => ea.User).WithMany(u => u.EventAttendees).HasForeignKey(ea => ea.UserId);
             });
@@ -71,8 +71,8 @@ namespace CalendarApp.Infrastructure.Database
                 entity.HasKey(n => n.Id);
                 entity.Property(n => n.Id).ValueGeneratedOnAdd();
                 entity.Property(n => n.Type).HasConversion<string>();
-                entity.Property(n => n.CreatedAt).HasDefaultValueSql("CURRENT_TIMESTAMP");
-                entity.Property(n => n.UpdatedAt).HasDefaultValueSql("CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP");
+                entity.Property(n => n.CreatedAt).HasColumnType("datetime").HasDefaultValueSql("CURRENT_TIMESTAMP");
+                entity.Property(n => n.UpdatedAt).HasColumnType("datetime").HasDefaultValueSql("CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP");
                 entity.HasOne(n => n.User).WithMany(u => u.Notifications).HasForeignKey(n => n.UserId);
                 entity.HasOne(n => n.Event).WithMany(e => e.Notifications).HasForeignKey(n => n.EventId);
             });

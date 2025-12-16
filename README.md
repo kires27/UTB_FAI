@@ -36,7 +36,7 @@ Správa osobního kalendáře s funkcemi
 
 https://moodle.utb.cz/mod/assign/view.php?id=769105
 
-# setup
+# start existing project
 
 start docker 
 `sudo systemctl start docker`
@@ -45,43 +45,34 @@ start existing container
 `docker start pw-calendar-db`
 
 to run project
+`~/.dotnet/dotnet run --project CalendarApp.Web/CalendarApp.Web.csproj`
+or, execute inside projects **Web** directory 
+`~/.dotnet/dotnet run`
+
+others
 `~/.dotnet/dotnet restore CalendarApp.sln`
 `~/.dotnet/dotnet build CalendarApp.sln`
-execute inside projects **Web** directory 
-`~/.dotnet/dotnet run`
-or 
-`~/.dotnet/dotnet run --project CalendarApp.Web/CalendarApp.Web.csproj`
-
-~~`~/.dotnet/dotnet run --project CalendarApp.sln`~~
 
 website url
 `http://localhost:5292/`
 
-# dotnet
+# init project dependencies
+## dotnet
+> using dotnet binary: https://dotnet.microsoft.com/en-us/download/dotnet/9.0
 
-to call dotnet framework use:w
+to call dotnet framework use:
 `~/.dotnet/dotnet`
 
 You can invoke the tool from this directory using the following commands: 
 `dotnet tool run dotnet-ef`
 
-## EF Migrations
+installed tools
+`~/.dotnet/dotnet tool list --global`
 
-This will create the database schema and apply migrations
-```
-~/.dotnet/dotnet ef database update \
-    --project ./CalendarApp.Infrastructure/CalendarApp.Infrastructure.csproj \
-    --startup-project ./CalendarApp.Web/CalendarApp.Web.csproj
-```
+remove tools
+`~/.dotnet/dotnet tool uninstall --global dotnet-ef`
 
-check if migrations are applied
-```
-~/.dotnet/dotnet ef migrations list \
-	--project ./CalendarApp.Infrastructure/CalendarApp.Infrastructure.csproj \
-    --startup-project ./CalendarApp.Web/CalendarApp.Web.csproj
-```
-
-# docker
+## docker
 
 start docker 
 `sudo systemctl start docker`
@@ -112,6 +103,26 @@ View running containers
 Connect to MySQL inside the container
 `docker exec -it my-mysql mysql -u root -p`
 
-# database
+## init EF Migrations
+
+
+dotnet ef migrations add NewMigration --project CalendarApp.Infrastructure --startup-project CalendarApp.Web
+
+
+This will create the database schema and apply migrations
+```
+~/.dotnet/dotnet ef database update \
+    --project ./CalendarApp.Infrastructure/CalendarApp.Infrastructure.csproj \
+    --startup-project ./CalendarApp.Web/CalendarApp.Web.csproj
+```
+
+check if migrations are applied
+```
+~/.dotnet/dotnet ef migrations list \
+	--project ./CalendarApp.Infrastructure/CalendarApp.Infrastructure.csproj \
+    --startup-project ./CalendarApp.Web/CalendarApp.Web.csproj
+```
+
+## database
 
 connect to database using vscode extension
