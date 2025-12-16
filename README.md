@@ -45,9 +45,9 @@ start existing container
 `docker start pw-calendar-db`
 
 to run project
-`~/.dotnet/dotnet run --project CalendarApp.Web/CalendarApp.Web.csproj`
+`dotnet run --project CalendarApp.Web/CalendarApp.Web.csproj`
 or, execute inside projects **Web** directory 
-`~/.dotnet/dotnet run`
+`dotnet run`
 
 others
 `~/.dotnet/dotnet restore CalendarApp.sln`
@@ -60,17 +60,14 @@ website url
 ## dotnet
 > using dotnet binary: https://dotnet.microsoft.com/en-us/download/dotnet/9.0
 
-to call dotnet framework use:
-`~/.dotnet/dotnet`
-
 You can invoke the tool from this directory using the following commands: 
 `dotnet tool run dotnet-ef`
 
 installed tools
-`~/.dotnet/dotnet tool list --global`
+`dotnet tool list --global`
 
 remove tools
-`~/.dotnet/dotnet tool uninstall --global dotnet-ef`
+`dotnet tool uninstall --global dotnet-ef`
 
 ## docker
 
@@ -98,7 +95,9 @@ remove the container
 `docker rm -v pw-calendar-db`
 
 View running containers
-`docker ps [-a]`
+`docker ps`
+View existing containers
+`docker ps -a`
 
 Connect to MySQL inside the container
 `docker exec -it my-mysql mysql -u root -p`
@@ -111,7 +110,7 @@ dotnet ef migrations add NewMigration --project CalendarApp.Infrastructure --sta
 
 This will create the database schema and apply migrations
 ```
-~/.dotnet/dotnet ef database update \
+dotnet ef database update \
     --project ./CalendarApp.Infrastructure/CalendarApp.Infrastructure.csproj \
     --startup-project ./CalendarApp.Web/CalendarApp.Web.csproj
 ```
