@@ -10,7 +10,8 @@
     "test:e2e": "cypress run",
     "test:unit": "vitest",
     "lint": "eslint .",
-    "android": "ionic cap run android"
+    "android": "ionic cap run android",
+    "sync": "ionic cap sync android"
   },
   "dependencies": {
     "@capacitor/android": "^7.4.4",
