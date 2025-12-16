@@ -23,7 +23,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch } from 'vue';
+import { ref, watch } from 'vue';
 import {
 	IonModal,
 	IonHeader,
@@ -69,14 +69,12 @@ const loadPhoto = async () => {
 	}
 };
 
-// Watch for photoPath changes and isOpen to load photo
 watch([() => props.photoPath, () => props.isOpen], ([newPhotoPath, isOpen]) => {
 	if (isOpen && newPhotoPath) {
 		loadPhoto();
 	}
 }, { immediate: true });
 
-// Reset when modal closes
 watch(() => props.isOpen, (isOpen) => {
 	if (!isOpen) {
 		currentPhoto.value = null;

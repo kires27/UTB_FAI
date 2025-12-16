@@ -1,0 +1,59 @@
+.note-textarea {
+	--background: var(--ion-color-light);
+	--border-radius: 12px;
+	--padding-start: 16px;
+	--padding-end: 16px;
+	--padding-top: 16px;
+	--padding-bottom: 16px;
+}
+
+.photo-btn {
+	--border-radius: 12px;
+}
+
+.photo-preview-container {
+	margin-top: 16px;
+}
+
+.photo-preview-container h4 {
+	margin: 0 0 12px 0;
+	color: var(--ion-color-dark);
+	font-size: 1rem;
+}
+
+.photo-preview-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+	gap: 12px;
+}
+
+.photo-preview-item {
+	position: relative;
+	aspect-ratio: 1;
+	border-radius: 8px;
+	overflow: hidden;
+}
+
+.photo-preview-item img {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+}
+
+.remove-photo-btn {
+	position: absolute;
+	top: 4px;
+	right: 4px;
+	--background: rgba(0, 0, 0, 0.7);
+	--color: white;
+	--border-radius: 50%;
+	width: 32px;
+	height: 32px;
+}
+
+.photo-actions {
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+	margin-top: 16px;
+}

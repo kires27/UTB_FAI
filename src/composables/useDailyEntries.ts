@@ -4,7 +4,7 @@ import { DailyEntry, DailyEntriesData, Note } from "@/types";
 
 const DAILY_ENTRIES_STORAGE = "daily-entries";
 
-// Global state to share between components
+// Global state
 const globalEntries = ref<DailyEntriesData>({ entries: {} });
 
 export const useDailyEntries = () => {
@@ -115,15 +115,12 @@ export const useDailyEntries = () => {
 		for (const date in entries.value.entries) {
 			if (date >= startDate && date <= endDate) {
 				const entry = entries.value.entries[date];
-
-				// Sort notes within each entry by timestamp (newest first)
 				entry.notes.sort((a, b) => b.timestamp - a.timestamp);
-
 				sortedEntries.push(entry);
 			}
 		}
 
-		// Sort entries by date (newest first)
+		// newest first
 		return sortedEntries.sort((a, b) => b.date.localeCompare(a.date));
 	};
 
@@ -138,7 +135,7 @@ export const useDailyEntries = () => {
 			}
 		}
 
-		return [...new Set(allPhotos)];
+		return allPhotos;
 	};
 
 	const getEntry = (date: string): DailyEntry | null => {
@@ -170,7 +167,6 @@ export const useDailyEntries = () => {
 	onMounted(loadEntries);
 	watch(entries, cacheEntries, { deep: true });
 
-	// Add a refresh method to force reload
 	const refreshEntries = async () => {
 		await loadEntries();
 	};

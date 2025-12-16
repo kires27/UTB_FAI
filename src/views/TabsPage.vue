@@ -10,7 +10,7 @@
 
 				<ion-tab-button tab="new-note" href="/tabs/new-note">
 					<ion-icon aria-hidden="true" :icon="create" />
-					<ion-label>New Entry</ion-label>
+					<ion-label>New Note</ion-label>
 				</ion-tab-button>
 
 				<ion-tab-button tab="photos" href="/tabs/photos">

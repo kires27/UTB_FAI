@@ -16,11 +16,9 @@
 
 		<ion-content class="ion-padding">
 			<div class="form-content">
-				<!-- Text input area -->
 				<ion-textarea v-model="noteText" placeholder="Write your thoughts here..." :auto-grow="true" :rows="8"
 					class="note-textarea" />
 
-				<!-- Photo preview area -->
 				<div v-if="photos.length > 0" class="photo-preview-container">
 					<h4>Attached Photos</h4>
 					<div class="photo-preview-grid">
@@ -33,7 +31,6 @@
 					</div>
 				</div>
 
-				<!-- Photo capture buttons -->
 				<div class="photo-actions">
 					<ion-button expand="block" fill="outline" @click="takePhoto" class="photo-btn">
 						<ion-icon :icon="camera" slot="start" />
@@ -93,14 +90,9 @@ const importPhoto = async () => {
 	} catch (error: any) {
 		console.error('Error importing photo:', error);
 
-		let errorMessage = 'Failed to import photo';
-		if (error.message && error.message.includes('Only JPG and PNG images are allowed')) {
-			errorMessage = 'Only JPG and PNG images are allowed';
-		} else if (error.message && error.message.includes('User cancelled')) {
-			errorMessage = 'Photo selection cancelled';
+		if (error.message) {
+			showToast(error.message as string);
 		}
-
-		showToast(errorMessage);
 	}
 };
 
@@ -110,13 +102,11 @@ const removePhoto = (index: number) => {
 
 const handleSaveNote = async () => {
 	try {
-		const noteId = await saveDailyEntry(noteText.value.trim(), photos.value.map(p => p.filepath));
+		await saveDailyEntry(noteText.value.trim(), photos.value.map(p => p.filepath));
 
-		// Reset form
 		noteText.value = '';
 		photos.value = [];
 
-		// Navigate back to timeline
 		router.push('/tabs/timeline');
 	} catch (error) {
 		console.error('Error saving note:', error);
@@ -148,62 +138,7 @@ const showToast = async (message: string) => {
 }
 
 .note-textarea {
-	--background: var(--ion-color-light);
-	--border-radius: 12px;
-	--padding-start: 16px;
-	--padding-end: 16px;
-	--padding-top: 16px;
-	--padding-bottom: 16px;
+	--padding-top: 24px;
 }
 
-.photo-preview-container {
-	margin-top: 16px;
-}
-
-.photo-preview-container h4 {
-	margin: 0 0 12px 0;
-	color: var(--ion-color-dark);
-	font-size: 1rem;
-}
-
-.photo-preview-grid {
-	display: grid;
-	grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-	gap: 12px;
-}
-
-.photo-preview-item {
-	position: relative;
-	aspect-ratio: 1;
-	border-radius: 8px;
-	overflow: hidden;
-}
-
-.photo-preview-item img {
-	width: 100%;
-	height: 100%;
-	object-fit: cover;
-}
-
-.remove-photo-btn {
-	position: absolute;
-	top: 4px;
-	right: 4px;
-	--background: rgba(0, 0, 0, 0.7);
-	--color: white;
-	--border-radius: 50%;
-	width: 32px;
-	height: 32px;
-}
-
-.photo-actions {
-	display: flex;
-	flex-direction: column;
-	gap: 12px;
-	margin-top: 16px;
-}
-
-.photo-btn {
-	--border-radius: 12px;
-}
 </style>
