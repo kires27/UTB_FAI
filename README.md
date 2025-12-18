@@ -42,13 +42,6 @@ https://moodle.utb.cz/mod/assign/view.php?id=769105
 - invite people 
 - create notification view
 
-1. Event entity editing by admin - ❌ Admin can edit events, but implementation needs refinement
-2. Server-side validation - ⚠️ PARTIAL - Basic validation implemented, but missing some attributes
-3. Client-side validation - ❌ INCOMPLETE - Custom validators exist but server validation has gaps
-4. Custom validation attribute - ⚠️ PARTIAL - 2 custom attributes created, but need more comprehensive coverage
-5. Notification system UI - ❌ MISSING - Data exists but no user interface
-6. Recurring event frequency - ❌ INCOMPLETE - Basic structure exists but no UI implementation
-
 
 # Startup
 ## start existing project
