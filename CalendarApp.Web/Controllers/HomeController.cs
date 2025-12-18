@@ -15,19 +15,17 @@ namespace CalendarApp.Web.Controllers
 
         public IActionResult Index()
         {
-            // Check if user is logged in via session
-            var userIdStr = HttpContext.Session.GetString("UserId");
-            if (!string.IsNullOrEmpty(userIdStr))
+            // Check if user is logged in via Identity
+            if (User.Identity?.IsAuthenticated == true)
             {
                 // User is logged in, redirect based on role
-                var userRole = HttpContext.Session.GetString("Role") ?? "User";
-                if (userRole == "Admin")
+                if (User.IsInRole("Admin"))
                 {
                     return RedirectToAction("Select", "Event", new { area = "Admin" });
                 }
                 else
                 {
-                    return RedirectToAction("Index", "Calendar");
+                    return RedirectToAction("Index", "Events");
                 }
             }
 

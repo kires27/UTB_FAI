@@ -1,6 +1,6 @@
-@model CalendarApp.Domain.Entities.Event
+@model CalendarApp.Web.Models.EventEditViewModel
 @{
-    ViewData["Title"] = "Create Event";
+    ViewData["Title"] = "Edit Event";
 }
 
 <div class="container-fluid">
@@ -13,16 +13,18 @@
     }
 
     <div class="row">
-        <div class="col-lg-6">
-            <div class="card shadow-sm border-warning">
-                <div class="card-header bg-warning text-dark">
+        <div class="col-lg-8">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
                     <h4 class="mb-0">
-                        <i class="bi bi-plus-circle me-2"></i>Create New Event (Admin)
+                        <i class="bi bi-pencil me-2"></i>Edit Event
                     </h4>
                 </div>
                 <div class="card-body">
-                    <form asp-action="Create">
+                    <form asp-action="Edit">
                         <div asp-validation-summary="All" class="text-danger"></div>
+                        <input type="hidden" asp-for="Id" />
+                        <input type="hidden" asp-for="OwnerId" />
                         
                         <div class="row">
                             <div class="col-md-6">
@@ -107,26 +109,59 @@
                             </div>
                         </div>
 
-                        <div id="recurringFields" class="row" style="display: none;">
-                            <div class="col-md-6">
-                                <div class="form-group mb-3">
-                                    <label asp-for="RecurrenceRule" class="control-label"></label>
-                                    <input asp-for="RecurrenceRule" class="form-control" placeholder="e.g., FREQ=WEEKLY;BYDAY=MO" />
-                                    <span asp-validation-for="RecurrenceRule" class="text-danger"></span>
+                        @if (Model?.IsRecurring == true)
+                        {
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group mb-3">
+                                        <label asp-for="RecurrenceRule" class="control-label"></label>
+                                        <input asp-for="RecurrenceRule" class="form-control" placeholder="e.g., FREQ=WEEKLY;BYDAY=MO" />
+                                        <span asp-validation-for="RecurrenceRule" class="text-danger"></span>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group mb-3">
+                                        <label asp-for="RecurrenceEnd" class="control-label"></label>
+                                        <input asp-for="RecurrenceEnd" class="form-control" type="datetime-local" />
+                                        <span asp-validation-for="RecurrenceEnd" class="text-danger"></span>
+                                    </div>
                                 </div>
                             </div>
-                            <div class="col-md-6">
-                                <div class="form-group mb-3">
-                                    <label asp-for="RecurrenceEnd" class="control-label"></label>
-                                    <input asp-for="RecurrenceEnd" class="form-control" type="datetime-local" />
-                                    <span asp-validation-for="RecurrenceEnd" class="text-danger"></span>
+                        }
+
+                        @if (Model?.CurrentAttendees?.Any() == true)
+                        {
+                            <div class="form-group mb-3">
+                                <label class="control-label">Current Attendees</label>
+                                <div class="border rounded p-3 bg-light">
+                                    @foreach (var attendee in Model.CurrentAttendees)
+                                    {
+                                        <div class="d-flex justify-content-between align-items-center mb-2">
+                                            <div>
+                                                <strong>@attendee.User.UserName</strong>
+                                                <small class="text-muted">(@attendee.User.Email)</small>
+                                            </div>
+                                            <button type="button" class="btn btn-sm btn-outline-danger"
+                                                    onclick="removeAttendee(@attendee.UserId)">
+                                                <i class="bi bi-x"></i> Remove
+                                            </button>
+                                        </div>
+                                    }
                                 </div>
+                                <input type="hidden" name="RemoveAttendeeIds" id="removeAttendeeIds" value="" />
                             </div>
+                        }
+
+                        <div class="form-group mb-3">
+                            <label asp-for="InviteEmails" class="control-label"></label>
+                            <textarea asp-for="InviteEmails" class="form-control" rows="2" placeholder="Enter email addresses separated by commas"></textarea>
+                            <span asp-validation-for="InviteEmails" class="text-danger"></span>
+                            <small class="form-text text-muted">Enter email addresses of users to invite to this event</small>
                         </div>
 
                         <div class="form-group">
-                            <input type="submit" value="Create Event" class="btn btn-primary" />
-                            <a asp-action="Select" class="btn btn-secondary">Cancel</a>
+                            <input type="submit" value="Save Changes" class="btn btn-primary" />
+                            <a asp-action="Index" class="btn btn-secondary">Cancel</a>
                         </div>
                     </form>
                 </div>
@@ -138,15 +173,15 @@
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const isRecurringCheckbox = document.querySelector('input[name="IsRecurring"]');
-            const recurringFields = document.getElementById('recurringFields');
-            
-            if (isRecurringCheckbox && recurringFields) {
-                isRecurringCheckbox.addEventListener('change', function() {
-                    recurringFields.style.display = this.checked ? 'block' : 'none';
-                });
+        let removeAttendeeIds = [];
+
+        function removeAttendee(userId) {
+            if (confirm('Remove this attendee from the event?')) {
+                removeAttendeeIds.push(userId);
+                document.getElementById('removeAttendeeIds').value = removeAttendeeIds.join(',');
+                // Hide the attendee row
+                event.target.closest('.d-flex').style.display = 'none';
             }
-        });
+        }
     </script>
 }

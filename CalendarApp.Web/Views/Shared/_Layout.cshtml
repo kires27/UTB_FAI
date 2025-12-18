@@ -14,35 +14,21 @@
     <header>
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
             <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">CalendarApp.Web</a>
+                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">Calendar Web App</a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-                        </li>
+                     <ul class="navbar-nav flex-grow-1"></ul>
+                     <ul class="navbar-nav">
                         @if (User.Identity?.IsAuthenticated == true)
                         {
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Calendar" asp-action="Index">Calendar</a>
+                                <a class="nav-link" href="@Url.Action("Index", "Notifications", new { area = User.IsInRole("Admin") ? "Admin" : "" })">
+                                    <i class="bi bi-bell"></i> Notifications
+                                </a>
                             </li>
-                        }
-                        @if (User.IsInRole("Admin"))
-                        {
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="Admin" asp-controller="Event" asp-action="Select">Admin</a>
-                            </li>
-                        }
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-                        </li>
-                    </ul>
-                    <ul class="navbar-nav">
-                        @if (User.Identity?.IsAuthenticated == true)
-                        {
                             <li class="nav-item">
                                 <span class="nav-link text-dark">Hello, @User.Identity.Name!</span>
                             </li>
@@ -80,6 +66,31 @@
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+    
+    @if (User.Identity?.IsAuthenticated == true)
+    {
+        <script>
+            $(document).ready(function() {
+                // Load notification count when page loads
+                updateNotificationCount();
+                
+                // Refresh notification count every 30 seconds
+                setInterval(updateNotificationCount, 30000);
+            });
+            
+            function updateNotificationCount() {
+                // Determine correct URL based on user role
+                const isAdmin = @(User.IsInRole("Admin") ? "true" : "false");
+                const url = isAdmin ? '/Admin/Notifications/GetUnreadCount' : '/Notifications/GetUnreadCount';
+                
+                // Get unread notification count
+                $.get(url, function(data) {
+                    // No longer updating badge since it was removed
+                });
+            }
+        </script>
+    }
+    
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

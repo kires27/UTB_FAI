@@ -1,0 +1,155 @@
+@model IEnumerable<CalendarApp.Domain.Entities.Notification>
+@using CalendarApp.Domain.Entities
+@{
+    ViewData["Title"] = "Notifications";
+}
+
+<div class="container-fluid">
+    <div class="row mb-4">
+        <div class="col">
+            <h2>Notifications</h2>
+            @if (ViewBag.UnreadCount > 0)
+            {
+                <span class="badge bg-danger">@ViewBag.UnreadCount unread</span>
+            }
+        </div>
+        <div class="col-auto">
+            <a asp-action="Index" asp-controller="Home" class="btn btn-secondary">
+                <i class="bi bi-calendar"></i> Back to Calendar
+            </a>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            @if (!Model.Any())
+            {
+                <div class="alert alert-info">
+                    <h4>No Notifications</h4>
+                    <p>You don't have any notifications.</p>
+                </div>
+            }
+            else
+            {
+                <div class="list-group">
+                    @foreach (var notification in Model)
+                    {
+                        <div class="list-group-item @(notification.IsRead ? "bg-light" : "bg-white")">
+                            <div class="d-flex justify-content-between align-items-start">
+                                <div class="flex-grow-1">
+                                    <div class="d-flex align-items-center mb-2">
+                                        <i class="bi bi-bell me-2"></i>
+                                        <strong>@notification.Message</strong>
+                                        @if (!notification.IsRead)
+                                        {
+                                            <span class="badge bg-primary ms-2">New</span>
+                                        }
+                                    </div>
+                                    <div class="text-muted small">
+                                        <i class="bi bi-clock"></i> @notification.CreatedAt.ToString("MMM dd, yyyy HH:mm")
+                                        @if (notification.Event != null)
+                                        {
+                                            <span class="ms-3">
+                                                <i class="bi bi-calendar-event"></i> @notification.Event.Title
+                                            </span>
+                                        }
+                                    </div>
+                                </div>
+                                <div class="d-flex gap-1">
+                                    @if (notification.Type == NotificationType.EventInvite && !notification.IsRead)
+                                    {
+                                        <form asp-action="AcceptInvitation" asp-route-id="@notification.Id" method="post" class="d-inline">
+                                            <button type="submit" class="btn btn-success btn-sm">
+                                                <i class="bi bi-check-circle"></i>
+                                            </button>
+                                        </form>
+                                        <form asp-action="DeclineInvitation" asp-route-id="@notification.Id" method="post" class="d-inline">
+                                            <button type="submit" class="btn btn-danger btn-sm">
+                                                <i class="bi bi-x-circle"></i>
+                                            </button>
+                                        </form>
+                                    }
+                                    else if (!notification.IsRead && notification.Type != NotificationType.EventInvite)
+                                    {
+                                        <form asp-action="MarkAsRead" asp-route-id="@notification.Id" method="post" class="d-inline">
+                                            <button type="submit" class="btn btn-outline-secondary btn-sm">
+                                                <i class="bi bi-check2"></i>
+                                            </button>
+                                        </form>
+                                    }
+                                    @if (notification.Event != null)
+                                    {
+                                        <a href="@Url.Action("Details", "Events", new { id = notification.Event.Id })" 
+                                           class="btn btn-outline-primary btn-sm">
+                                            <i class="bi bi-eye"></i>
+                                        </a>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function handleInvitationResponse(event, action, notificationId) {
+            event.preventDefault();
+            
+            const form = event.target;
+            const url = action === 'accept' 
+                ? '@Url.Action("AcceptInvitation", "Notifications")' 
+                : '@Url.Action("DeclineInvitation", "Notifications")';
+            
+            const formData = new FormData(form);
+            
+            fetch(url, {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]')?.value,
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Update the UI
+                    const listItem = form.closest('.list-group-item');
+                    listItem.classList.remove('bg-white', 'border-start', 'border-4', 'border-primary');
+                    listItem.classList.add('bg-light');
+                    
+                    // Remove the New badge
+                    const newBadge = listItem.querySelector('.badge.bg-primary');
+                    if (newBadge) {
+                        newBadge.remove();
+                    }
+                    
+                    // Replace buttons with success message
+                    const buttonGroup = form.closest('.d-flex.gap-1');
+                    if (action === 'accept') {
+                        buttonGroup.innerHTML = '<span class="text-success"><i class="bi bi-check-circle-fill"></i> Accepted</span>';
+                    } else {
+                        buttonGroup.innerHTML = '<span class="text-danger"><i class="bi bi-x-circle-fill"></i> Declined</span>';
+                    }
+                    
+                    // Notification count badge removed from header
+                    console.log('Notification processed successfully');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                // Fallback to normal form submission
+                form.submit();
+            });
+        }
+        
+        function updateNotificationCount(count) {
+            // No longer updating badge since it was removed from header
+            console.log('Notification count updated:', count);
+        }
+    </script>
+}

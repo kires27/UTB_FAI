@@ -11,7 +11,6 @@ namespace CalendarApp.Domain.Entities
         Custom
     }
 
-    [Table(nameof(Notification))]
     public class Notification : Entity<int>
     {
         [Required]
@@ -29,10 +28,11 @@ namespace CalendarApp.Domain.Entities
 
         public DateTime? NotifyAt { get; set; }
 
-        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
-        public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
+    	[DatabaseGenerated(DatabaseGeneratedOption.Computed)]
+		public DateTime CreatedAt { get; protected set; }
 
-        // Navigation properties
+        public DateTime UpdatedAt { get; set; }
+
         [ForeignKey(nameof(UserId))]
         public virtual User User { get; set; } = null!;
 

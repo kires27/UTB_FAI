@@ -17,7 +17,6 @@ namespace CalendarApp.Domain.Entities
         Participant
     }
 
-    [Table(nameof(EventAttendee))]
     public class EventAttendee
     {
         [Required]
@@ -30,8 +29,10 @@ namespace CalendarApp.Domain.Entities
 
         public AttendeeRole Role { get; set; } = AttendeeRole.Participant;
 
-        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
-        public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
+    	[DatabaseGenerated(DatabaseGeneratedOption.Computed)]
+		public DateTime CreatedAt { get; protected set; }
+
+        public DateTime UpdatedAt { get; set; }
 
         // Navigation properties
         [ForeignKey(nameof(EventId))]

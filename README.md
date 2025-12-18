@@ -1,9 +1,8 @@
 # about project
 Správa osobního kalendáře s funkcemi 
-- [ ] plánování událostí, 
+- [x] plánování událostí, 
 - [ ] notifikacemi, 
 - [ ] sdílením mezi uživateli. 
-- [ ] Vytvoření Web API pro pohodlnější budoucí rozšíření na mobilní aplikaci.
 
 **Obecné podmínky pro projekt:**
 
@@ -22,7 +21,7 @@ Správa osobního kalendáře s funkcemi
 
 - [ ] Projekt musí obsahovat několik entit, popř. ViewModelů/DTO (minimálně 5 - nepočítají se entity z Entity Framework Core a ani z Identity, ani ErrorViewModel). Musí být definováno aspoň jedno propojení entit skrz cizí klíč.
 
-- [ ] Vytvoření Area "Admin", ve které budou uloženy Controllery a View pro správu všech položek v databázi adminem (admin bude moct spravovat i data uživatele, ale nebude jim smět měnit hash hesla).
+- [x] Vytvoření Area "Admin", ve které budou uloženy Controllery a View pro správu všech položek v databázi adminem (admin bude moct spravovat i data uživatele, ale nebude jim smět měnit hash hesla).
 	- [ ] Ve správě položek musí být implementována i editace položek.
 
 - [ ] Bude vyřešena hlavně serverová validace (ale nejlépe i ta klientská).
@@ -32,96 +31,138 @@ Správa osobního kalendáře s funkcemi
 	- [ ] Funkce Managera je taková, že spravuje systém v oblastech, kde interaguje se zákazníky/klienty (např. v případě e-shopu jsou to produkty, objednávky, faktury apod.), ale nemůže měnit kritické vlastnosti systému (uživatele, role, přístupová práva, nastavení webové aplikace apod.).
 	- [ ] Zákazník/klient využívá systém pro účely, ke kterým je určen (např. v e-shopu nakupuje produkty, vytváří pro sebe objednávky, prohlíží si jen své vlastní objednávky, generuje své faktury apod.).
 
-- [ ] Prvky na stránce by měly být responzivní (pomocí Bootstrap nebo jiné technologie, anebo vlastním řešením). Pro front-end je možné použít jakýkoliv framework (např. Vue, React, Angular, SvelteKit apod.)
+- [x] Prvky na stránce by měly být responzivní (pomocí Bootstrap nebo jiné technologie, anebo vlastním řešením). Pro front-end je možné použít jakýkoliv framework (např. Vue, React, Angular, SvelteKit apod.)
 
 https://moodle.utb.cz/mod/assign/view.php?id=769105
 
-# start existing project
 
-start docker 
-`sudo systemctl start docker`
+# TODO
+- recurring event frequency is incomplete
+- proper client and server validationdd
+- invite people 
+- create notification view
 
-start existing container
-`docker start pw-calendar-db`
+1. Event entity editing by admin - ❌ Admin can edit events, but implementation needs refinement
+2. Server-side validation - ⚠️ PARTIAL - Basic validation implemented, but missing some attributes
+3. Client-side validation - ❌ INCOMPLETE - Custom validators exist but server validation has gaps
+4. Custom validation attribute - ⚠️ PARTIAL - 2 custom attributes created, but need more comprehensive coverage
+5. Notification system UI - ❌ MISSING - Data exists but no user interface
+6. Recurring event frequency - ❌ INCOMPLETE - Basic structure exists but no UI implementation
 
-to run project
-`dotnet run --project CalendarApp.Web/CalendarApp.Web.csproj`
-or, execute inside projects **Web** directory 
-`dotnet run`
+
+# Startup
+## start existing project
+`sudo systemctl start docker` start docker
+
+`docker start pw_calendar_db` start existing container
+
+`dotnet run --project CalendarApp.Web` to run project
+`dotnet watch run --project CalendarApp.Web` realtime changes
 
 others
-`~/.dotnet/dotnet restore CalendarApp.sln`
-`~/.dotnet/dotnet build CalendarApp.sln`
+`dotnet restore CalendarApp.sln`
+`dotnet build CalendarApp.sln`
 
 website url
 `http://localhost:5292/`
 
-# init project dependencies
+## start new project
+
+# project dependencies
+## tools and packages
+*entitiy framework CLI*
+`dotnet new tool-manifest`
+`dotnet tool install dotnet-ef --version 9.0.9`
+
+*Project 'CalendarApp.Web'*
+> Microsoft.AspNetCore.Identity.EntityFrameworkCore      9.0.9       9.0.9   
+> Microsoft.AspNetCore.Identity.UI                       9.0.9       9.0.9   
+> Microsoft.EntityFrameworkCore.Design                   9.0.9       9.0.9   
+> Microsoft.EntityFrameworkCore.SqlServer                9.0.9       9.0.9   
+> Microsoft.EntityFrameworkCore.Tools                    9.0.9       9.0.9   
+> Microsoft.VisualStudio.Web.CodeGeneration.Design       9.0.0       9.0.0   
+> System.ComponentModel.Annotations                      5.0.0       5.0.0   
+
+*Project 'CalendarApp.Domain'*
+> Microsoft.AspNetCore.Identity.EntityFrameworkCore      9.0.9       9.0.9   
+
+*Project 'CalendarApp.Infrastructure'*
+> Microsoft.AspNetCore.Identity.EntityFrameworkCore      9.0.9       9.0.9   
+> Microsoft.EntityFrameworkCore                          9.0.9       9.0.9   
+> Microsoft.EntityFrameworkCore.Tools                    9.0.9       9.0.9   
+> Pomelo.EntityFrameworkCore.MySql                       9.0.0       9.0.0   
+
+*Project 'CalendarApp.Application'*
+> Microsoft.EntityFrameworkCore                          9.0.9       9.0.9   
+> Microsoft.EntityFrameworkCore.Relational               9.0.9       9.0.9   
+
+
 ## dotnet
-> using dotnet binary: https://dotnet.microsoft.com/en-us/download/dotnet/9.0
+`sudo pacman -S dotnet-sdk-9.0`
 
-You can invoke the tool from this directory using the following commands: 
 `dotnet tool run dotnet-ef`
-
-installed tools
-`dotnet tool list --global`
-
-remove tools
-`dotnet tool uninstall --global dotnet-ef`
-
-## docker
-
-start docker 
-`sudo systemctl start docker`
-
-create container
-```
-docker run --name pw-calendar-db \
-  -e MYSQL_ROOT_PASSWORD=root \
-  -e MYSQL_DATABASE=calendar-db \
-  -p 3306:3306 \
-  -v pw-calendar-db:/var/lib/mysql \
-  -d mysql:8.0.29
-```
->data stored in: /var/lib/docker/volumes/
-
-start existing container
-`docker start pw-calendar-db`
-
-Stop the container
-`docker stop pw-calendar-db`
-
-remove the container
-`docker rm -v pw-calendar-db`
-
-View running containers
-`docker ps`
-View existing containers
-`docker ps -a`
-
-Connect to MySQL inside the container
-`docker exec -it my-mysql mysql -u root -p`
-
-## init EF Migrations
+`dotnet tool list` installed tools 
+`dotnet tool uninstall dotnet-ef` remove tools
+`dotnet list package`
+`dotnet add package <package> --version <x>` add package
 
 
-dotnet ef migrations add NewMigration --project CalendarApp.Infrastructure --startup-project CalendarApp.Web
+## EF Migration
 
-
-This will create the database schema and apply migrations
-```
-dotnet ef database update \
-    --project ./CalendarApp.Infrastructure/CalendarApp.Infrastructure.csproj \
-    --startup-project ./CalendarApp.Web/CalendarApp.Web.csproj
+*create New Migration*
+```bash
+dotnet tool run dotnet-ef migrations add CleanCalendarReset \
+  --project ./CalendarApp.Infrastructure \
+  --startup-project ./CalendarApp.Web
 ```
 
-check if migrations are applied
+*apply Migration to Database*
+```bash
+dotnet tool run dotnet-ef database update \
+  --project ./CalendarApp.Infrastructure \
+  --startup-project ./CalendarApp.Web
 ```
-~/.dotnet/dotnet ef migrations list \
+
+*check if migrations are applied*
+```bash
+dotnet tool run dotnet-ef migrations list \
 	--project ./CalendarApp.Infrastructure/CalendarApp.Infrastructure.csproj \
     --startup-project ./CalendarApp.Web/CalendarApp.Web.csproj
 ```
 
+### seeding users
+*name*			*password*
+admin			Admin123!
+alexjohnson 	User123!
+sarahchen		User123!
+mikedavis		User123!
+
+## docker
+`sudo systemctl start docker` start docker 
+
+*create container*
+```
+docker run --name pw_calendar_db \
+  -e MYSQL_ROOT_PASSWORD=root \
+  -e MYSQL_DATABASE=calendar_db \
+  -p 3306:3306 \
+  -v pw_calendar_db:/var/lib/mysql \
+  -d mysql:8.0.29
+```
+>data stored in: /var/lib/docker/volumes/
+
+`docker start pw_calendar_db` start existing container
+`docker stop pw_calendar_db` Stop the container
+`docker rm -v pw_calendar_db` remove the container
+`docker ps` View running containers
+`docker ps -a` View existing containers
+
+`docker exec -it my-mysql mysql -u root -p` Connect to MySQL inside the container
+
+
+
 ## database
 
 connect to database using vscode extension
+
+### MYSQL

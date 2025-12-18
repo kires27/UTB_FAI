@@ -18,9 +18,6 @@ namespace CalendarApp.Web.Models
         [Display(Name = "Password")]
         public string Password { get; set; } = string.Empty;
 
-        [Required]
-        [Display(Name = "Full Name")]
-        public string FullName { get; set; } = string.Empty;
     }
 
     public class LoginViewModel

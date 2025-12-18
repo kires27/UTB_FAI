@@ -1,17 +1,26 @@
 using Microsoft.AspNetCore.Mvc;
-using CalendarApp.Application.Abstraction;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Authorization;
 using CalendarApp.Domain.Entities;
 using CalendarApp.Web.Models;
 
 namespace CalendarApp.Web.Controllers
 {
+    [AllowAnonymous]
     public class AccountController : Controller
     {
-        private readonly IUserAppService _userAppService;
+        private readonly UserManager<User> _userManager;
+        private readonly SignInManager<User> _signInManager;
+        private readonly RoleManager<Role> _roleManager;
 
-        public AccountController(IUserAppService userAppService)
+        public AccountController(
+            UserManager<User> userManager,
+            SignInManager<User> signInManager,
+            RoleManager<Role> roleManager)
         {
-            _userAppService = userAppService;
+            _userManager = userManager;
+            _signInManager = signInManager;
+            _roleManager = roleManager;
         }
 
         [HttpGet]
@@ -29,21 +38,23 @@ namespace CalendarApp.Web.Controllers
                 {
                     UserName = model.Username,
                     Email = model.Email,
-                    FullName = model.FullName
                 };
 
-                var result = await _userAppService.CreateUserAsync(user, model.Password);
+                var result = await _userManager.CreateAsync(user, model.Password);
 
                 if (result.Succeeded)
                 {
-                    // Simple cookie authentication
-                    HttpContext.Session.SetString("UserId", user.Id.ToString());
-                    HttpContext.Session.SetString("Username", user.UserName);
-                    HttpContext.Session.SetString("Role", user.Role ?? "User");
+                    // Assign User role by default
+                    await _userManager.AddToRoleAsync(user, "User");
+
+                    await _signInManager.SignInAsync(user, isPersistent: false);
                     return RedirectToAction("Index", "Home");
                 }
 
-                ModelState.AddModelError("", result.ErrorMessage ?? "Registration failed");
+                foreach (var error in result.Errors)
+                {
+                    ModelState.AddModelError("", error.Description);
+                }
             }
 
             return View(model);
@@ -60,13 +71,14 @@ namespace CalendarApp.Web.Controllers
         {
             if (ModelState.IsValid)
             {
-                var result = await _userAppService.ValidateUserAsync(model.Username, model.Password);
+                var result = await _signInManager.PasswordSignInAsync(
+                    model.Username, 
+                    model.Password, 
+                    model.RememberMe, 
+                    lockoutOnFailure: false);
 
                 if (result.Succeeded)
                 {
-                    HttpContext.Session.SetString("UserId", result.UserId?.ToString() ?? "");
-                    HttpContext.Session.SetString("Username", result.Username ?? "");
-                    HttpContext.Session.SetString("Role", result.Role ?? "User");
                     return RedirectToAction("Index", "Home");
                 }
 
@@ -77,10 +89,16 @@ namespace CalendarApp.Web.Controllers
         }
 
         [HttpPost]
-        public IActionResult Logout()
+        public async Task<IActionResult> Logout()
         {
-            HttpContext.Session.Clear();
+            await _signInManager.SignOutAsync();
             return RedirectToAction("Index", "Home");
+        }
+
+        [HttpGet]
+        public IActionResult AccessDenied()
+        {
+            return View();
         }
     }
 }

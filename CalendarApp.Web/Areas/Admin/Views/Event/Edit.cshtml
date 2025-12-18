@@ -1,6 +1,6 @@
 @model CalendarApp.Domain.Entities.Event
 @{
-    ViewData["Title"] = "Create Event";
+    ViewData["Title"] = "Edit Event";
 }
 
 <div class="container-fluid">
@@ -11,18 +11,21 @@
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
     }
-
-    <div class="row">
-        <div class="col-lg-6">
-            <div class="card shadow-sm border-warning">
+    
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card border-warning">
                 <div class="card-header bg-warning text-dark">
-                    <h4 class="mb-0">
-                        <i class="bi bi-plus-circle me-2"></i>Create New Event (Admin)
-                    </h4>
+                    <h3 class="mb-0">
+                        <i class="bi bi-shield-lock me-2"></i>Edit Event (Admin)
+                    </h3>
                 </div>
                 <div class="card-body">
-                    <form asp-action="Create">
+                    <form asp-action="Edit">
                         <div asp-validation-summary="All" class="text-danger"></div>
+                        <input type="hidden" asp-for="Id" />
+                        <input type="hidden" asp-for="OwnerId" />
+                        <input type="hidden" asp-for="CreatedAt" />
                         
                         <div class="row">
                             <div class="col-md-6">
@@ -65,6 +68,7 @@
                         </div>
 
                         <div class="row">
+
                             <div class="col-md-4">
                                 <div class="form-group mb-3">
                                     <label asp-for="Status" class="control-label"></label>
@@ -81,13 +85,6 @@
                                     <label asp-for="Color" class="control-label"></label>
                                     <input asp-for="Color" class="form-control" type="color" />
                                     <span asp-validation-for="Color" class="text-danger"></span>
-                                </div>
-                            </div>
-                            <div class="col-md-4">
-                                <div class="form-group mb-3">
-                                    <label asp-for="ReminderTime" class="control-label"></label>
-                                    <input asp-for="ReminderTime" class="form-control" type="datetime-local" />
-                                    <span asp-validation-for="ReminderTime" class="text-danger"></span>
                                 </div>
                             </div>
                         </div>
@@ -107,25 +104,42 @@
                             </div>
                         </div>
 
-                        <div id="recurringFields" class="row" style="display: none;">
-                            <div class="col-md-6">
-                                <div class="form-group mb-3">
-                                    <label asp-for="RecurrenceRule" class="control-label"></label>
-                                    <input asp-for="RecurrenceRule" class="form-control" placeholder="e.g., FREQ=WEEKLY;BYDAY=MO" />
-                                    <span asp-validation-for="RecurrenceRule" class="text-danger"></span>
+                        @if (Model.IsRecurring)
+                        {
+                            <div class="form-group mb-3">
+                                <label asp-for="RecurrenceRule" class="control-label"></label>
+                                <input asp-for="RecurrenceRule" class="form-control" placeholder="e.g., FREQ=WEEKLY;BYDAY=MO" />
+                                <span asp-validation-for="RecurrenceRule" class="text-danger"></span>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group mb-3">
+                                        <label asp-for="RecurrenceEnd" class="control-label"></label>
+                                        <input asp-for="RecurrenceEnd" class="form-control" type="datetime-local" />
+                                        <span asp-validation-for="RecurrenceEnd" class="text-danger"></span>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group mb-3">
+                                        <label asp-for="ReminderTime" class="control-label"></label>
+                                        <input asp-for="ReminderTime" class="form-control" type="datetime-local" />
+                                        <span asp-validation-for="ReminderTime" class="text-danger"></span>
+                                    </div>
                                 </div>
                             </div>
-                            <div class="col-md-6">
-                                <div class="form-group mb-3">
-                                    <label asp-for="RecurrenceEnd" class="control-label"></label>
-                                    <input asp-for="RecurrenceEnd" class="form-control" type="datetime-local" />
-                                    <span asp-validation-for="RecurrenceEnd" class="text-danger"></span>
-                                </div>
+                        }
+                        else
+                        {
+                            <div class="form-group mb-3">
+                                <label asp-for="ReminderTime" class="control-label"></label>
+                                <input asp-for="ReminderTime" class="form-control" type="datetime-local" />
+                                <span asp-validation-for="ReminderTime" class="text-danger"></span>
                             </div>
-                        </div>
+                        }
 
                         <div class="form-group">
-                            <input type="submit" value="Create Event" class="btn btn-primary" />
+                            <input type="submit" value="Save Changes" class="btn btn-warning" />
                             <a asp-action="Select" class="btn btn-secondary">Cancel</a>
                         </div>
                     </form>
@@ -137,16 +151,4 @@
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const isRecurringCheckbox = document.querySelector('input[name="IsRecurring"]');
-            const recurringFields = document.getElementById('recurringFields');
-            
-            if (isRecurringCheckbox && recurringFields) {
-                isRecurringCheckbox.addEventListener('change', function() {
-                    recurringFields.style.display = this.checked ? 'block' : 'none';
-                });
-            }
-        });
-    </script>
 }
