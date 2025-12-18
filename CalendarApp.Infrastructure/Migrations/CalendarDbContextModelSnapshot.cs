@@ -82,9 +82,6 @@ namespace CalendarApp.Infrastructure.Migrations
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime(6)");
 
-                    b.Property<int>("Visibility")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
 
                     b.HasIndex("OwnerId");

@@ -126,7 +126,7 @@ namespace CalendarApp.Web.Areas.Admin.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        // GET: Admin/Notifications/GetUnreadCount (for AJAX calls)
+        // GET: Admin/Notifications/GetUnreadCount
         [HttpGet]
         public async Task<IActionResult> GetUnreadCount()
         {

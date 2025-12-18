@@ -1,8 +1,8 @@
 # about project
 Správa osobního kalendáře s funkcemi 
 - [x] plánování událostí, 
-- [ ] notifikacemi, 
-- [ ] sdílením mezi uživateli. 
+- [x] notifikacemi, 
+- [x] sdílením mezi uživateli. 
 
 **Obecné podmínky pro projekt:**
 
@@ -17,30 +17,23 @@ Správa osobního kalendáře s funkcemi
 	- V Presentation vrstvě se nesmí objevit přímé použití Infrastructure vrstvy (kromě konfigurace).
 	- V Controllerech nesmí být kód logicky spadající do nižších vrstev.
 
-- [ ] Vytvoření databáze technikou Code-First (s migracemi) a její napojení a použití pomocí EntityFrameworkCore (nebo obdobného frameworku).
+- [x] Vytvoření databáze technikou Code-First (s migracemi) a její napojení a použití pomocí EntityFrameworkCore (nebo obdobného frameworku).
 
-- [ ] Projekt musí obsahovat několik entit, popř. ViewModelů/DTO (minimálně 5 - nepočítají se entity z Entity Framework Core a ani z Identity, ani ErrorViewModel). Musí být definováno aspoň jedno propojení entit skrz cizí klíč.
+- [x] Projekt musí obsahovat několik entit, popř. ViewModelů/DTO (minimálně 5 - nepočítají se entity z Entity Framework Core a ani z Identity, ani ErrorViewModel). Musí být definováno aspoň jedno propojení entit skrz cizí klíč.
 
 - [x] Vytvoření Area "Admin", ve které budou uloženy Controllery a View pro správu všech položek v databázi adminem (admin bude moct spravovat i data uživatele, ale nebude jim smět měnit hash hesla).
-	- [ ] Ve správě položek musí být implementována i editace položek.
+	- [x] Ve správě položek musí být implementována i editace položek.
 
-- [ ] Bude vyřešena hlavně serverová validace (ale nejlépe i ta klientská).
-	- [ ] včetně vytvoření jednoho vlastního validačního atributu (tzn. takového, který jste vytvořili sami!).
-- [ ] Bude umožněna registrace a přihlášení uživatele -> celkem aspoň 2 role (admin, zákazník/klient, popř. manager/redaktor apod.).
-	- [ ] Admin má veškerá práva a může spravovat vše.
-	- [ ] Funkce Managera je taková, že spravuje systém v oblastech, kde interaguje se zákazníky/klienty (např. v případě e-shopu jsou to produkty, objednávky, faktury apod.), ale nemůže měnit kritické vlastnosti systému (uživatele, role, přístupová práva, nastavení webové aplikace apod.).
-	- [ ] Zákazník/klient využívá systém pro účely, ke kterým je určen (např. v e-shopu nakupuje produkty, vytváří pro sebe objednávky, prohlíží si jen své vlastní objednávky, generuje své faktury apod.).
+- [x] Bude vyřešena hlavně serverová validace (ale nejlépe i ta klientská).
+	- [x] včetně vytvoření jednoho vlastního validačního atributu (tzn. takového, který jste vytvořili sami!).
+- [x] Bude umožněna registrace a přihlášení uživatele -> celkem aspoň 2 role (admin, zákazník/klient, popř. manager/redaktor apod.).
+	- [x] Admin má veškerá práva a může spravovat vše.
+	- [x] Funkce Managera je taková, že spravuje systém v oblastech, kde interaguje se zákazníky/klienty (např. v případě e-shopu jsou to produkty, objednávky, faktury apod.), ale nemůže měnit kritické vlastnosti systému (uživatele, role, přístupová práva, nastavení webové aplikace apod.).
+	- [x] Zákazník/klient využívá systém pro účely, ke kterým je určen (např. v e-shopu nakupuje produkty, vytváří pro sebe objednávky, prohlíží si jen své vlastní objednávky, generuje své faktury apod.).
 
 - [x] Prvky na stránce by měly být responzivní (pomocí Bootstrap nebo jiné technologie, anebo vlastním řešením). Pro front-end je možné použít jakýkoliv framework (např. Vue, React, Angular, SvelteKit apod.)
 
 https://moodle.utb.cz/mod/assign/view.php?id=769105
-
-
-# TODO
-- recurring event frequency is incomplete
-- proper client and server validationdd
-- invite people 
-- create notification view
 
 
 # Startup
@@ -152,10 +145,6 @@ docker run --name pw_calendar_db \
 
 `docker exec -it my-mysql mysql -u root -p` Connect to MySQL inside the container
 
-
-
 ## database
 
 connect to database using vscode extension
-
-### MYSQL

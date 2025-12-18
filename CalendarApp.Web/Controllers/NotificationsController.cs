@@ -125,7 +125,7 @@ namespace CalendarApp.Web.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        // GET: Notifications/GetUnreadCount (for AJAX calls)
+        // GET: Notifications/GetUnreadCount
         [HttpGet]
         public async Task<IActionResult> GetUnreadCount()
         {

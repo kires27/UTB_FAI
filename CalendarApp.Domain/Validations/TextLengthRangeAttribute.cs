@@ -18,7 +18,7 @@ namespace CalendarApp.Domain.Validations
         {
             if (value == null)
             {
-                return ValidationResult.Success; // Let [Required] handle null values
+                return ValidationResult.Success;
             }
 
             if (value is string text)

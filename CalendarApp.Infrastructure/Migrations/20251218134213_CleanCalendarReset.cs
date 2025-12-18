@@ -213,7 +213,6 @@ namespace CalendarApp.Infrastructure.Migrations
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     RecurrenceEnd = table.Column<DateTime>(type: "datetime(6)", nullable: true),
                     OwnerId = table.Column<int>(type: "int", nullable: false),
-                    Visibility = table.Column<int>(type: "int", nullable: false),
                     ReminderTime = table.Column<DateTime>(type: "datetime(6)", nullable: true),
                     Color = table.Column<string>(type: "varchar(7)", maxLength: 7, nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),

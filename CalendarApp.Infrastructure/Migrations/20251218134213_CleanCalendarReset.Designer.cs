@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CalendarApp.Infrastructure.Migrations
 {
     [DbContext(typeof(CalendarDbContext))]
-    [Migration("20251217230846_CleanCalendarReset")]
+    [Migration("20251218134213_CleanCalendarReset")]
     partial class CleanCalendarReset
     {
         /// <inheritdoc />
@@ -84,9 +84,6 @@ namespace CalendarApp.Infrastructure.Migrations
 
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime(6)");
-
-                    b.Property<int>("Visibility")
-                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
