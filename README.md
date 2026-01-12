@@ -35,6 +35,11 @@ Správa osobního kalendáře s funkcemi
 
 https://moodle.utb.cz/mod/assign/view.php?id=769105
 
+# TODO
+- recurring event frequency is incomplete
+- proper client and server validationdd
+- invite people 
+- create notification view
 
 # Startup
 ## start existing project
@@ -43,7 +48,7 @@ https://moodle.utb.cz/mod/assign/view.php?id=769105
 `docker start pw_calendar_db` start existing container
 
 `dotnet run --project CalendarApp.Web` to run project
-`dotnet watch run --project CalendarApp.Web` realtime changes
+`dotnet watch run --project CalendarApp.Web` run with realtime changes
 
 others
 `dotnet restore CalendarApp.sln`
