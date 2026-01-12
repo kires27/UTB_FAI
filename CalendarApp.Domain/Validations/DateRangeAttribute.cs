@@ -11,7 +11,6 @@ namespace CalendarApp.Domain.Validations
 
             var instance = validationContext.ObjectInstance;
             
-            // Get the start time property
             var startTimeProperty = instance.GetType().GetProperty("StartTime");
             var endTimeProperty = instance.GetType().GetProperty("EndTime");
             

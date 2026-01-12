@@ -1,0 +1,131 @@
+@model MonthlyCalendarViewModel
+@using CalendarApp.Web.Models
+@using CalendarApp.Domain.Entities
+@{
+    var currentUserId = int.Parse(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value ?? "0");
+    
+    string GetEventActionUrl(Event evt) {
+        if (evt.OwnerId == currentUserId) {
+            return Url.Action("Edit", "Events", new { id = evt.Id })!;
+        }
+        return Url.Action("Details", "Events", new { id = evt.Id })!;
+    }
+}
+
+<div class="monthly-calendar">
+    <!-- Calendar Header -->
+    <div class="calendar-header d-flex justify-content-between align-items-center mb-3">
+        <a href="/Events/Index?view=monthly&year=@(Model.DisplayMonth.AddMonths(-1).Year)&month=@(Model.DisplayMonth.AddMonths(-1).Month)" class="btn btn-outline-secondary">
+            <i class="bi bi-chevron-left"></i> Previous
+        </a>
+        
+        <h4 class="mb-0">@Model.DisplayMonth.ToString("MMMM yyyy")</h4>
+        
+        <a href="/Events/Index?view=monthly&year=@(Model.DisplayMonth.AddMonths(1).Year)&month=@(Model.DisplayMonth.AddMonths(1).Month)" class="btn btn-outline-secondary">
+            Next <i class="bi bi-chevron-right"></i>
+        </a>
+    </div>
+
+    <!-- Calendar Grid -->
+    <div class="calendar-grid">
+        <!-- Weekday Headers -->
+        <div class="calendar-weekdays">
+            <div class="calendar-weekday">Sun</div>
+            <div class="calendar-weekday">Mon</div>
+            <div class="calendar-weekday">Tue</div>
+            <div class="calendar-weekday">Wed</div>
+            <div class="calendar-weekday">Thu</div>
+            <div class="calendar-weekday">Fri</div>
+            <div class="calendar-weekday">Sat</div>
+        </div>
+
+        <!-- Calendar Days -->
+        <div class="calendar-days">
+            @for (int i = 0; i < Model.Days.Count; i++)
+            {
+                var day = Model.Days[i];
+                <div class="calendar-day @(day.IsCurrentMonth ? "current-month" : "other-month") @(day.IsToday ? "today" : "")"
+                     data-date="@day.Date.ToString("yyyy-MM-dd")">
+                    <div class="day-number">@day.Date.Day</div>
+                    
+                    @if (day.Events.Any())
+                    {
+                        <div class="day-events">
+                            @foreach (var evt in day.Events)
+                            {
+                                <div class="event-item clickable" 
+                                     data-event-id="@evt.Id"
+                                     style="background-color: @(evt.Color ?? "#3788d8");"
+                                     title="@(evt.OwnerId == currentUserId ? "Click to edit" : "Click to view"): @evt.Title - @(evt.AllDay ? "All day" : evt.StartTime.ToString("HH:mm"))">
+                                    <a href="@GetEventActionUrl(evt)" class="event-link">
+                                        @if (evt.AllDay)
+                                        {
+                                            <span class="event-time-all-day">@evt.Title</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="event-time">@evt.StartTime.ToString("HH:mm")</span>
+                                            <span class="event-title">@evt.Title</span>
+                                        }
+                                    </a>
+                                </div>
+                            }
+                        </div>
+                    }
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function() {
+        // Make calendar days clickable (only when not clicking on events)
+        $('.calendar-day.current-month').click(function(e) {
+            // Don't navigate if click was on an event
+            if ($(e.target).closest('.event-item').length === 0) {
+                var date = $(this).data('date');
+                if (date) {
+                    // Navigate to create event for this day
+                    var url = '/Events/Create?date=' + date;
+                    window.location.href = url;
+                }
+            }
+        });
+        
+        // Make events clickable
+        $('.event-item').click(function(e) {
+            e.stopPropagation(); // Prevent day click
+            var url = $(this).find('.event-link').attr('href');
+            if (url) {
+                window.location.href = url;
+            }
+        });
+        
+        // Add hover effect to clickable days
+        $('.calendar-day.current-month').hover(
+            function() { 
+                if (!$(this).hasClass('has-hover-event')) {
+                    $(this).css('background-color', '#f8f9fa');
+                }
+            },
+            function() { 
+                if (!$(this).hasClass('has-hover-event')) {
+                    $(this).css('background-color', '');
+                }
+            }
+        );
+        
+        // Add hover effect to events
+        $('.event-item').hover(
+            function() { 
+                $(this).css('opacity', '0.8').css('cursor', 'pointer');
+                $(this).closest('.calendar-day').addClass('has-hover-event').css('background-color', '#f0f8ff');
+            },
+            function() { 
+                $(this).css('opacity', '').css('cursor', '');
+                $(this).closest('.calendar-day').removeClass('has-hover-event').css('background-color', '');
+            }
+        );
+    });
+</script>

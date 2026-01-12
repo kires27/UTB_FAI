@@ -46,7 +46,6 @@
                                 <th>Date & Time</th>
                                 <th>Location</th>
                                 <th>Owner</th>
-                                <th>Status</th>
                                 <th>Actions</th>
                             </tr>
                         </thead>
@@ -65,11 +64,11 @@
                                     <td>
                                         @if (eventItem.AllDay)
                                         {
-                                            <span>@eventItem.StartTime.ToString("MMM dd") (All Day)</span>
+                                            <span>@eventItem.StartTime.ToString("MMM dd yyyy") (All Day)</span>
                                         }
                                         else
                                         {
-                                            <span>@eventItem.StartTime.ToString("MMM dd HH:mm") - @eventItem.EndTime.ToString("MMM dd HH:mm")</span>
+                                            <span>@eventItem.StartTime.ToString("MMM dd yyyy HH:mm") - @eventItem.EndTime.ToString("MMM dd yyyy HH:mm")</span>
                                         }
                                     </td>
                                     <td>
@@ -88,9 +87,6 @@
                                         <small class="text-muted">@eventItem.Owner?.Email</small>
                                     </td>
 
-                                    <td>
-                                        <span class="badge bg-secondary">@eventItem.Status</span>
-                                    </td>
                                     <td>
                                         <a asp-action="Details" asp-route-id="@eventItem.Id" 
                                            class="btn btn-sm btn-outline-primary me-1">

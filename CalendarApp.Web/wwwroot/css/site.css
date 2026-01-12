@@ -1,3 +1,5 @@
+@import 'monthlyView.css';
+
 html {
   font-size: 14px;
 }
@@ -48,76 +50,17 @@ body {
   opacity: 0.7;
 }
 
-.notification-list .card:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-}
 
-.notification-list .card.border-primary {
-  border-left: 4px solid #007bff !important;
-}
-
-.notification-list .card.border-secondary {
-  border-left: 4px solid #6c757d !important;
-}
-
-.notification-badge {
-  animation: pulse 2s infinite;
-}
-
-@keyframes pulse {
-  0% {
-    transform: scale(1);
-  }
-  50% {
-    transform: scale(1.1);
-  }
-  100% {
-    transform: scale(1);
-  }
-}
-
-.notification-count {
-  min-width: 1.5rem;
-  height: 1.5rem;
-  font-size: 0.75rem;
-  line-height: 1;
-  padding: 0.25rem;
-}
-
-
-
-.notification-unread {
-  background-color: #e3f2fd;
-  border-left: 3px solid #2196f3;
-}
-
-.notification-icon {
-  width: 32px;
-  height: 32px;
+/* Header navigation alignment */
+.navbar-nav.mx-auto {
+  margin: 0 auto;
   display: flex;
   align-items: center;
-  justify-content: center;
-  border-radius: 50%;
-  margin-right: 0.75rem;
 }
 
-.notification-icon.event-invite {
-  background-color: #e3f2fd;
-  color: #1976d2;
-}
-
-.notification-icon.event-update {
-  background-color: #fff3e0;
-  color: #f57c00;
-}
-
-.notification-icon.reminder {
-  background-color: #e8f5e8;
-  color: #388e3c;
-}
-
-.notification-icon.custom {
-  background-color: #fafafa;
-  color: #616161;
+/* Active state for calendar view nav links */
+.navbar-nav.mx-auto .nav-link.active {
+  color: #3788d8;
+  font-weight: 600;
+  border-bottom: 2px solid #3788d8;
 }

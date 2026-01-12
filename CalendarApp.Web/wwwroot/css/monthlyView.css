@@ -1,0 +1,149 @@
+.monthly-calendar {
+	background: white;
+	border-radius: 8px;
+	padding: 20px;
+	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.calendar-header {
+	padding: 0 10px;
+}
+
+.calendar-grid {
+	border: 1px solid #dee2e6;
+	border-radius: 6px;
+	overflow: hidden;
+}
+
+.calendar-weekdays {
+	display: grid;
+	grid-template-columns: repeat(7, minmax(0, 1fr));
+	background-color: #f8f9fa;
+	border-bottom: 1px solid #dee2e6;
+}
+
+.calendar-weekday {
+	padding: 12px 8px;
+	text-align: center;
+	font-weight: 600;
+	font-size: 0.875rem;
+	color: #495057;
+	border-right: 1px solid #dee2e6;
+}
+
+.calendar-weekday:last-child {
+	border-right: none;
+}
+
+.calendar-days {
+	display: grid;
+	grid-template-columns: repeat(7, minmax(0, 1fr));
+	grid-template-rows: repeat(6, minmax(100px, auto));
+	gap: 0;
+}
+
+.calendar-day {
+	min-height: 120px;
+	padding: 8px;
+	border-right: 1px solid #dee2e6;
+	border-bottom: 1px solid #dee2e6;
+	cursor: pointer;
+	transition: background-color 0.2s ease;
+	position: relative;
+}
+
+.calendar-day:hover {
+	background-color: #f8f9fa;
+}
+
+.calendar-day.other-month {
+	background-color: #f8f9fa;
+	color: #6c757d;
+}
+
+.calendar-day.today {
+	background-color: #e3f2fd;
+}
+
+.calendar-day.other-month.today {
+	background-color: #e8eaf6;
+}
+
+.calendar-day:nth-child(7n) {
+	border-right: none;
+}
+
+.calendar-day:nth-last-child(-n+7) {
+	border-bottom: none;
+}
+
+.day-number {
+	font-weight: 600;
+	font-size: 0.875rem;
+	margin-bottom: 4px;
+}
+
+.calendar-day.today .day-number {
+	color: #1976d2;
+	font-weight: 700;
+}
+
+.day-events {
+	font-size: 0.75rem;
+	overflow-y: auto;
+	overflow-x: hidden;
+	height: 90px;
+	font-size: 13px;
+}
+
+.event-item {
+	background-color: #3788d8;
+	color: white;
+	padding: 2px 4px;
+	margin-bottom: 3px;
+	border-radius: 3px;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	cursor: pointer;
+	transition: opacity 0.2s ease;
+	line-height: 1.2;
+	max-width: 100%;
+	position: relative;
+}
+
+.event-item.clickable {
+	cursor: pointer;
+}
+
+.event-item:hover {
+	opacity: 0.8;
+}
+
+.calendar-day.other-month .event-item {
+	opacity: 0.4;
+}
+
+.event-link {
+	color: white;
+	text-decoration: none;
+	display: block;
+}
+
+.event-link:hover {
+	color: white;
+	text-decoration: none;
+}
+
+.event-time {
+	font-weight: 600;
+	margin-right: 4px;
+}
+
+.event-time-all-day {
+	font-weight: 600;
+}
+
+.event-title {
+	opacity: 0.9;
+}

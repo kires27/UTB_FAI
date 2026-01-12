@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using CalendarApp.Domain.Entities;
+using CalendarApp.Domain.Validations;
 
 namespace CalendarApp.Web.Models
 {
@@ -14,7 +15,7 @@ namespace CalendarApp.Web.Models
         [Required]
         public DateTime StartTime { get; set; } = DateTime.Now;
 
-        [Required]
+        [Required, DateRange]
         public DateTime EndTime { get; set; } = DateTime.Now.AddHours(1);
 
         public bool AllDay { get; set; } = false;
@@ -54,7 +55,7 @@ namespace CalendarApp.Web.Models
         [Required]
         public DateTime StartTime { get; set; }
 
-        [Required]
+        [Required, DateRange]
         public DateTime EndTime { get; set; }
 
         public bool AllDay { get; set; } = false;
@@ -84,5 +85,21 @@ namespace CalendarApp.Web.Models
 
         public List<int> RemoveAttendeeIds { get; set; } = new List<int>();
         public List<EventAttendee> CurrentAttendees { get; set; } = new List<EventAttendee>();
+    }
+
+    public class CalendarDayViewModel
+    {
+        public DateTime Date { get; set; }
+        public bool IsCurrentMonth { get; set; }
+        public bool IsToday { get; set; }
+        public List<Event> Events { get; set; } = new List<Event>();
+    }
+
+    public class MonthlyCalendarViewModel
+    {
+        public DateTime CurrentDate { get; set; }
+        public DateTime DisplayMonth { get; set; }
+        public List<CalendarDayViewModel> Days { get; set; } = new List<CalendarDayViewModel>();
+        public string CurrentView { get; set; } = "list";
     }
 }

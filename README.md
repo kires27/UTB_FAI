@@ -50,52 +50,31 @@ https://moodle.utb.cz/mod/assign/view.php?id=769105
 `dotnet run --project CalendarApp.Web` to run project
 `dotnet watch run --project CalendarApp.Web` run with realtime changes
 
-others
-`dotnet restore CalendarApp.sln`
-`dotnet build CalendarApp.sln`
-
 website url
 `http://localhost:5292/`
 
 ## start new project
 
 # project dependencies
-## tools and packages
-*entitiy framework CLI*
-`dotnet new tool-manifest`
-`dotnet tool install dotnet-ef --version 9.0.9`
-
-*Project 'CalendarApp.Web'*
-> Microsoft.AspNetCore.Identity.EntityFrameworkCore      9.0.9       9.0.9   
-> Microsoft.AspNetCore.Identity.UI                       9.0.9       9.0.9   
-> Microsoft.EntityFrameworkCore.Design                   9.0.9       9.0.9   
-> Microsoft.EntityFrameworkCore.SqlServer                9.0.9       9.0.9   
-> Microsoft.EntityFrameworkCore.Tools                    9.0.9       9.0.9   
-> Microsoft.VisualStudio.Web.CodeGeneration.Design       9.0.0       9.0.0   
-> System.ComponentModel.Annotations                      5.0.0       5.0.0   
-
-*Project 'CalendarApp.Domain'*
-> Microsoft.AspNetCore.Identity.EntityFrameworkCore      9.0.9       9.0.9   
-
-*Project 'CalendarApp.Infrastructure'*
-> Microsoft.AspNetCore.Identity.EntityFrameworkCore      9.0.9       9.0.9   
-> Microsoft.EntityFrameworkCore                          9.0.9       9.0.9   
-> Microsoft.EntityFrameworkCore.Tools                    9.0.9       9.0.9   
-> Pomelo.EntityFrameworkCore.MySql                       9.0.0       9.0.0   
-
-*Project 'CalendarApp.Application'*
-> Microsoft.EntityFrameworkCore                          9.0.9       9.0.9   
-> Microsoft.EntityFrameworkCore.Relational               9.0.9       9.0.9   
-
-
 ## dotnet
 `sudo pacman -S dotnet-sdk-9.0`
 
+*tools and packages*
 `dotnet tool run dotnet-ef`
 `dotnet tool list` installed tools 
 `dotnet tool uninstall dotnet-ef` remove tools
 `dotnet list package`
 `dotnet add package <package> --version <x>` add package
+
+*others*
+`dotnet restore CalendarApp.sln`
+`dotnet build CalendarApp.sln`
+`dotnet build CalendarApp.Web`
+`dotnet clean`
+
+*entitiy framework CLI*
+`dotnet new tool-manifest`
+`dotnet tool install dotnet-ef --version 9.0.9`
 
 
 ## EF Migration

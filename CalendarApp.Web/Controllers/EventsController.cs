@@ -17,7 +17,7 @@ namespace CalendarApp.Web.Controllers
             _eventAppService = eventAppService;
         }
 
-        public IActionResult Index()
+        public IActionResult Index(string view = "list", int year = 0, int month = 0)
         {
             // Get current user ID from Identity claims
             var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
@@ -36,7 +36,65 @@ namespace CalendarApp.Web.Controllers
                 .ToList();
 
             ViewBag.Username = username;
-            return View(userEvents);
+
+            // If monthly view is requested
+            if (view == "monthly")
+            {
+                // Default to current month if not specified
+                var displayDate = (year > 0 && month > 0) ? new DateTime(year, month, 1) : DateTime.Now;
+                var monthlyViewModel = BuildMonthlyCalendar(userEvents, displayDate);
+                monthlyViewModel.CurrentView = "monthly";
+                ViewBag.UserEvents = userEvents;
+                return View("Index", monthlyViewModel);
+            }
+
+            // Default list view
+            var listViewModel = new MonthlyCalendarViewModel
+            {
+                CurrentDate = DateTime.Now,
+                DisplayMonth = DateTime.Now,
+                CurrentView = "list",
+                Days = new List<CalendarDayViewModel>()
+            };
+            ViewBag.UserEvents = userEvents;
+            return View("Index", listViewModel);
+        }
+
+        private MonthlyCalendarViewModel BuildMonthlyCalendar(List<Event> events, DateTime displayDate)
+        {
+            var viewModel = new MonthlyCalendarViewModel
+            {
+                CurrentDate = DateTime.Now,
+                DisplayMonth = displayDate,
+                CurrentView = "monthly",
+                Days = new List<CalendarDayViewModel>()
+            };
+
+            // Get the first day of the month and first day of the calendar week (Sunday)
+            var firstDayOfMonth = new DateTime(displayDate.Year, displayDate.Month, 1);
+            var firstDayOfWeek = firstDayOfMonth.AddDays(-(int)firstDayOfMonth.DayOfWeek);
+
+            // Generate 6 weeks (42 days) to cover the entire month
+            for (int week = 0; week < 6; week++)
+            {
+                for (int day = 0; day < 7; day++)
+                {
+                    var currentDate = firstDayOfWeek.AddDays(week * 7 + day);
+                    var dayEvents = events.Where(e => 
+                        (e.StartTime.Date <= currentDate.Date && e.EndTime.Date >= currentDate.Date))
+                        .ToList();
+
+                    viewModel.Days.Add(new CalendarDayViewModel
+                    {
+                        Date = currentDate,
+                        IsCurrentMonth = currentDate.Month == displayDate.Month,
+                        IsToday = currentDate.Date == DateTime.Today,
+                        Events = dayEvents.OrderBy(e => e.StartTime).ToList()
+                    });
+                }
+            }
+
+            return viewModel;
         }
 
         public IActionResult Details(int id)
@@ -64,12 +122,13 @@ namespace CalendarApp.Web.Controllers
         }
 
         [HttpGet]
-        public IActionResult Create()
+        public IActionResult Create(DateTime? date = null)
         {
+            var startTime = date ?? DateTime.Now;
             var viewModel = new EventCreateViewModel
             {
-                StartTime = DateTime.Now,
-                EndTime = DateTime.Now.AddHours(1),
+                StartTime = startTime,
+                EndTime = startTime.AddHours(1),
                 Color = "#3788d8"
             };
 

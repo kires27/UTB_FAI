@@ -19,8 +19,29 @@
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                     <ul class="navbar-nav flex-grow-1"></ul>
+                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between align-items-center">
+                     <!-- Center: Calendar View Toggle Buttons - Always visible for consistent header -->
+                     <ul class="navbar-nav mx-auto">
+                         @{
+                             var currentController = ViewContext.RouteData.Values["controller"]?.ToString();
+                             var currentView = currentController == "Events" 
+                                 ? ViewContext.HttpContext.Request.Query["view"].ToString()
+                                 : "list";
+                             if (string.IsNullOrEmpty(currentView)) currentView = "list";
+                         }
+                         <li class="nav-item">
+                             <a class="nav-link @(currentView == "list" ? "active" : "")" href="/Events/Index?view=list">
+                                 List
+                             </a>
+                         </li>
+                         <li class="nav-item">
+                             <a class="nav-link @(currentView == "monthly" ? "active" : "")" href="/Events/Index?view=monthly">
+                                 Month
+                             </a>
+                         </li>
+                     </ul>
+                     
+                     <!-- Right: User Actions -->
                      <ul class="navbar-nav">
                         @if (User.Identity?.IsAuthenticated == true)
                         {
