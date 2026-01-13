@@ -2,6 +2,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using CalendarApp.Application.Abstraction;
 using CalendarApp.Domain.Entities;
+using CalendarApp.Web.Models;
+using System.Security.Claims;
 
 namespace CalendarApp.Web.Areas.Admin.Controllers
 {
@@ -9,10 +11,13 @@ namespace CalendarApp.Web.Areas.Admin.Controllers
     [Authorize(Roles = "Admin")]
     public class EventController : Controller
     {
-        IEventAppService _eventAppService;
-        public EventController(IEventAppService eventAppService)
+        private readonly IEventAppService _eventAppService;
+        private readonly IUserAppService _userAppService;
+
+        public EventController(IEventAppService eventAppService, IUserAppService userAppService)
         {
             _eventAppService = eventAppService;
+            _userAppService = userAppService;
         }
 
         public IActionResult Select()
@@ -22,20 +27,88 @@ namespace CalendarApp.Web.Areas.Admin.Controllers
         }
 
         [HttpGet]
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
-            return View();
+            var allUsers = await _userAppService.GetAllUsersAsync();
+            var currentAdminId = GetCurrentUserId();
+            
+            var viewModel = new AdminEventCreateViewModel
+            {
+                AllUsers = allUsers.ToList(),
+                FilteredUsers = allUsers.ToList(),
+                OwnerId = currentAdminId,
+                StartTime = DateTime.Now,
+                EndTime = DateTime.Now.AddHours(1),
+                Color = "#3788d8"
+            };
+            
+            return View(viewModel);
         }
 
         [HttpPost]
-        public IActionResult Create(Event @event)
+        public async Task<IActionResult> Create(AdminEventCreateViewModel viewModel)
         {
+            // Re-populate users for view return
+            var allUsers = await _userAppService.GetAllUsersAsync();
+            viewModel.AllUsers = allUsers.ToList();
+            viewModel.FilteredUsers = FilterUsersBySearch(allUsers.ToList(), viewModel.SearchTerm);
+
             if (ModelState.IsValid)
             {
-                _eventAppService.Create(@event);
-                return RedirectToAction(nameof(Select));
+                var @event = new Event
+                {
+                    Title = viewModel.Title,
+                    Description = viewModel.Description,
+                    StartTime = viewModel.StartTime,
+                    EndTime = viewModel.EndTime,
+                    AllDay = viewModel.AllDay,
+                    Location = viewModel.Location,
+                    IsRecurring = viewModel.IsRecurring,
+                    RecurrenceRule = viewModel.RecurrenceRule,
+                    RecurrenceEnd = viewModel.RecurrenceEnd,
+                    OwnerId = viewModel.OwnerId,
+                    ReminderTime = viewModel.ReminderTime,
+                    Color = viewModel.Color,
+                    Status = viewModel.Status
+                };
+
+                try
+                {
+                    _eventAppService.Create(@event);
+
+                    // Invite additional attendees (excluding owner)
+                    if (viewModel.AttendeeIds.Any())
+                    {
+                        await _eventAppService.InviteUsersToEvent(@event.Id, viewModel.AttendeeIds);
+                    }
+
+                    var ownerName = allUsers.FirstOrDefault(u => u.Id == viewModel.OwnerId)?.UserName ?? "Unknown";
+                    TempData["Success"] = $"Event created for {ownerName} with {viewModel.AttendeeIds.Count} additional attendees!";
+                    return RedirectToAction(nameof(Select));
+                }
+                catch (Exception ex)
+                {
+                    ModelState.AddModelError("", "Error creating event: " + ex.Message);
+                }
             }
-            return View(@event);
+
+            return View(viewModel);
+        }
+
+        private int GetCurrentUserId()
+        {
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            return int.TryParse(userIdClaim, out var userId) ? userId : 0;
+        }
+
+        private IList<UserWithRoleDto> FilterUsersBySearch(IList<UserWithRoleDto> users, string? searchTerm)
+        {
+            if (string.IsNullOrEmpty(searchTerm) || searchTerm.Length < 2)
+                return users;
+
+            return users.Where(u => 
+                u.Email.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)
+            ).ToList();
         }
 
         public IActionResult Details(int id)

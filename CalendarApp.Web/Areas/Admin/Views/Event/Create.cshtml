@@ -1,4 +1,4 @@
-@model CalendarApp.Domain.Entities.Event
+@model CalendarApp.Web.Models.AdminEventCreateViewModel
 @{
     ViewData["Title"] = "Create Event";
 }
@@ -13,7 +13,7 @@
     }
 
     <div class="row">
-        <div class="col-lg-6">
+        <div class="col-lg-8">
             <div class="card shadow-sm border-warning">
                 <div class="card-header bg-warning text-dark">
                     <h4 class="mb-0">
@@ -24,6 +24,19 @@
                     <form asp-action="Create">
                         <div asp-validation-summary="All" class="text-danger"></div>
                         
+                        <!-- Owner Selection -->
+                        <div class="form-group mb-3">
+                            <label asp-for="OwnerId" class="control-label">Event Owner</label>
+                            <select asp-for="OwnerId" class="form-select" id="ownerSelect">
+                                <option value="">-- Select Event Owner --</option>
+                                @foreach (var user in Model.AllUsers)
+                                {
+                                    <option value="@user.Id">@user.UserName (@user.Email)</option>
+                                }
+                            </select>
+                            <span asp-validation-for="OwnerId" class="text-danger"></span>
+                        </div>
+
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group mb-3">
@@ -62,6 +75,20 @@
                                     <span asp-validation-for="EndTime" class="text-danger"></span>
                                 </div>
                             </div>
+                        </div>
+
+                        <!-- Attendee Selection -->
+                        <div class="form-group mb-3">
+                            <label class="control-label">Additional Attendees</label>
+                            <input type="text" class="form-control mb-2" id="userSearch" placeholder="Search by email address (minimum 2 characters)..." />
+                            <select asp-for="AttendeeIds" class="form-select" multiple size="6" id="attendeeSelect">
+                                @foreach (var user in Model.FilteredUsers)
+                                {
+                                    <option value="@user.Id">@user.UserName (@user.Email)</option>
+                                }
+                            </select>
+                            <small class="text-muted">Hold Ctrl/Cmd to select multiple users. Owner is automatically included as attendee.</small>
+                            <span asp-validation-for="AttendeeIds" class="text-danger"></span>
                         </div>
 
                         <div class="row">
@@ -139,6 +166,56 @@
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            const userSearch = document.getElementById('userSearch');
+            const attendeeSelect = document.getElementById('attendeeSelect');
+            const ownerSelect = document.getElementById('ownerSelect');
+            const allOptions = Array.from(attendeeSelect.options);
+            const selectedValuesList = [];
+            
+            // Store current selections
+            attendeeSelect.addEventListener('change', function() {
+                selectedValuesList.length = 0; // Clear array
+                Array.from(this.selectedOptions).forEach(option => {
+                    selectedValuesList.push(parseInt(option.value));
+                });
+            });
+            
+            // Search functionality
+            userSearch.addEventListener('input', function() {
+                const searchTerm = this.value.toLowerCase();
+                const selectedOwnerId = parseInt(ownerSelect.value);
+                
+                // Only filter if search term is at least 2 characters or empty
+                if (searchTerm.length < 2 && searchTerm !== '') {
+                    return;
+                }
+                
+                // Filter options based on search and exclude owner
+                const filteredOptions = allOptions.filter(option => {
+                    const userId = parseInt(option.value);
+                    const emailMatch = searchTerm === '' || option.textContent.toLowerCase().includes(searchTerm);
+                    const notOwner = isNaN(selectedOwnerId) || userId !== selectedOwnerId;
+                    return emailMatch && notOwner;
+                });
+                
+                // Update select options
+                attendeeSelect.innerHTML = '';
+                filteredOptions.forEach(option => {
+                    const newOption = option.cloneNode(true);
+                    // Restore selection if this option was previously selected
+                    if (selectedValuesList.includes(parseInt(newOption.value))) {
+                        newOption.selected = true;
+                    }
+                    attendeeSelect.add(newOption);
+                });
+            });
+            
+            // Update attendee list when owner changes
+            ownerSelect.addEventListener('change', function() {
+                userSearch.dispatchEvent(new Event('input')); // Trigger search filter
+            });
+            
+            // Recurring fields toggle
             const isRecurringCheckbox = document.querySelector('input[name="IsRecurring"]');
             const recurringFields = document.getElementById('recurringFields');
             

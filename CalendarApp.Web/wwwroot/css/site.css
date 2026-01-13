@@ -32,25 +32,6 @@ body {
   text-align: start;
 }
 
-/* Notification Styles */
-.list-group-item {
-  transition: all 0.2s ease-in-out;
-}
-
-.list-group-item:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-}
-
-.list-group-item.border-start.border-4.border-primary {
-  border-left-width: 4px !important;
-}
-
-.list-group-item.bg-light {
-  opacity: 0.7;
-}
-
-
 /* Header navigation alignment */
 .navbar-nav.mx-auto {
   margin: 0 auto;

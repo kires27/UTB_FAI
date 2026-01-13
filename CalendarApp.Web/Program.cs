@@ -46,6 +46,7 @@ builder.Services.ConfigureApplicationCookie(options =>
 
 builder.Services.AddScoped<IEventAppService, EventAppService>();
 builder.Services.AddScoped<INotificationAppService, NotificationAppService>();
+builder.Services.AddScoped<IUserAppService, UserAppService>();
 
 var app = builder.Build();
 

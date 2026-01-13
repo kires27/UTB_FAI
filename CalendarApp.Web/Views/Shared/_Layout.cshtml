@@ -45,6 +45,14 @@
                      <ul class="navbar-nav">
                         @if (User.Identity?.IsAuthenticated == true)
                         {
+                            @if (User.IsInRole("Admin"))
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link" asp-area="Admin" asp-controller="UserManagement" asp-action="Index">
+                                        <i class="bi bi-people"></i> User Management
+                                    </a>
+                                </li>
+                            }
                             <li class="nav-item">
                                 <a class="nav-link" href="@Url.Action("Index", "Notifications", new { area = User.IsInRole("Admin") ? "Admin" : "" })">
                                     <i class="bi bi-bell"></i> Notifications

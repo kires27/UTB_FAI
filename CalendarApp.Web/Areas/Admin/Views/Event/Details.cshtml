@@ -119,14 +119,14 @@
             <div class="card border-warning">
                 <div class="card-header bg-warning text-dark">
                     <h5 class="mb-0">
-                        <i class="bi bi-people me-2"></i>Attendees (@Model.EventAttendees.Count)
+                        <i class="bi bi-people me-2"></i>Attendees (@(Model.EventAttendees?.Count(a => a.Role != AttendeeRole.Owner) ?? 0))
                     </h5>
                 </div>
                 <div class="card-body">
                     @if (Model.EventAttendees != null && Model.EventAttendees.Any())
                     {
                         <ul class="list-group list-group-flush">
-                            @foreach (var attendee in Model.EventAttendees)
+                            @foreach (var attendee in Model.EventAttendees?.Where(a => a.Role != AttendeeRole.Owner) ?? Enumerable.Empty<EventAttendee>())
                             {
                                 <li class="list-group-item d-flex justify-content-between align-items-center">
                                     <div>
@@ -140,10 +140,6 @@
                                                          attendee.Status == AttendeeStatus.Tentative ? "warning" : "secondary")">
                                             @attendee.Status
                                         </span>
-                                        @if (attendee.Role == AttendeeRole.Owner)
-                                        {
-                                            <span class="badge bg-primary">Owner</span>
-                                        }
                                     </div>
                                 </li>
                             }

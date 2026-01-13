@@ -1,6 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using CalendarApp.Domain.Entities;
 using CalendarApp.Domain.Validations;
+using CalendarApp.Application.Abstraction;
 
 namespace CalendarApp.Web.Models
 {
@@ -93,6 +94,20 @@ namespace CalendarApp.Web.Models
         public bool IsCurrentMonth { get; set; }
         public bool IsToday { get; set; }
         public List<Event> Events { get; set; } = new List<Event>();
+    }
+
+    public class AdminEventCreateViewModel : EventCreateViewModel
+    {
+        [Required]
+        [Display(Name = "Event Owner")]
+        public int OwnerId { get; set; }
+        
+        [Display(Name = "Additional Attendees")]
+        public List<int> AttendeeIds { get; set; } = new List<int>();
+        
+        public IList<UserWithRoleDto> AllUsers { get; set; } = new List<UserWithRoleDto>();
+        public IList<UserWithRoleDto> FilteredUsers { get; set; } = new List<UserWithRoleDto>();
+        public string? SearchTerm { get; set; }
     }
 
     public class MonthlyCalendarViewModel
