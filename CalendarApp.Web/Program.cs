@@ -4,7 +4,8 @@ using CalendarApp.Application.Abstraction;
 using CalendarApp.Application.Implementation;
 using CalendarApp.Infrastructure.Database;
 using CalendarApp.Infrastructure.Database.Seeding;
-using CalendarApp.Domain.Entities;
+using CalendarApp.Infrastructure.Identity;
+using CalendarApp.Infrastructure.Identity.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -17,7 +18,7 @@ ServerVersion serverVersion = new MySqlServerVersion("8.0.29");
 builder.Services.AddDbContext<CalendarDbContext>(options => options.UseMySql(connectionString, serverVersion));
 
 // Add ASP.NET Core Identity
-builder.Services.AddIdentity<User, Role>()
+builder.Services.AddIdentity<ApplicationUser, ApplicationRole>()
     .AddEntityFrameworkStores<CalendarDbContext>()
     .AddDefaultTokenProviders();
 
@@ -51,41 +52,41 @@ builder.Services.AddScoped<IUserAppService, UserAppService>();
 var app = builder.Build();
 
 // Seed initial data
-using (var scope = app.Services.CreateScope())
-{
-    var services = scope.ServiceProvider;
-    var dbContext = services.GetRequiredService<CalendarDbContext>();
-    var userManager = services.GetRequiredService<UserManager<User>>();
-    var roleManager = services.GetRequiredService<RoleManager<Role>>();
+// using (var scope = app.Services.CreateScope())
+// {
+//     var services = scope.ServiceProvider;
+//     var dbContext = services.GetRequiredService<CalendarDbContext>();
+//     var userManager = services.GetRequiredService<UserManager<User>>();
+//     var roleManager = services.GetRequiredService<RoleManager<Role>>();
 
-    // Seed users and roles using Identity (safe - checks for existing)
-    var userSeeder = new UsersInit();
-    await userSeeder.SeedIdentityUsersAsync(userManager, roleManager);
+//     // Seed users and roles using Identity (safe - checks for existing)
+//     var userSeeder = new UsersInit();
+//     await userSeeder.SeedIdentityUsersAsync(userManager, roleManager);
 
-    // Seed other entities using regular EF (with existence checks)
-    if (!await dbContext.Events.AnyAsync())
-    {
-        var eventSeeder = new EventsInit();
-        var events = eventSeeder.GenerateEvents();
-        await dbContext.Events.AddRangeAsync(events);
-    }
+//     // Seed other entities using regular EF (with existence checks)
+//     if (!await dbContext.Events.AnyAsync())
+//     {
+//         var eventSeeder = new EventsInit();
+//         var events = eventSeeder.GenerateEvents();
+//         await dbContext.Events.AddRangeAsync(events);
+//     }
 
-    if (!await dbContext.EventAttendees.AnyAsync())
-    {
-        var attendeeSeeder = new EventAttendeesInit();
-        var attendees = attendeeSeeder.GenerateEventAttendees();
-        await dbContext.EventAttendees.AddRangeAsync(attendees);
-    }
+//     if (!await dbContext.EventAttendees.AnyAsync())
+//     {
+//         var attendeeSeeder = new EventAttendeesInit();
+//         var attendees = attendeeSeeder.GenerateEventAttendees();
+//         await dbContext.EventAttendees.AddRangeAsync(attendees);
+//     }
 
-    if (!await dbContext.Notifications.AnyAsync())
-    {
-        var notificationSeeder = new NotificationsInit();
-        var notifications = notificationSeeder.GenerateNotifications();
-        await dbContext.Notifications.AddRangeAsync(notifications);
-    }
+//     if (!await dbContext.Notifications.AnyAsync())
+//     {
+//         var notificationSeeder = new NotificationsInit();
+//         var notifications = notificationSeeder.GenerateNotifications();
+//         await dbContext.Notifications.AddRangeAsync(notifications);
+//     }
 
-    await dbContext.SaveChangesAsync();
-}
+//     await dbContext.SaveChangesAsync();
+// }
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())

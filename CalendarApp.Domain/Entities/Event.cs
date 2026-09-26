@@ -53,8 +53,8 @@ namespace CalendarApp.Domain.Entities
         public DateTime UpdatedAt { get; set; }
 
         // Navigation properties
-        [ForeignKey(nameof(OwnerId))]
-        public virtual User Owner { get; set; } = null!;
+        // [ForeignKey(nameof(OwnerId))]
+        // public virtual User Owner { get; set; } = null!;
         public virtual ICollection<EventAttendee> EventAttendees { get; set; } = new List<EventAttendee>();
         public virtual ICollection<Notification> Notifications { get; set; } = new List<Notification>();
 

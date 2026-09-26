@@ -1,14 +1,13 @@
 using CalendarApp.Application.Abstraction;
-using CalendarApp.Domain.Entities;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+// using Microsoft.AspNetCore.Identity;
 
 namespace CalendarApp.Application.Implementation
 {
     public class UserAppService : IUserAppService
     {
-        private readonly UserManager<User> _userManager;
-        private readonly RoleManager<Role> _roleManager;
+        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly RoleManager<ApplicationRole> _roleManager;
 
         public UserAppService(UserManager<User> userManager, RoleManager<Role> roleManager)
         {

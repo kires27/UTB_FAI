@@ -2,10 +2,11 @@ using Microsoft.EntityFrameworkCore;
 using CalendarApp.Domain.Entities;
 using CalendarApp.Infrastructure.Database.Seeding;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using CalendarApp.Infrastructure.Identity;
 
 namespace CalendarApp.Infrastructure.Database
 {
-	public class CalendarDbContext : IdentityDbContext<User, Role, int>
+	public class CalendarDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, int>
 	{
 		public DbSet<Event> Events { get; set; }
 		public DbSet<EventAttendee> EventAttendees { get; set; }

@@ -1,6 +1,5 @@
 using CalendarApp.Application.Abstraction;
 using CalendarApp.Domain.Entities;
-using CalendarApp.Infrastructure.Database;
 using Microsoft.EntityFrameworkCore;
 
 namespace CalendarApp.Application.Implementation
