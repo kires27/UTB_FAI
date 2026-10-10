@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using CalendarApp.Application.Abstraction;
-using CalendarApp.Application.Helpers;
 using CalendarApp.Domain.Entities;
 using CalendarApp.Application.Models;
 using System.Security.Claims;
@@ -12,10 +11,12 @@ namespace CalendarApp.Web.Controllers
     public class EventsController : Controller
     {
         private readonly IEventAppService _eventAppService;
+        private readonly IRecurrenceAppService _recurrenceAppService;
 
-        public EventsController(IEventAppService eventAppService)
+        public EventsController(IEventAppService eventAppService, IRecurrenceAppService recurrenceAppService)
         {
             _eventAppService = eventAppService;
+            _recurrenceAppService = recurrenceAppService;
         }
 
         public IActionResult Index(string view = "list", int year = 0, int month = 0, DateTime? date = null)
@@ -48,7 +49,7 @@ namespace CalendarApp.Web.Controllers
                 // (weeks start Monday, same as the weekly view)
                 var firstDayOfMonth = new DateTime(displayDate.Year, displayDate.Month, 1);
                 var firstDayOfWeek = firstDayOfMonth.AddDays(-(((int)firstDayOfMonth.DayOfWeek + 6) % 7));
-                var displayEvents = RecurrenceExpander.Expand(userEvents, firstDayOfWeek, firstDayOfWeek.AddDays(42));
+                var displayEvents = _recurrenceAppService.Expand(userEvents, firstDayOfWeek, firstDayOfWeek.AddDays(42));
 
                 var monthlyViewModel = BuildMonthlyCalendar(displayEvents, displayDate);
                 monthlyViewModel.CurrentView = "monthly";
@@ -72,7 +73,7 @@ namespace CalendarApp.Web.Controllers
                     gridDays = Enumerable.Range(0, 7).Select(i => weekStart.AddDays(i)).ToList();
                 }
 
-                var displayEvents = RecurrenceExpander.Expand(userEvents, gridDays[0], gridDays[^1].Date.AddDays(1));
+                var displayEvents = _recurrenceAppService.Expand(userEvents, gridDays[0], gridDays[^1].Date.AddDays(1));
 
                 var gridViewModel = BuildTimeGrid(displayEvents, gridDays);
                 gridViewModel.CurrentView = view;
@@ -84,7 +85,7 @@ namespace CalendarApp.Web.Controllers
             // (unbounded rules would otherwise grow the list forever)
             var listStart = DateTime.Today.AddDays(-30);
             var listEnd = DateTime.Today.AddMonths(6);
-            var listEvents = RecurrenceExpander.Expand(userEvents, listStart, listEnd)
+            var listEvents = _recurrenceAppService.Expand(userEvents, listStart, listEnd)
                 .OrderBy(e => e.StartTime)
                 .ToList();
 
@@ -184,12 +185,13 @@ namespace CalendarApp.Web.Controllers
             ViewBag.CanDecline = myAttendance != null && myAttendance.Role != AttendeeRole.Owner && myAttendance.Status != AttendeeStatus.Declined;
             ViewBag.IsDeclined = myAttendance?.Status == AttendeeStatus.Declined;
             ViewBag.Users = _eventAppService.GetUsersByIds(@event.EventAttendees.Select(ea => ea.UserId).Append(@event.OwnerId));
+            ViewBag.RecurrenceDescription = _recurrenceAppService.Describe(@event);
 
             // Recurring series: resolve the requested occurrence (exception overrides applied)
             if (@event.IsRecurring && occurrenceDate.HasValue)
             {
                 var target = occurrenceDate.Value.Date;
-                var occurrences = RecurrenceExpander.Expand(@event, target, target.AddDays(1));
+                var occurrences = _recurrenceAppService.Expand(@event, target, target.AddDays(1));
                 var occurrence = occurrences.FirstOrDefault(o => o.StartTime.Date == target) ?? occurrences.FirstOrDefault();
                 if (occurrence != null)
                 {
@@ -369,7 +371,7 @@ namespace CalendarApp.Web.Controllers
             if (@event.IsRecurring && occurrenceDate.HasValue)
             {
                 var target = occurrenceDate.Value.Date;
-                var occurrences = RecurrenceExpander.Expand(@event, target, target.AddDays(1));
+                var occurrences = _recurrenceAppService.Expand(@event, target, target.AddDays(1));
                 var occurrence = occurrences.FirstOrDefault(o => o.StartTime.Date == target) ?? occurrences.FirstOrDefault();
                 if (occurrence != null)
                 {

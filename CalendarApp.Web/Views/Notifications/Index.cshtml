@@ -58,12 +58,12 @@
                                 <div class="d-flex gap-1">
                                     @if (notification.Type == NotificationType.EventInvite && !notification.IsRead)
                                     {
-                                        <form asp-action="AcceptInvitation" asp-route-id="@notification.Id" method="post" class="d-inline">
+                                        <form asp-action="AcceptInvitation" asp-route-id="@notification.Id" method="post" class="d-inline" data-invitation-action="accept">
                                             <button type="submit" class="btn btn-success btn-sm">
                                                 <i class="bi bi-check-circle"></i>
                                             </button>
                                         </form>
-                                        <form asp-action="DeclineInvitation" asp-route-id="@notification.Id" method="post" class="d-inline">
+                                        <form asp-action="DeclineInvitation" asp-route-id="@notification.Id" method="post" class="d-inline" data-invitation-action="decline">
                                             <button type="submit" class="btn btn-danger btn-sm">
                                                 <i class="bi bi-x-circle"></i>
                                             </button>
@@ -95,61 +95,5 @@
 </div>
 
 @section Scripts {
-    <script>
-        function handleInvitationResponse(event, action, notificationId) {
-            event.preventDefault();
-            
-            const form = event.target;
-            const url = action === 'accept' 
-                ? '@Url.Action("AcceptInvitation", "Notifications")' 
-                : '@Url.Action("DeclineInvitation", "Notifications")';
-            
-            const formData = new FormData(form);
-            
-            fetch(url, {
-                method: 'POST',
-                body: formData,
-                headers: {
-                    'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]')?.value,
-                    'X-Requested-With': 'XMLHttpRequest'
-                }
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    // Update the UI
-                    const listItem = form.closest('.list-group-item');
-                    listItem.classList.remove('bg-white', 'border-start', 'border-4', 'border-primary');
-                    listItem.classList.add('bg-light');
-                    
-                    // Remove the New badge
-                    const newBadge = listItem.querySelector('.badge.bg-primary');
-                    if (newBadge) {
-                        newBadge.remove();
-                    }
-                    
-                    // Replace buttons with success message
-                    const buttonGroup = form.closest('.d-flex.gap-1');
-                    if (action === 'accept') {
-                        buttonGroup.innerHTML = '<span class="text-success"><i class="bi bi-check-circle-fill"></i> Accepted</span>';
-                    } else {
-                        buttonGroup.innerHTML = '<span class="text-danger"><i class="bi bi-x-circle-fill"></i> Declined</span>';
-                    }
-                    
-                    // Notification count badge removed from header
-                    console.log('Notification processed successfully');
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                // Fallback to normal form submission
-                form.submit();
-            });
-        }
-        
-        function updateNotificationCount(count) {
-            // No longer updating badge since it was removed from header
-            console.log('Notification count updated:', count);
-        }
-    </script>
+    <script src="~/js/notifications.js" asp-append-version="true"></script>
 }

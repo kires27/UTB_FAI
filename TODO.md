@@ -18,8 +18,8 @@
 - [x] Identity nemá být v Domain, ale v Infrastructure, 
 - [x] Aplikování seedingu dejte rovnou do DbContextu ať se promítne do migrací
 - [x] ViewModels přesunout do Application
-- [ ] UserManager, SignInManager atd. (všechny ostatní implementace/třídy) nepoužívat v Controllerech, ale ve službách. 
-- [ ] move js from cshtml files into wwwroot
+- [x] UserManager, SignInManager atd. (všechny ostatní implementace/třídy) nepoužívat v Controllerech, ale ve službách. 
+- [x] move js from cshtml files into wwwroot
 - [x] change default styling
 - [x] events from monthly view wont return user to list view
 - [x] change the frequency ui
@@ -29,3 +29,5 @@
 - [ ] restructure project
 	- [ ] use vue for frontend
 	- [ ] add correct project structure and requirements into agents.md
+	- [ ] responsive design
+	

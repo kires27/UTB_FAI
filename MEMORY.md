@@ -13,6 +13,8 @@
 - Create/Edit share one form (`wwwroot/js/event-form.js`); hidden ISO StartTime/EndTime.
 - Create takes owner from claims; Edit ignores posted OwnerId.
 - Weeks start Monday; grep `firstDayOfWeek` before touching week math.
+- All ViewModels live in `CalendarApp.Application/Models` (namespace `CalendarApp.Application.Models`). Only `ErrorViewModel` stays in `CalendarApp.Web/Models`, used only by `HomeController.Error` (keeps `using CalendarApp.Web.Models`).
+- Login accepts username or email (`AccountAppService.LoginAsync` resolves email → username).
 
 # Gotchas & Lessons
 - Never `$(document).ready`: jQuery loads after RenderBody, script dies silently. Use DOMContentLoaded.

@@ -48,6 +48,7 @@ builder.Services.AddScoped<IEventAppService, EventAppService>();
 builder.Services.AddScoped<INotificationAppService, NotificationAppService>();
 builder.Services.AddScoped<IUserAppService, UserAppService>();
 builder.Services.AddScoped<IAccountAppService, AccountAppService>();
+builder.Services.AddScoped<IRecurrenceAppService, RecurrenceAppService>();
 
 var app = builder.Build();
 
