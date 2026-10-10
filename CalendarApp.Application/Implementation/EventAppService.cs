@@ -1,5 +1,7 @@
 using CalendarApp.Application.Abstraction;
 using CalendarApp.Domain.Entities;
+using CalendarApp.Infrastructure.Identity;
+using CalendarApp.Infrastructure.Database;
 using Microsoft.EntityFrameworkCore;
 
 namespace CalendarApp.Application.Implementation
@@ -16,19 +18,51 @@ namespace CalendarApp.Application.Implementation
         public IList<Event> SelectAll()
         {
             return _calendarDbContext.Events
-                .Include(e => e.Owner)
                 .Include(e => e.EventAttendees)
-                .ThenInclude(ea => ea.User)
+                .Include(e => e.Exceptions)
                 .ToList();
         }
 
         public Event? GetById(int id)
         {
             return _calendarDbContext.Events
-                .Include(e => e.Owner)
                 .Include(e => e.EventAttendees)
-                .ThenInclude(ea => ea.User)
+                .Include(e => e.Exceptions)
                 .FirstOrDefault(e => e.Id == id);
+        }
+
+        public EventOccurrenceException? GetOccurrenceException(int masterEventId, DateTime originalDate)
+        {
+            return _calendarDbContext.EventOccurrenceExceptions
+                .FirstOrDefault(x => x.MasterEventId == masterEventId && x.OriginalDate == originalDate.Date);
+        }
+
+        public void UpsertOccurrenceException(EventOccurrenceException exception)
+        {
+            var existing = _calendarDbContext.EventOccurrenceExceptions
+                .FirstOrDefault(x => x.MasterEventId == exception.MasterEventId && x.OriginalDate == exception.OriginalDate.Date);
+
+            if (existing == null)
+            {
+                exception.OriginalDate = exception.OriginalDate.Date;
+                _calendarDbContext.EventOccurrenceExceptions.Add(exception);
+            }
+            else
+            {
+                existing.IsCancelled = exception.IsCancelled;
+                existing.Title = exception.Title;
+                existing.Description = exception.Description;
+                existing.StartTime = exception.StartTime;
+                existing.EndTime = exception.EndTime;
+                existing.AllDay = exception.AllDay;
+                existing.Location = exception.Location;
+                existing.ReminderTime = exception.ReminderTime;
+                existing.Color = exception.Color;
+                existing.Status = exception.Status;
+                existing.UpdatedAt = DateTime.UtcNow;
+            }
+
+            _calendarDbContext.SaveChanges();
         }
 
         public void Create(Event @event)
@@ -54,6 +88,8 @@ namespace CalendarApp.Application.Implementation
         {
             var eventToDelete = _calendarDbContext.Events
                 .Include(e => e.EventAttendees)
+                .Include(e => e.Notifications)
+                .Include(e => e.Exceptions)
                 .FirstOrDefault(e => e.Id == id);
                 
             if (eventToDelete != null)
@@ -93,11 +129,12 @@ namespace CalendarApp.Application.Implementation
         public async Task<bool> InviteUsersToEvent(int eventId, List<int> userIds)
         {
             var @event = await _calendarDbContext.Events
-                .Include(e => e.Owner)
                 .FirstOrDefaultAsync(e => e.Id == eventId);
 
             if (@event == null)
                 return false;
+
+            var owner = await _calendarDbContext.Users.FindAsync(@event.OwnerId);
 
             foreach (var userId in userIds)
             {
@@ -125,7 +162,7 @@ namespace CalendarApp.Application.Implementation
                         UserId = userId,
                         EventId = eventId,
                         Type = NotificationType.EventInvite,
-                        Message = $"{@event.Owner?.UserName ?? "Someone"} invited you to '{@event.Title}'",
+                        Message = $"{owner?.UserName ?? "Someone"} invited you to '{@event.Title}'",
                         IsRead = false,
                         NotifyAt = DateTime.UtcNow,
                         UpdatedAt = DateTime.UtcNow
@@ -139,10 +176,28 @@ namespace CalendarApp.Application.Implementation
             return true;
         }
 
+        public Dictionary<int, User> GetUsersByIds(IEnumerable<int> userIds)
+        {
+            var ids = userIds.Distinct().ToList();
+            return _calendarDbContext.Users
+                .Where(u => ids.Contains(u.Id))
+                .ToDictionary(u => u.Id);
+        }
+
         public async Task<List<User>> FindUsersByEmailsAsync(List<string> emails)
         {
             return await _calendarDbContext.Users
                 .Where(u => u.Email != null && emails.Contains(u.Email))
+                .ToListAsync();
+        }
+
+        public async Task<List<User>> SearchUsersAsync(string term)
+        {
+            return await _calendarDbContext.Users
+                .Where(u => (u.UserName != null && u.UserName.Contains(term)) ||
+                            (u.Email != null && u.Email.Contains(term)))
+                .OrderBy(u => u.UserName)
+                .Take(10)
                 .ToListAsync();
         }
 
@@ -158,6 +213,46 @@ namespace CalendarApp.Application.Implementation
                 return true;
             }
             return false;
+        }
+
+        public async Task<bool> DeclineEventAsync(int eventId, int userId)
+        {
+            var attendee = await _calendarDbContext.EventAttendees
+                .Include(ea => ea.Event)
+                .FirstOrDefaultAsync(ea => ea.EventId == eventId && ea.UserId == userId);
+
+            if (attendee == null || attendee.Role == AttendeeRole.Owner || attendee.Status == AttendeeStatus.Declined)
+            {
+                return false;
+            }
+
+            attendee.Status = AttendeeStatus.Declined;
+            attendee.UpdatedAt = DateTime.UtcNow;
+
+            var invites = await _calendarDbContext.Notifications
+                .Where(n => n.UserId == userId && n.EventId == eventId && n.Type == NotificationType.EventInvite && !n.IsRead)
+                .ToListAsync();
+            foreach (var invite in invites)
+            {
+                invite.IsRead = true;
+                invite.UpdatedAt = DateTime.UtcNow;
+            }
+
+            var decliner = await _calendarDbContext.Users.FindAsync(userId);
+
+            _calendarDbContext.Notifications.Add(new Notification
+            {
+                UserId = attendee.Event.OwnerId,
+                EventId = eventId,
+                Type = NotificationType.EventUpdate,
+                Message = $"{decliner?.UserName ?? "Someone"} declined '{attendee.Event.Title}'",
+                IsRead = false,
+                NotifyAt = DateTime.UtcNow,
+                UpdatedAt = DateTime.UtcNow
+            });
+
+            await _calendarDbContext.SaveChangesAsync();
+            return true;
         }
     }
 }

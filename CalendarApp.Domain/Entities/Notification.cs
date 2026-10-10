@@ -33,9 +33,6 @@ namespace CalendarApp.Domain.Entities
 
         public DateTime UpdatedAt { get; set; }
 
-        // [ForeignKey(nameof(UserId))]
-        // public virtual User User { get; set; } = null!;
-
         [ForeignKey(nameof(EventId))]
         public virtual Event? Event { get; set; }
     }

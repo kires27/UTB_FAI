@@ -1,6 +1,7 @@
-@model CalendarApp.Web.Models.LoginViewModel
+@model CalendarApp.Application.Models.LoginViewModel
 @{
     ViewData["Title"] = "Login";
+    ViewData["Standalone"] = true;
 }
 
 <h2>Login</h2>
@@ -28,8 +29,10 @@
     </div>
 
     <div class="form-group">
-        <button type="submit" class="btn btn-primary">Login</button>
-        <a asp-action="Register" class="btn btn-secondary">Register</a>
+        <button type="submit" class="btn btn-primary me-2">Login</button>
+        <a asp-controller="Home" asp-action="Index" class="btn btn-secondary">
+            <i class="bi bi-arrow-left me-1"></i>Back to main page
+        </a>
     </div>
 </form>
 

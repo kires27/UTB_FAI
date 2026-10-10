@@ -1,0 +1,213 @@
+@model CalendarApp.Application.Models.MonthlyCalendarViewModel
+@{
+    var days = Model.Days;
+    var first = days[0].Date;
+    var last = days[days.Count - 1].Date;
+    var step = days.Count == 1 ? 1 : 7;
+    var prev = first.AddDays(-step).ToString("yyyy-MM-dd");
+    var next = first.AddDays(step).ToString("yyyy-MM-dd");
+    var todayStr = DateTime.Today.ToString("yyyy-MM-dd");
+    var title = days.Count == 1
+        ? first.ToString("dddd, MMMM d, yyyy")
+        : string.Format("{0:MMM d} \u2013 {1:MMM d, yyyy}", first, last);
+}
+<div class="time-grid-wrap" data-view="@Model.CurrentView">
+    <div class="time-grid-nav">
+        <a class="btn btn-sm btn-outline-secondary" href="/Events/Index?view=@Model.CurrentView&date=@prev" title="Previous" aria-label="Previous">
+            <i class="bi bi-chevron-left"></i>
+        </a>
+        <a class="btn btn-sm btn-outline-secondary" href="/Events/Index?view=@Model.CurrentView&date=@todayStr">Today</a>
+        <a class="btn btn-sm btn-outline-secondary" href="/Events/Index?view=@Model.CurrentView&date=@next" title="Next" aria-label="Next">
+            <i class="bi bi-chevron-right"></i>
+        </a>
+        <span class="tg-title">@title</span>
+    </div>
+
+    <div class="tg-scroll" id="tgScroll">
+        <div class="tg-grid" style="grid-template-columns: 56px repeat(@days.Count, minmax(130px, 1fr));">
+            <div class="tg-corner"></div>
+
+            @for (var di = 0; di < days.Count; di++)
+            {
+                <a class="tg-day-header @(days[di].IsToday ? "today" : "")"
+                   href="/Events/Index?view=daily&date=@days[di].Date.ToString("yyyy-MM-dd")"
+                   style="grid-column: @(di + 2);" title="Open day view">
+                    <span class="tg-dow">@days[di].Date.ToString("ddd")</span>
+                    <span class="tg-date">@days[di].Date.Day</span>
+                </a>
+            }
+
+            <div class="tg-allday-label">All day</div>
+            @for (var di = 0; di < days.Count; di++)
+            {
+                var day = days[di];
+                <div class="tg-allday-cell @(day.IsToday ? "today-col" : "")"
+                     data-date="@day.Date.ToString("yyyy-MM-dd")"
+                     style="grid-column: @(di + 2);"
+                     title="Click to create an all-day event">
+                    @foreach (var evt in day.Events.Where(e => e.AllDay))
+                    {
+                        <a class="tg-allday-chip" style="background-color:@(evt.Color ?? "#3788d8")"
+                           asp-controller="Events" asp-action="Details" asp-route-id="@evt.Id"
+                           asp-route-occurrenceDate="@(evt.IsRecurring ? evt.StartTime.ToString("yyyy-MM-dd") : null)"
+                           asp-route-returnView="@Model.CurrentView" asp-route-returnDate="@first.ToString("yyyy-MM-dd")">@evt.Title <i class="bi bi-arrow-repeat" title="Recurring"></i></a>
+                    }
+                </div>
+            }
+
+            <div class="tg-gutter">
+                @for (int h = 0; h < 24; h++)
+                {
+                    <span class="tg-hour-label" style="top: @(h * 48)px;">@h:00</span>
+                }
+            </div>
+
+            @for (var di = 0; di < days.Count; di++)
+            {
+                var day = days[di];
+                var dayStart = day.Date;
+                <div class="tg-day-col @(day.IsToday ? "today-col" : "")"
+                     data-date="@day.Date.ToString("yyyy-MM-dd")"
+                     style="grid-row: 3 / span 24; grid-column: @(di + 2);"
+                     title="Click an empty slot to create an event">
+                    @foreach (var evt in day.Events.Where(e => !e.AllDay))
+                    {
+                        var startMins = (evt.StartTime.Date < dayStart) ? 0 : (evt.StartTime - dayStart).TotalMinutes;
+                        var endRaw = (evt.EndTime.Date > dayStart) ? 1440 : (evt.EndTime - dayStart).TotalMinutes;
+                        var endMins = Math.Max(startMins + 15, endRaw);
+                        <a class="tg-event"
+                           style="background-color:@(evt.Color ?? "#3788d8"); top:@(Math.Round(startMins * 0.8))px; height:@(Math.Max(20, Math.Round((endMins - startMins) * 0.8)))px;"
+                           data-start="@((int)startMins)"
+                           data-end="@((int)endMins)"
+                           asp-controller="Events" asp-action="Details" asp-route-id="@evt.Id"
+                           asp-route-occurrenceDate="@(evt.IsRecurring ? evt.StartTime.ToString("yyyy-MM-dd") : null)"
+                           asp-route-returnView="@Model.CurrentView" asp-route-returnDate="@first.ToString("yyyy-MM-dd")">
+                            <span class="tg-event-time">@evt.StartTime.ToString("HH:mm")</span>@evt.Title@if (evt.IsRecurring) {<i class="bi bi-arrow-repeat" title="Recurring"></i>}
+                        </a>
+                    }
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<script>
+    // Runs after full DOM parse (jQuery loads later in the page, so no $ here)
+    document.addEventListener('DOMContentLoaded', function () {
+        var ROW = 48; // px per hour
+
+        // Auto-scroll to current time (default 7:00)
+        var now = new Date();
+        var target = now.getHours() >= 9 ? (now.getHours() - 2) * ROW : 7 * ROW;
+        var scroll = document.getElementById('tgScroll');
+        if (scroll) scroll.scrollTop = target;
+
+        // Current time indicator (in today's column)
+        function updateNowLine() {
+            var col = document.querySelector('.tg-day-col.today-col');
+            if (!col) return;
+            var n = new Date();
+            var top = (n.getHours() * 60 + n.getMinutes()) / 60 * ROW;
+            var line = col.querySelector('.tg-now-line');
+            if (!line) {
+                line = document.createElement('div');
+                line.className = 'tg-now-line';
+                var label = document.createElement('span');
+                label.className = 'tg-now-label';
+                line.appendChild(label);
+                col.appendChild(line);
+            }
+            line.style.top = top + 'px';
+            line.querySelector('.tg-now-label').textContent =
+                String(n.getHours()).padStart(2, '0') + ':' + String(n.getMinutes()).padStart(2, '0');
+        }
+        updateNowLine();
+        setInterval(updateNowLine, 60000);
+
+        // Hover time indicator in the left gutter (15-min granularity, same as clicks)
+        var grid = document.querySelector('.tg-grid');
+        if (grid) {
+            var hoverLabel = document.createElement('div');
+            hoverLabel.className = 'tg-hover-label';
+            grid.appendChild(hoverLabel);
+
+            document.querySelectorAll('.tg-day-col').forEach(function (col) {
+                col.addEventListener('mousemove', function (e) {
+                    var yCol = e.clientY - col.getBoundingClientRect().top;
+                    if (yCol < 0) { hoverLabel.style.display = 'none'; return; }
+                    var mins = Math.min(23 * 60 + 45, Math.floor((yCol / ROW) * 60 / 15) * 15);
+                    hoverLabel.textContent = String(Math.floor(mins / 60)).padStart(2, '0') +
+                        ':' + String(mins % 60).padStart(2, '0');
+                    // snap to the 15-min slot the cursor is in (no smooth movement)
+                    var colTop = col.getBoundingClientRect().top - grid.getBoundingClientRect().top;
+                    hoverLabel.style.top = (colTop + (mins / 60) * ROW - 9) + 'px';
+                    hoverLabel.style.display = 'block';
+                });
+            });
+            grid.addEventListener('mouseleave', function () {
+                hoverLabel.style.display = 'none';
+            });
+        }
+
+        // Split overlapping events side by side within each day column
+        document.querySelectorAll('.tg-day-col').forEach(function (col) {
+            var evs = Array.prototype.map.call(col.querySelectorAll('.tg-event'), function (el) {
+                return { el: el, s: +el.dataset.start, e: +el.dataset.end };
+            }).sort(function (a, b) { return a.s - b.s; });
+
+            var groups = [], cur = [];
+            evs.forEach(function (ev) {
+                var latest = cur.length ? Math.max.apply(null, cur.map(function (x) { return x.e; })) : -1;
+                if (cur.length && ev.s >= latest) { groups.push(cur); cur = []; }
+                cur.push(ev);
+            });
+            if (cur.length) groups.push(cur);
+
+            groups.forEach(function (g) {
+                var lanes = [];
+                g.forEach(function (ev) {
+                    var placed = false;
+                    for (var i = 0; i < lanes.length; i++) {
+                        if (lanes[i].every(function (x) { return x.e <= ev.s; })) {
+                            lanes[i].push(ev); placed = true; break;
+                        }
+                    }
+                    if (!placed) lanes.push([ev]);
+                });
+                // Events use only part of the column so the free space beside them stays clickable
+                var span = 90;
+                lanes.forEach(function (lane, i) {
+                    lane.forEach(function (ev) {
+                        var w = span / lanes.length;
+                        ev.el.style.left = 'calc(' + (i * w) + '% + 3px)';
+                        ev.el.style.width = 'calc(' + w + '% - 6px)';
+                    });
+                });
+            });
+        });
+
+        // Click an empty slot -> create event at that date/time (rounded to 15 min)
+        var gridView = document.querySelector('.time-grid-wrap');
+        var sourceView = gridView ? gridView.dataset.view : 'list';
+        document.querySelectorAll('.tg-day-col').forEach(function (col) {
+            col.addEventListener('click', function (e) {
+                if (e.target !== col) return;
+                var rect = col.getBoundingClientRect();
+                var mins = Math.min(23 * 60 + 45, Math.floor((e.clientY - rect.top) / ROW * 60 / 15) * 15);
+                var hh = Math.floor(mins / 60), mm = mins % 60;
+                window.location.href = '/Events/Create?date=' + col.dataset.date +
+                    'T' + String(hh).padStart(2, '0') + ':' + String(mm).padStart(2, '0') +
+                    '&view=' + encodeURIComponent(sourceView);
+            });
+        });
+
+        // Click empty all-day lane -> create all-day event
+        document.querySelectorAll('.tg-allday-cell').forEach(function (cell) {
+            cell.addEventListener('click', function (e) {
+                if (e.target !== cell) return;
+                window.location.href = '/Events/Create?date=' + cell.dataset.date +
+                    'T00:00&allDay=true&view=' + encodeURIComponent(sourceView);
+            });
+        });
+    });
+</script>

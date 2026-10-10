@@ -1,26 +1,18 @@
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Authorization;
-using CalendarApp.Domain.Entities;
-using CalendarApp.Web.Models;
+using CalendarApp.Application.Abstraction;
+using CalendarApp.Application.Models;
 
 namespace CalendarApp.Web.Controllers
 {
     [AllowAnonymous]
     public class AccountController : Controller
     {
-        private readonly UserManager<User> _userManager;
-        private readonly SignInManager<User> _signInManager;
-        private readonly RoleManager<Role> _roleManager;
+        private readonly IAccountAppService _accountAppService;
 
-        public AccountController(
-            UserManager<User> userManager,
-            SignInManager<User> signInManager,
-            RoleManager<Role> roleManager)
+        public AccountController(IAccountAppService accountAppService)
         {
-            _userManager = userManager;
-            _signInManager = signInManager;
-            _roleManager = roleManager;
+            _accountAppService = accountAppService;
         }
 
         [HttpGet]
@@ -34,26 +26,16 @@ namespace CalendarApp.Web.Controllers
         {
             if (ModelState.IsValid)
             {
-                var user = new User
+                var errors = await _accountAppService.RegisterAsync(model.Username, model.Email, model.Password);
+
+                if (errors.Count == 0)
                 {
-                    UserName = model.Username,
-                    Email = model.Email,
-                };
-
-                var result = await _userManager.CreateAsync(user, model.Password);
-
-                if (result.Succeeded)
-                {
-                    // Assign User role by default
-                    await _userManager.AddToRoleAsync(user, "User");
-
-                    await _signInManager.SignInAsync(user, isPersistent: false);
                     return RedirectToAction("Index", "Home");
                 }
 
-                foreach (var error in result.Errors)
+                foreach (var error in errors)
                 {
-                    ModelState.AddModelError("", error.Description);
+                    ModelState.AddModelError("", error);
                 }
             }
 
@@ -71,13 +53,9 @@ namespace CalendarApp.Web.Controllers
         {
             if (ModelState.IsValid)
             {
-                var result = await _signInManager.PasswordSignInAsync(
-                    model.Username, 
-                    model.Password, 
-                    model.RememberMe, 
-                    lockoutOnFailure: false);
+                var succeeded = await _accountAppService.LoginAsync(model.Username, model.Password, model.RememberMe);
 
-                if (result.Succeeded)
+                if (succeeded)
                 {
                     return RedirectToAction("Index", "Home");
                 }
@@ -91,7 +69,7 @@ namespace CalendarApp.Web.Controllers
         [HttpPost]
         public async Task<IActionResult> Logout()
         {
-            await _signInManager.SignOutAsync();
+            await _accountAppService.LogoutAsync();
             return RedirectToAction("Index", "Home");
         }
 

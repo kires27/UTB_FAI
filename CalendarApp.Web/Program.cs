@@ -1,11 +1,10 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
+using CalendarApp.Domain.Entities;
+using CalendarApp.Infrastructure.Identity;
 using CalendarApp.Application.Abstraction;
 using CalendarApp.Application.Implementation;
 using CalendarApp.Infrastructure.Database;
-using CalendarApp.Infrastructure.Database.Seeding;
-using CalendarApp.Infrastructure.Identity;
-using CalendarApp.Infrastructure.Identity.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -18,7 +17,7 @@ ServerVersion serverVersion = new MySqlServerVersion("8.0.29");
 builder.Services.AddDbContext<CalendarDbContext>(options => options.UseMySql(connectionString, serverVersion));
 
 // Add ASP.NET Core Identity
-builder.Services.AddIdentity<ApplicationUser, ApplicationRole>()
+builder.Services.AddIdentity<User, Role>()
     .AddEntityFrameworkStores<CalendarDbContext>()
     .AddDefaultTokenProviders();
 
@@ -48,45 +47,22 @@ builder.Services.ConfigureApplicationCookie(options =>
 builder.Services.AddScoped<IEventAppService, EventAppService>();
 builder.Services.AddScoped<INotificationAppService, NotificationAppService>();
 builder.Services.AddScoped<IUserAppService, UserAppService>();
+builder.Services.AddScoped<IAccountAppService, AccountAppService>();
 
 var app = builder.Build();
 
-// Seed initial data
-// using (var scope = app.Services.CreateScope())
-// {
-//     var services = scope.ServiceProvider;
-//     var dbContext = services.GetRequiredService<CalendarDbContext>();
-//     var userManager = services.GetRequiredService<UserManager<User>>();
-//     var roleManager = services.GetRequiredService<RoleManager<Role>>();
-
-//     // Seed users and roles using Identity (safe - checks for existing)
-//     var userSeeder = new UsersInit();
-//     await userSeeder.SeedIdentityUsersAsync(userManager, roleManager);
-
-//     // Seed other entities using regular EF (with existence checks)
-//     if (!await dbContext.Events.AnyAsync())
-//     {
-//         var eventSeeder = new EventsInit();
-//         var events = eventSeeder.GenerateEvents();
-//         await dbContext.Events.AddRangeAsync(events);
-//     }
-
-//     if (!await dbContext.EventAttendees.AnyAsync())
-//     {
-//         var attendeeSeeder = new EventAttendeesInit();
-//         var attendees = attendeeSeeder.GenerateEventAttendees();
-//         await dbContext.EventAttendees.AddRangeAsync(attendees);
-//     }
-
-//     if (!await dbContext.Notifications.AnyAsync())
-//     {
-//         var notificationSeeder = new NotificationsInit();
-//         var notifications = notificationSeeder.GenerateNotifications();
-//         await dbContext.Notifications.AddRangeAsync(notifications);
-//     }
-
-//     await dbContext.SaveChangesAsync();
-// }
+// Ensure Identity roles exist (Admin/User) — needed for registration
+using (var scope = app.Services.CreateScope())
+{
+    var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<Role>>();
+    foreach (var roleName in new[] { "Admin", "User" })
+    {
+        if (!await roleManager.RoleExistsAsync(roleName))
+        {
+            await roleManager.CreateAsync(new Role { Name = roleName });
+        }
+    }
+}
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())

@@ -3,7 +3,7 @@ using CalendarApp.Domain.Entities;
 using CalendarApp.Domain.Validations;
 using CalendarApp.Application.Abstraction;
 
-namespace CalendarApp.Web.Models
+namespace CalendarApp.Application.Models
 {
     public class EventCreateViewModel
     {
@@ -40,6 +40,10 @@ namespace CalendarApp.Web.Models
 
         [StringLength(1000)]
         public string? InviteEmails { get; set; } = null;
+
+        // Where to return after creation (calendar view context)
+        public string ReturnView { get; set; } = "list";
+        public DateTime? ReturnDate { get; set; }
     }
 
     public class EventEditViewModel
@@ -86,6 +90,14 @@ namespace CalendarApp.Web.Models
 
         public List<int> RemoveAttendeeIds { get; set; } = new List<int>();
         public List<EventAttendee> CurrentAttendees { get; set; } = new List<EventAttendee>();
+
+        // Per-occurrence editing: "all" = the whole series, "this" = one occurrence only
+        public string Scope { get; set; } = "all";
+        public DateTime? OccurrenceDate { get; set; }
+
+        // Where to return after saving (calendar view context)
+        public string ReturnView { get; set; } = "details";
+        public DateTime? ReturnDate { get; set; }
     }
 
     public class CalendarDayViewModel

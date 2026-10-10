@@ -167,7 +167,7 @@ namespace CalendarApp.Infrastructure.Migrations
                     b.ToTable("Notifications");
                 });
 
-            modelBuilder.Entity("CalendarApp.Domain.Entities.Role", b =>
+            modelBuilder.Entity("CalendarApp.Infrastructure.Identity.Role", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -196,7 +196,7 @@ namespace CalendarApp.Infrastructure.Migrations
                     b.ToTable("AspNetRoles", (string)null);
                 });
 
-            modelBuilder.Entity("CalendarApp.Domain.Entities.User", b =>
+            modelBuilder.Entity("CalendarApp.Infrastructure.Identity.User", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -377,7 +377,7 @@ namespace CalendarApp.Infrastructure.Migrations
 
             modelBuilder.Entity("CalendarApp.Domain.Entities.Event", b =>
                 {
-                    b.HasOne("CalendarApp.Domain.Entities.User", "Owner")
+                    b.HasOne("CalendarApp.Infrastructure.Identity.User", "Owner")
                         .WithMany("OwnedEvents")
                         .HasForeignKey("OwnerId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -394,7 +394,7 @@ namespace CalendarApp.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("CalendarApp.Domain.Entities.User", "User")
+                    b.HasOne("CalendarApp.Infrastructure.Identity.User", "User")
                         .WithMany("EventAttendees")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -411,7 +411,7 @@ namespace CalendarApp.Infrastructure.Migrations
                         .WithMany("Notifications")
                         .HasForeignKey("EventId");
 
-                    b.HasOne("CalendarApp.Domain.Entities.User", "User")
+                    b.HasOne("CalendarApp.Infrastructure.Identity.User", "User")
                         .WithMany("Notifications")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -424,7 +424,7 @@ namespace CalendarApp.Infrastructure.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>
                 {
-                    b.HasOne("CalendarApp.Domain.Entities.Role", null)
+                    b.HasOne("CalendarApp.Infrastructure.Identity.Role", null)
                         .WithMany()
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -433,7 +433,7 @@ namespace CalendarApp.Infrastructure.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<int>", b =>
                 {
-                    b.HasOne("CalendarApp.Domain.Entities.User", null)
+                    b.HasOne("CalendarApp.Infrastructure.Identity.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -442,7 +442,7 @@ namespace CalendarApp.Infrastructure.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<int>", b =>
                 {
-                    b.HasOne("CalendarApp.Domain.Entities.User", null)
+                    b.HasOne("CalendarApp.Infrastructure.Identity.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -451,13 +451,13 @@ namespace CalendarApp.Infrastructure.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<int>", b =>
                 {
-                    b.HasOne("CalendarApp.Domain.Entities.Role", null)
+                    b.HasOne("CalendarApp.Infrastructure.Identity.Role", null)
                         .WithMany()
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("CalendarApp.Domain.Entities.User", null)
+                    b.HasOne("CalendarApp.Infrastructure.Identity.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -466,7 +466,7 @@ namespace CalendarApp.Infrastructure.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<int>", b =>
                 {
-                    b.HasOne("CalendarApp.Domain.Entities.User", null)
+                    b.HasOne("CalendarApp.Infrastructure.Identity.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -480,7 +480,7 @@ namespace CalendarApp.Infrastructure.Migrations
                     b.Navigation("Notifications");
                 });
 
-            modelBuilder.Entity("CalendarApp.Domain.Entities.User", b =>
+            modelBuilder.Entity("CalendarApp.Infrastructure.Identity.User", b =>
                 {
                     b.Navigation("EventAttendees");
 

@@ -1,5 +1,6 @@
 @model IEnumerable<CalendarApp.Domain.Entities.Event>
 @using CalendarApp.Domain.Entities
+@{ var users = (Dictionary<int, User>)ViewBag.Users; }
 @{
     ViewData["Title"] = "Admin Events";
 }
@@ -82,9 +83,9 @@
                                         }
                                     </td>
                                     <td>
-                                        <strong>@eventItem.Owner?.UserName</strong>
+                                        <strong>@users.GetValueOrDefault(eventItem.OwnerId)?.UserName</strong>
                                         <br>
-                                        <small class="text-muted">@eventItem.Owner?.Email</small>
+                                        <small class="text-muted">@users.GetValueOrDefault(eventItem.OwnerId)?.Email</small>
                                     </td>
 
                                     <td>

@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using CalendarApp.Application.Abstraction;
-using CalendarApp.Web.Models;
+using CalendarApp.Application.Models;
 using System.Security.Claims;
 
 namespace CalendarApp.Web.Areas.Admin.Controllers

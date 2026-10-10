@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using CalendarApp.Application.Abstraction;
 using CalendarApp.Domain.Entities;
-using CalendarApp.Web.Models;
+using CalendarApp.Application.Models;
 using System.Security.Claims;
 
 namespace CalendarApp.Web.Areas.Admin.Controllers
@@ -23,6 +23,7 @@ namespace CalendarApp.Web.Areas.Admin.Controllers
         public IActionResult Select()
         {
             var events = _eventAppService.SelectAll();
+            ViewBag.Users = _eventAppService.GetUsersByIds(events.Select(e => e.OwnerId));
             return View(events);
         }
 
@@ -118,6 +119,7 @@ namespace CalendarApp.Web.Areas.Admin.Controllers
             {
                 return NotFound();
             }
+            ViewBag.Users = _eventAppService.GetUsersByIds(@event.EventAttendees.Select(ea => ea.UserId).Append(@event.OwnerId));
             return View(@event);
         }
 

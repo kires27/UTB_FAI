@@ -1,5 +1,6 @@
 @model CalendarApp.Domain.Entities.Event
 @using CalendarApp.Domain.Entities
+@{ var users = (Dictionary<int, User>)ViewBag.Users; }
 @{
     ViewData["Title"] = "Admin Event Details";
 }
@@ -91,9 +92,9 @@
                     <div class="row mb-3">
                         <div class="col-sm-3"><strong>Owner:</strong></div>
                         <div class="col-sm-9">
-                            <strong>@Model.Owner?.UserName</strong>
+                            <strong>@users.GetValueOrDefault(Model.OwnerId)?.UserName</strong>
                             <br>
-                            <small class="text-muted">@Model.Owner?.Email</small>
+                            <small class="text-muted">@users.GetValueOrDefault(Model.OwnerId)?.Email</small>
                         </div>
                     </div>
 
@@ -123,16 +124,16 @@
                     </h5>
                 </div>
                 <div class="card-body">
-                    @if (Model.EventAttendees != null && Model.EventAttendees.Any())
+                    @if (Model.EventAttendees != null && Model.EventAttendees.Any(a => a.Role != AttendeeRole.Owner))
                     {
                         <ul class="list-group list-group-flush">
                             @foreach (var attendee in Model.EventAttendees?.Where(a => a.Role != AttendeeRole.Owner) ?? Enumerable.Empty<EventAttendee>())
                             {
                                 <li class="list-group-item d-flex justify-content-between align-items-center">
                                     <div>
-                                        <strong>@attendee.User.UserName</strong>
+                                        <strong>@users.GetValueOrDefault(attendee.UserId)?.UserName</strong>
                                         <br>
-                                        <small class="text-muted">@attendee.User.Email</small>
+                                        <small class="text-muted">@users.GetValueOrDefault(attendee.UserId)?.Email</small>
                                     </div>
                                     <div>
                                         <span class="badge bg-@(attendee.Status == AttendeeStatus.Accepted ? "success" : 

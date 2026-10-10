@@ -1,7 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using CalendarApp.Application.Abstraction;
 
-namespace CalendarApp.Web.Models
+namespace CalendarApp.Application.Models
 {
     public class UserCreateViewModel
     {

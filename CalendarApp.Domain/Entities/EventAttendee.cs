@@ -37,8 +37,5 @@ namespace CalendarApp.Domain.Entities
         // Navigation properties
         [ForeignKey(nameof(EventId))]
         public virtual Event Event { get; set; } = null!;
-
-        // [ForeignKey(nameof(UserId))]
-        // public virtual User User { get; set; } = null!;
     }
 }

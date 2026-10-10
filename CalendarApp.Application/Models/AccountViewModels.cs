@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace CalendarApp.Web.Models
+namespace CalendarApp.Application.Models
 {
     public class RegisterViewModel
     {
@@ -23,7 +23,7 @@ namespace CalendarApp.Web.Models
     public class LoginViewModel
     {
         [Required]
-        [Display(Name = "Username")]
+        [Display(Name = "Username or email")]
         public string Username { get; set; } = string.Empty;
 
         [Required]

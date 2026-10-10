@@ -1,134 +1,146 @@
-# about project
-Správa osobního kalendáře s funkcemi 
-- [x] plánování událostí, 
-- [x] notifikacemi, 
-- [x] sdílením mezi uživateli. 
 
 **Obecné podmínky pro projekt:**
 
-- [x] Návrh webové aplikace projektu (funkční požadavky, návrh entit/diagramu tříd/databáze). Můžete vytvořit dokument ve Wordu (nemusíte dělat diagramy v EA).
+Návrh webové aplikace projektu (funkční požadavky, návrh entit/diagramu tříd/databáze). Můžete vytvořit dokument ve Wordu (nemusíte dělat diagramy v EA).
+Webová aplikace typu ASP.NET Core MVC (verze 9.x nebo vyšší)
+Aplikace může být vytvořena kompletně v této technologii, nebo lze využít jen pro back-end, např. ve formě Web API.
+Jedinou povolenou alternativou je vytvoření backendu v Javě (framework Spring MVC) nebo Python (Django MVC), anebo PHP (Laravel -> MVC!!!) - doporučeno jen pokud už s tímto máte zkušenosti!
+Projekt i tak musí splňovat podmínky využití MVC, vícevrstvé architektury, objektového programování. Ve webovém projektu se také nesmí objevit ani řádek SQL kódu, aby byl oddělen kód webové stránky a databáze (výjimkou je volání SQL procedur - ujistěte se ale, že víte, co znamená "SQL procedura" a "volání SQL procedury"!)
+Pokud tyto podmínky nebudou splněny, tak projekt neprojde 7. týden kontrolou a ani obhajobou!
+Vytvoření vícevrstvé aplikace -> minimálně musí být obsaženy vrstvy Presentation, Application, Infrastructure a Domain.
+Všechna funkcionalita musí být vytvořena a používána pomocí služeb (services).
+V Presentation vrstvě se nesmí objevit přímé použití Infrastructure vrstvy (kromě konfigurace).
+V Controllerech nesmí být kód logicky spadající do nižších vrstev.
+Vytvoření databáze technikou Code-First (s migracemi) a její napojení a použití pomocí EntityFrameworkCore (nebo obdobného frameworku).
+Projekt musí obsahovat několik entit, popř. ViewModelů/DTO (minimálně 5 - nepočítají se entity z Entity Framework Core a ani z Identity, ani ErrorViewModel). Musí být definováno aspoň jedno propojení entit skrz cizí klíč.
+Vytvoření Area "Admin", ve které budou uloženy Controllery a View pro správu všech položek v databázi adminem (admin bude moct spravovat i data uživatele, ale nebude jim smět měnit hash hesla).
+Ve správě položek musí být implementována i editace položek.
+Bude vyřešena hlavně serverová validace (ale nejlépe i ta klientská).
+včetně vytvoření jednoho vlastního validačního atributu (tzn. takového, který jste vytvořili sami!).
+Bude umožněna registrace a přihlášení uživatele pomocí Identity nebo ekvivalentního frameworku -> celkem aspoň 2 role (admin, zákazník/klient, popř. manager/redaktor apod.).
+Admin má veškerá práva a může spravovat vše.
+Funkce Managera je taková, že spravuje systém v oblastech, kde interaguje se zákazníky/klienty (např. v případě e-shopu jsou to produkty, objednávky, faktury apod.), ale nemůže měnit kritické vlastnosti systému (uživatele, role, přístupová práva, nastavení webové aplikace apod.).
+Zákazník/klient využívá systém pro účely, ke kterým je určen (např. v e-shopu nakupuje produkty, vytváří pro sebe objednávky, prohlíží si jen své vlastní objednávky, generuje své faktury apod.).
+Prvky na stránce by měly být responzivní (pomocí Bootstrap nebo jiné technologie, anebo vlastním řešením). Pro front-end je možné použít jakýkoliv framework (např. Vue, React, Angular, SvelteKit apod.)
 
-- [x] Webová aplikace typu ASP.NET Core MVC (verze 9.x nebo vyšší)
-	- Projekt i tak musí splňovat podmínky využití MVC, vícevrstvé architektury, objektového programování. Ve webovém projektu se také nesmí objevit ani řádek SQL kódu, aby byl oddělen kód webové stránky a databáze (výjimkou je volání SQL procedur - ujistěte se ale, že víte, co znamená "SQL procedura" a "volání SQL procedury"!)
-	- Pokud tyto podmínky nebudou splněny, tak projekt neprojde 7. týden kontrolou a ani obhajobou!
+https://www.tutorialsteacher.com/core/aspnet-core-application-project-structure
+https://www.tutorialsteacher.com/core/aspnet-core-wwwroot
+https://www.tutorialsteacher.com/core/aspnet-core-program
 
-- [x] Vytvoření vícevrstvé aplikace -> minimálně musí být obsaženy vrstvy Presentation, Application, Infrastructure a Domain.
-	- Všechna funkcionalita musí být vytvořena a používána pomocí služeb (services).
-	- V Presentation vrstvě se nesmí objevit přímé použití Infrastructure vrstvy (kromě konfigurace).
-	- V Controllerech nesmí být kód logicky spadající do nižších vrstev.
-
-- [x] Vytvoření databáze technikou Code-First (s migracemi) a její napojení a použití pomocí EntityFrameworkCore (nebo obdobného frameworku).
-
-- [x] Projekt musí obsahovat několik entit, popř. ViewModelů/DTO (minimálně 5 - nepočítají se entity z Entity Framework Core a ani z Identity, ani ErrorViewModel). Musí být definováno aspoň jedno propojení entit skrz cizí klíč.
-
-- [x] Vytvoření Area "Admin", ve které budou uloženy Controllery a View pro správu všech položek v databázi adminem (admin bude moct spravovat i data uživatele, ale nebude jim smět měnit hash hesla).
-	- [x] Ve správě položek musí být implementována i editace položek.
-
-- [x] Bude vyřešena hlavně serverová validace (ale nejlépe i ta klientská).
-	- [x] včetně vytvoření jednoho vlastního validačního atributu (tzn. takového, který jste vytvořili sami!).
-- [x] Bude umožněna registrace a přihlášení uživatele -> celkem aspoň 2 role (admin, zákazník/klient, popř. manager/redaktor apod.).
-	- [x] Admin má veškerá práva a může spravovat vše.
-	- [x] Funkce Managera je taková, že spravuje systém v oblastech, kde interaguje se zákazníky/klienty (např. v případě e-shopu jsou to produkty, objednávky, faktury apod.), ale nemůže měnit kritické vlastnosti systému (uživatele, role, přístupová práva, nastavení webové aplikace apod.).
-	- [x] Zákazník/klient využívá systém pro účely, ke kterým je určen (např. v e-shopu nakupuje produkty, vytváří pro sebe objednávky, prohlíží si jen své vlastní objednávky, generuje své faktury apod.).
-
-- [x] Prvky na stránce by měly být responzivní (pomocí Bootstrap nebo jiné technologie, anebo vlastním řešením). Pro front-end je možné použít jakýkoliv framework (např. Vue, React, Angular, SvelteKit apod.)
-
-https://moodle.utb.cz/mod/assign/view.php?id=769105
-
-# TODO
-- recurring event frequency is incomplete
-- proper client and server validationdd
-- invite people 
-- create notification view
 
 # Startup
-## start existing project
-`sudo systemctl start docker` start docker
 
-`docker start pw_calendar_db` start existing container
+Everything runs in Docker — no dotnet on the host needed.
 
-`dotnet run --project CalendarApp.Web` to run project
-`dotnet watch run --project CalendarApp.Web` run with realtime changes
+## one-time setup
+```bash
+sudo pacman -S docker docker-compose
+sudo systemctl enable --now docker
+sudo usermod -aG docker $USER   # log out/in once, then docker works without sudo
+```
+
+## run
+```bash
+docker compose up -d            # db + migrations + web (hot reload enabled)
+```
 
 website url
 `http://localhost:5292/`
 
-## start new project
+seed data (users, roles, events, notifications) is applied automatically
+by the `SeedDataInDbContext` migration on first start — logins below
+
+## stop
+```bash
+docker compose down             # stop everything, data kept
+```
+> `docker compose down -v` also deletes the database volume — avoid
+
+## code changes
+Source is bind-mounted into the container with `dotnet watch` — edit normally,
+changes apply on save, no rebuild needed.
 
 # project dependencies
-## dotnet
-`sudo pacman -S dotnet-sdk-9.0`
 
-*tools and packages*
-`dotnet tool run dotnet-ef`
-`dotnet tool list` installed tools 
-`dotnet tool uninstall dotnet-ef` remove tools
-`dotnet list package`
-`dotnet add package <package> --version <x>` add package
+dotnet, MySQL and dotnet-ef all run inside containers (see `docker-compose.yml`):
+- `web` / `migrator` — `mcr.microsoft.com/dotnet/sdk:9.0`, source mounted at `/src`
+- `db` — `mysql:8.0.29`, data in named volume `pw_calendar_db`
 
-*others*
-`dotnet restore CalendarApp.sln`
-`dotnet build CalendarApp.sln`
-`dotnet build CalendarApp.Web`
-`dotnet clean`
+NuGet packages cache in `.docker/nuget/` (host dir, gitignored).
 
-*entitiy framework CLI*
-`dotnet new tool-manifest`
-`dotnet tool install dotnet-ef --version 9.0.9`
-
+*build / shell inside container*
+```bash
+docker compose run --rm web bash -c "dotnet build CalendarApp.Web"
+docker compose run --rm web bash      # interactive shell with dotnet + dotnet-ef
+```
 
 ## EF Migration
 
-*create New Migration*
+Migrations run in the container (`migrator` service applies pending migrations
+on every `docker compose up`). For creating new migrations:
+
+*create new migration*
 ```bash
-dotnet tool run dotnet-ef migrations add CleanCalendarReset \
+docker compose run --rm web bash -c "dotnet tool restore && \
+  dotnet tool run dotnet-ef migrations add <Name> \
   --project ./CalendarApp.Infrastructure \
-  --startup-project ./CalendarApp.Web
+  --startup-project ./CalendarApp.Web"
 ```
 
-*apply Migration to Database*
+*apply migrations (also runs automatically on `up`)*
 ```bash
-dotnet tool run dotnet-ef database update \
+docker compose run --rm migrator
+```
+
+*check applied migrations*
+```bash
+docker compose run --rm web bash -c "dotnet tool restore && \
+  dotnet tool run dotnet-ef migrations list \
   --project ./CalendarApp.Infrastructure \
-  --startup-project ./CalendarApp.Web
+  --startup-project ./CalendarApp.Web"
 ```
 
-*check if migrations are applied*
-```bash
-dotnet tool run dotnet-ef migrations list \
-	--project ./CalendarApp.Infrastructure/CalendarApp.Infrastructure.csproj \
-    --startup-project ./CalendarApp.Web/CalendarApp.Web.csproj
-```
+### seed users
 
-### seeding users
-*name*			*password*
-admin			Admin123!
-alexjohnson 	User123!
-sarahchen		User123!
-mikedavis		User123!
+seeded via EF Core `HasData` in `CalendarDbContext` (migration
+`SeedDataInDbContext`), applied by the migrator on `docker compose up`:
+
+*username*	*email*					*password*			*role*
+admin		admin@calendarapp.com	Admin123!			Admin
+alexjohnson	alex.johnson@email.com	User123!			User
+sarahchen	sarah.chen@email.com	User123!			User
+mikedavis	mike.davis@email.com	User123!			User
+
+> log in with the **username** (not the email)
+
+> existing databases: the seed uses fixed IDs (roles 1-2, users -1..-4).
+> if the db already has those users/roles, the migration fails on the
+> unique index — delete the volume (`docker compose down -v`) or remove
+> the conflicting rows first
 
 ## docker
-`sudo systemctl start docker` start docker 
 
-*create container*
+```bash
+docker compose up -d                 # start (db + migrate + web)
+docker compose down                  # stop, keep data
+docker compose ps                    # running containers
+docker compose logs web -f           # follow app logs
+docker compose logs db -f            # follow MySQL logs
+docker compose run --rm web bash     # shell inside web container
+docker compose exec db mysql -u root -p   # MySQL client in db container
 ```
-docker run --name pw_calendar_db \
-  -e MYSQL_ROOT_PASSWORD=root \
-  -e MYSQL_DATABASE=calendar_db \
-  -p 3306:3306 \
-  -v pw_calendar_db:/var/lib/mysql \
-  -d mysql:8.0.29
-```
->data stored in: /var/lib/docker/volumes/
 
-`docker start pw_calendar_db` start existing container
-`docker stop pw_calendar_db` Stop the container
-`docker rm -v pw_calendar_db` remove the container
-`docker ps` View running containers
-`docker ps -a` View existing containers
-
-`docker exec -it my-mysql mysql -u root -p` Connect to MySQL inside the container
+MySQL data lives in named volume `pw_calendar_db` (persists across `down`).
 
 ## database
 
-connect to database using vscode extension
+browse from host — port `3306` is published
+
+VS Code extension: *Database Client* (`cweijan.vscode-mysql-client2`)
+
+*connection*
+- host: `localhost`
+- port: `3306`
+- user: `root`
+- password: `root`
+- database: `calendar_db`

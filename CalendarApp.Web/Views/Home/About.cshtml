@@ -1,0 +1,47 @@
+@{
+    ViewData["Title"] = "About";
+}
+
+<div class="about-page">
+    <h1 class="mb-3"><i class="bi bi-info-circle me-2"></i>About</h1>
+
+    <div class="about-card">
+        <h2>Calendar Web App</h2>
+        <p>
+            A web application for managing events and shared calendars. Users can create events,
+            invite other users as attendees, and track invitations through notifications.
+            Events are visible in a list or a monthly calendar view.
+        </p>
+    </div>
+
+    <div class="about-card">
+        <h2>Features</h2>
+        <ul class="mb-0">
+            <li>Event creation with validation, colors and status tracking</li>
+            <li>Monthly and list calendar views</li>
+            <li>User registration and authentication</li>
+            <li>Event invitations with accept / decline notifications</li>
+            <li>Admin area for user and event management</li>
+        </ul>
+    </div>
+
+    <div class="about-card">
+        <h2>Technology</h2>
+        <ul class="mb-0">
+            <li>ASP.NET Core 9.0 (MVC)</li>
+            <li>Entity Framework Core with MySQL</li>
+            <li>ASP.NET Core Identity for authentication</li>
+            <li>Bootstrap 5 + Bootstrap Icons</li>
+        </ul>
+    </div>
+
+    <div class="about-card">
+        <h2>Privacy</h2>
+        <p class="mb-0">
+            This app stores only what is needed to run it: your account details (name, email, password hash),
+            your events, attendees and notifications. No analytics, no third-party tracking, no data sharing.
+        </p>
+    </div>
+
+    <p class="text-muted small">&copy; @DateTime.Now.Year Calendar Web App</p>
+</div>

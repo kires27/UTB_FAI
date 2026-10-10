@@ -18,9 +18,7 @@ namespace CalendarApp.Application.Implementation
         {
             return await _calendarDbContext.Notifications
                 .Include(n => n.Event)
-                .Include(n => n.Event!.Owner)
                 .Include(n => n.Event!.EventAttendees)
-                    .ThenInclude(ea => ea.User)
                 .Where(n => n.UserId == userId)
                 .OrderByDescending(n => n.CreatedAt)
                 .ToListAsync();
@@ -57,6 +55,9 @@ namespace CalendarApp.Application.Implementation
             // Update EventAttendee status to Accepted
             var eventAttendee = await _calendarDbContext.EventAttendees
                 .FirstOrDefaultAsync(ea => ea.EventId == notification.EventId && ea.UserId == userId);
+
+            if (eventAttendee?.Status == AttendeeStatus.Declined)
+                return false;
 
             if (eventAttendee != null)
             {

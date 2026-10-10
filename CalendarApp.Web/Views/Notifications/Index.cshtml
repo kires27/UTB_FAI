@@ -79,7 +79,7 @@
                                     }
                                     @if (notification.Event != null)
                                     {
-                                        <a href="@Url.Action("Details", "Events", new { id = notification.Event.Id })" 
+                                        <a href="@Url.Action("Details", "Events", new { id = notification.Event.Id, returnView = "notifications" })" 
                                            class="btn btn-outline-primary btn-sm">
                                             <i class="bi bi-eye"></i>
                                         </a>

@@ -1,0 +1,83 @@
+@{
+    var currentController = ViewContext.RouteData.Values["controller"]?.ToString();
+    var currentAction = ViewContext.RouteData.Values["action"]?.ToString();
+    var currentArea = ViewContext.RouteData.Values["area"]?.ToString();
+    var currentView = currentController == "Events"
+        ? ViewContext.HttpContext.Request.Query["view"].ToString()
+        : "list";
+    if (string.IsNullOrEmpty(currentView)) currentView = "list";
+}
+
+<aside class="sidebar" id="sidebar">
+    <div class="sidebar-top">
+        <a class="sidebar-brand" asp-area="" asp-controller="Home" asp-action="Index" title="Calendar">
+            <i class="bi bi-calendar2-week"></i>
+            <span class="sidebar-label">Calendar</span>
+        </a>
+        <button type="button" class="sidebar-fold" id="sidebarFold" aria-label="Fold sidebar" title="Fold sidebar">
+            <i class="bi bi-chevron-left" id="sidebarFoldIcon"></i>
+        </button>
+    </div>
+
+    <nav class="sidebar-nav">
+        <div class="sidebar-section">Views</div>
+        <a class="sidebar-item @(currentController == "Events" && currentView == "list" ? "active" : "")"
+           href="/Events/Index?view=list" title="List view">
+            <i class="bi bi-list-ul"></i>
+            <span class="sidebar-label">List</span>
+        </a>
+        <a class="sidebar-item @(currentController == "Events" && currentView == "daily" ? "active" : "")"
+           href="/Events/Index?view=daily" title="Day view">
+            <i class="bi bi-calendar-day"></i>
+            <span class="sidebar-label">Day</span>
+        </a>
+        <a class="sidebar-item @(currentController == "Events" && currentView == "weekly" ? "active" : "")"
+           href="/Events/Index?view=weekly" title="Week view">
+            <i class="bi bi-calendar-week"></i>
+            <span class="sidebar-label">Week</span>
+        </a>
+        <a class="sidebar-item @(currentController == "Events" && currentView == "monthly" ? "active" : "")"
+           href="/Events/Index?view=monthly" title="Month view">
+            <i class="bi bi-calendar3"></i>
+            <span class="sidebar-label">Month</span>
+        </a>
+
+        <div class="sidebar-section">Others</div>
+        <a class="sidebar-item @(currentController == "Home" && currentAction == "About" ? "active" : "")"
+           asp-area="" asp-controller="Home" asp-action="About" title="About">
+            <i class="bi bi-info-circle"></i>
+            <span class="sidebar-label">About</span>
+        </a>
+        @if (User.IsInRole("Admin"))
+        {
+            <a class="sidebar-item @(currentArea == "Admin" ? "active" : "")"
+               asp-area="Admin" asp-controller="UserManagement" asp-action="Index" title="User Management">
+                <i class="bi bi-people"></i>
+                <span class="sidebar-label">User Management</span>
+            </a>
+        }
+    </nav>
+
+    <div class="sidebar-bottom">
+        <a class="sidebar-item" asp-area="" asp-controller="Notifications" asp-action="Index" title="Notifications">
+            <i class="bi bi-bell"></i>
+            <span class="sidebar-label">Notifications</span>
+            <span class="sidebar-badge d-none" id="sidebarUnread">0</span>
+        </a>
+        <div class="sidebar-item sidebar-user" title="@User.Identity?.Name">
+            <i class="bi bi-person-circle"></i>
+            <span class="sidebar-label">@(User.Identity?.Name)</span>
+        </div>
+        <button type="button" class="sidebar-item" id="themeToggle" title="Toggle theme">
+            <i class="bi bi-sun" id="themeIcon"></i>
+            <span class="sidebar-label">Theme</span>
+        </button>
+        <form asp-area="" asp-controller="Account" asp-action="Logout" method="post" class="sidebar-form">
+            <button type="submit" class="sidebar-item" title="Logout">
+                <i class="bi bi-box-arrow-right"></i>
+                <span class="sidebar-label">Logout</span>
+            </button>
+        </form>
+    </div>
+</aside>
+<div class="sidebar-backdrop" id="sidebarBackdrop"></div>

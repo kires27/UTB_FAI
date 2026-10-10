@@ -105,9 +105,9 @@ public required string RequiredField { get; set; }  // Required property
 ### Clean Architecture Principles
 - **Dependency Direction**: Web → Application → Infrastructure → Domain
 - **Domain Layer**: No external dependencies, pure business logic
-- **Application Layer**: Service interfaces and implementations
+- **Application Layer**: Service interfaces, implementations, and ViewModels (`CalendarApp.Application.Models`)
 - **Infrastructure Layer**: EF Core, external services
-- **Web Layer**: Controllers, views, models
+- **Web Layer**: Controllers, views, `ErrorViewModel`
 
 ### Dependency Injection Pattern
 ```csharp
@@ -365,6 +365,40 @@ UpdatedAt = DateTime.UtcNow;
 - **Authentication**: Uses ASP.NET Core Identity with cookie authentication
 - **Error Handling**: No centralized error handling - implement global exception filter
 - **Logging**: No structured logging - consider adding Serilog
+
+## Project Requirements
+
+Source: `README.md` (Czech, translated). Checked at the week 7 review and defense. Status reflects last known state; verify before claiming done.
+
+### General
+- [x] Design document: functional requirements plus entity/class/database design (Word document is acceptable; EA diagrams not required). Created: `docs/CalendarApp_Design_Document.docx` (not visually rendered; LibreOffice not installed).
+- [x] ASP.NET Core MVC 9.x or higher (alternatives: Spring MVC, Django MVC, Laravel — not used).
+- [x] MVC, multi-layer architecture, object-oriented programming.
+- [ ] No SQL code in the web project (stored procedure calls are the only exception). Verify.
+- [ ] Layers: Presentation, Application, Infrastructure, Domain (all present; verify boundaries).
+- [ ] All functionality created and used through services. Verify controllers have no lower-layer logic.
+- [x] Presentation must not use Infrastructure directly, except configuration. `AccountController` now uses `IAccountAppService` (Application). `Program.cs` is configuration (allowed). Verify: `_ViewImports.cshtml` imports `CalendarApp.Infrastructure.Identity`; check views don't use Identity types.
+- [x] Database via Code-First with migrations, EF Core.
+- [x] At least 5 entities and/or ViewModels/DTOs (EF Core and Identity entities and ErrorViewModel excluded). Entities (4): Event, EventAttendee, Notification, EventOccurrenceException. ViewModels/DTOs (10): UserCreateViewModel, UserListViewModel, EventCreateViewModel, EventEditViewModel, CalendarDayViewModel, AdminEventCreateViewModel, MonthlyCalendarViewModel, RegisterViewModel, LoginViewModel, UserWithRoleDto. Total 14.
+- [x] At least one foreign-key relationship.
+- [ ] Admin area (`CalendarApp.Web/Areas/Admin`) with management of all DB items, including edit. Verify coverage per entity.
+- [ ] Admin may manage user data but must not change password hashes. Deferred; currently unmet.
+- [ ] Server-side validation (priority) and client-side validation (preferred).
+- [x] At least one custom validation attribute written by us (`TextLengthRange`, `DateRange`; verify both are custom).
+- [x] Registration and login via ASP.NET Core Identity.
+- [x] At least 2 roles: Admin and User (customer). No Manager role by decision.
+- [x] Admin has full rights.
+- [ ] Customer sees only own data (own events). Verify all event and notification queries are scoped to the user.
+- [x] Responsive front end (Bootstrap 5).
+
+### Operations (from README, not graded)
+- Run via Docker Compose (`docker compose up -d`); migrator applies migrations on start.
+- Seeding is applied via EF Core `HasData` in `CalendarDbContext` (migration `SeedDataInDbContext`); runs on `docker compose up` via the migrator service.
+
+### References (from README)
+- https://www.tutorialsteacher.com/core/aspnet-core-application-project-structure
+- https://www.tutorialsteacher.com/core/aspnet-core-wwwroot
+- https://www.tutorialsteacher.com/core/aspnet-core-program
 
 ## When Making Changes
 

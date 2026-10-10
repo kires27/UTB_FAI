@@ -1,0 +1,55 @@
+services:
+  db:
+    image: mysql:8.0.29
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: calendar_db
+      TZ: Europe/Prague
+    ports:
+      - "3306:3306"                # kept open for the VS Code MySQL extension (README)
+    volumes:
+      - pw_calendar_db:/var/lib/mysql   # reuses/creates volume with that name — data survives
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-uroot", "-proot"]
+      start_period: 30s            # first-boot datadir init takes a while
+      retries: 10
+
+  migrator:
+    image: mcr.microsoft.com/dotnet/sdk:9.0
+    working_dir: /src
+    user: "1000:1000"              # your uid → no root-owned bin/obj in the repo
+    environment:
+      HOME: /tmp
+      NUGET_PACKAGES: /src/.docker/nuget
+      ConnectionStrings__MySQL: "server=db;database=calendar_db;user=root;password=root"
+    volumes:
+      - .:/src
+      - ./.docker/nuget:/src/.docker/nuget
+    depends_on:
+      db: { condition: service_healthy }
+    command: ["bash", "-c", "dotnet tool restore && dotnet tool run dotnet-ef database update --project CalendarApp.Infrastructure --startup-project CalendarApp.Web"]
+
+  web:
+    image: mcr.microsoft.com/dotnet/sdk:9.0
+    working_dir: /src
+    user: "1000:1000"
+    environment:
+      HOME: /tmp
+      ASPNETCORE_ENVIRONMENT: Development
+      ASPNETCORE_URLS: http://+:5292
+      TZ: Europe/Prague
+      NUGET_PACKAGES: /src/.docker/nuget
+      ConnectionStrings__MySQL: "server=db;database=calendar_db;user=root;password=root"
+    volumes:
+      - .:/src
+      - ./.docker/nuget:/src/.docker/nuget
+    ports:
+      - "5292:5292"
+    depends_on:
+      db: { condition: service_healthy }
+      migrator: { condition: service_completed_successfully }
+    command: dotnet watch run --project CalendarApp.Web --no-launch-profile
+
+volumes:
+  pw_calendar_db:
+    name: pw_calendar_db

@@ -2,6 +2,6 @@ using Microsoft.AspNetCore.Identity;
 
 namespace CalendarApp.Infrastructure.Identity;
 
-public class ApplicationRole : IdentityRole<int>
+public class Role : IdentityRole<int>
 {
 }

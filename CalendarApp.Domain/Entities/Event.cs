@@ -48,14 +48,13 @@ namespace CalendarApp.Domain.Entities
         public EventStatus Status { get; set; } = EventStatus.Confirmed;
 
     	[DatabaseGenerated(DatabaseGeneratedOption.Computed)]
-		public DateTime CreatedAt { get; protected set; }
+		public DateTime CreatedAt { get; set; }
 
         public DateTime UpdatedAt { get; set; }
 
         // Navigation properties
-        // [ForeignKey(nameof(OwnerId))]
-        // public virtual User Owner { get; set; } = null!;
         public virtual ICollection<EventAttendee> EventAttendees { get; set; } = new List<EventAttendee>();
+        public virtual ICollection<EventOccurrenceException> Exceptions { get; set; } = new List<EventOccurrenceException>();
         public virtual ICollection<Notification> Notifications { get; set; } = new List<Notification>();
 
     }

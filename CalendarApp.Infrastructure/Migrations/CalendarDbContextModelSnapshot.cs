@@ -87,6 +87,139 @@ namespace CalendarApp.Infrastructure.Migrations
                     b.HasIndex("OwnerId");
 
                     b.ToTable("Events");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = -1,
+                            AllDay = false,
+                            Color = "#007bff",
+                            CreatedAt = new DateTime(2025, 11, 30, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Description = "Quarterly business planning and strategy meeting",
+                            EndTime = new DateTime(2025, 12, 15, 11, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsRecurring = false,
+                            Location = "Conference Room A",
+                            OwnerId = -1,
+                            StartTime = new DateTime(2025, 12, 15, 9, 0, 0, 0, DateTimeKind.Unspecified),
+                            Status = 0,
+                            Title = "Q4 Planning Session",
+                            UpdatedAt = new DateTime(2025, 11, 30, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        },
+                        new
+                        {
+                            Id = -2,
+                            AllDay = false,
+                            Color = "#007bff",
+                            CreatedAt = new DateTime(2025, 12, 5, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Description = "Discuss project requirements and timeline",
+                            EndTime = new DateTime(2025, 12, 18, 12, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsRecurring = false,
+                            Location = "Virtual - Zoom",
+                            OwnerId = -1,
+                            StartTime = new DateTime(2025, 12, 18, 11, 0, 0, 0, DateTimeKind.Unspecified),
+                            Status = 0,
+                            Title = "Client Call - Project X",
+                            UpdatedAt = new DateTime(2025, 12, 5, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        },
+                        new
+                        {
+                            Id = -3,
+                            AllDay = false,
+                            Color = "#28a745",
+                            CreatedAt = new DateTime(2025, 11, 23, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Description = "Weekly grocery run",
+                            EndTime = new DateTime(2025, 12, 20, 15, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsRecurring = true,
+                            Location = "Supermarket",
+                            OwnerId = -2,
+                            RecurrenceRule = "FREQ=WEEKLY;BYDAY=SA",
+                            StartTime = new DateTime(2025, 12, 20, 14, 0, 0, 0, DateTimeKind.Unspecified),
+                            Status = 0,
+                            Title = "Grocery Shopping",
+                            UpdatedAt = new DateTime(2025, 11, 23, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        },
+                        new
+                        {
+                            Id = -4,
+                            AllDay = false,
+                            Color = "#6f42c1",
+                            CreatedAt = new DateTime(2025, 11, 27, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Description = "Regular dental checkup",
+                            EndTime = new DateTime(2025, 12, 17, 16, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsRecurring = false,
+                            Location = "Dental Clinic",
+                            OwnerId = -2,
+                            StartTime = new DateTime(2025, 12, 17, 15, 0, 0, 0, DateTimeKind.Unspecified),
+                            Status = 0,
+                            Title = "Dentist Appointment",
+                            UpdatedAt = new DateTime(2025, 11, 27, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        },
+                        new
+                        {
+                            Id = -5,
+                            AllDay = false,
+                            Color = "#dc3545",
+                            CreatedAt = new DateTime(2025, 11, 7, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Description = "Cardio and strength training",
+                            EndTime = new DateTime(2025, 12, 16, 7, 30, 0, 0, DateTimeKind.Unspecified),
+                            IsRecurring = true,
+                            Location = "Gym",
+                            OwnerId = -3,
+                            RecurrenceRule = "FREQ=WEEKLY;BYDAY=TU,TH",
+                            StartTime = new DateTime(2025, 12, 16, 6, 30, 0, 0, DateTimeKind.Unspecified),
+                            Status = 0,
+                            Title = "Morning Workout",
+                            UpdatedAt = new DateTime(2025, 11, 7, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        },
+                        new
+                        {
+                            Id = -6,
+                            AllDay = false,
+                            Color = "#ffc107",
+                            CreatedAt = new DateTime(2025, 12, 4, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Description = "Team happy hour after work",
+                            EndTime = new DateTime(2025, 12, 19, 22, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsRecurring = false,
+                            Location = "The Local Pub",
+                            OwnerId = -1,
+                            StartTime = new DateTime(2025, 12, 19, 19, 0, 0, 0, DateTimeKind.Unspecified),
+                            Status = 0,
+                            Title = "Friday Night Drinks",
+                            UpdatedAt = new DateTime(2025, 12, 4, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        },
+                        new
+                        {
+                            Id = -7,
+                            AllDay = false,
+                            Color = "#e83e8c",
+                            CreatedAt = new DateTime(2025, 12, 2, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Description = "Emma's 30th birthday celebration",
+                            EndTime = new DateTime(2025, 12, 20, 23, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsRecurring = false,
+                            Location = "Emma's House",
+                            OwnerId = -2,
+                            StartTime = new DateTime(2025, 12, 20, 18, 0, 0, 0, DateTimeKind.Unspecified),
+                            Status = 0,
+                            Title = "Birthday Party - Emma",
+                            UpdatedAt = new DateTime(2025, 12, 2, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        },
+                        new
+                        {
+                            Id = -8,
+                            AllDay = false,
+                            Color = "#fd7e14",
+                            CreatedAt = new DateTime(2025, 11, 22, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Description = "Monthly catch-up lunch",
+                            EndTime = new DateTime(2025, 12, 21, 14, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsRecurring = true,
+                            Location = "Favorite Restaurant",
+                            OwnerId = -3,
+                            RecurrenceRule = "FREQ=MONTHLY;BYMONTHDAY=15",
+                            StartTime = new DateTime(2025, 12, 21, 12, 30, 0, 0, DateTimeKind.Unspecified),
+                            Status = 0,
+                            Title = "Lunch with Mom",
+                            UpdatedAt = new DateTime(2025, 11, 22, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        });
                 });
 
             modelBuilder.Entity("CalendarApp.Domain.Entities.EventAttendee", b =>
@@ -117,6 +250,123 @@ namespace CalendarApp.Infrastructure.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("EventAttendees");
+
+                    b.HasData(
+                        new
+                        {
+                            EventId = -6,
+                            UserId = -2,
+                            CreatedAt = new DateTime(2025, 12, 5, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Role = 1,
+                            Status = 1,
+                            UpdatedAt = new DateTime(2025, 12, 5, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        },
+                        new
+                        {
+                            EventId = -6,
+                            UserId = -3,
+                            CreatedAt = new DateTime(2025, 12, 6, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Role = 1,
+                            Status = 3,
+                            UpdatedAt = new DateTime(2025, 12, 6, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        },
+                        new
+                        {
+                            EventId = -7,
+                            UserId = -1,
+                            CreatedAt = new DateTime(2025, 12, 3, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Role = 1,
+                            Status = 1,
+                            UpdatedAt = new DateTime(2025, 12, 3, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        },
+                        new
+                        {
+                            EventId = -5,
+                            UserId = -2,
+                            CreatedAt = new DateTime(2025, 11, 30, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Role = 1,
+                            Status = 0,
+                            UpdatedAt = new DateTime(2025, 11, 30, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        },
+                        new
+                        {
+                            EventId = -1,
+                            UserId = -1,
+                            CreatedAt = new DateTime(2025, 11, 30, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Role = 0,
+                            Status = 1,
+                            UpdatedAt = new DateTime(2025, 11, 30, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        },
+                        new
+                        {
+                            EventId = -3,
+                            UserId = -2,
+                            CreatedAt = new DateTime(2025, 11, 23, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Role = 0,
+                            Status = 1,
+                            UpdatedAt = new DateTime(2025, 11, 23, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        });
+                });
+
+            modelBuilder.Entity("CalendarApp.Domain.Entities.EventOccurrenceException", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<bool?>("AllDay")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<string>("Color")
+                        .HasMaxLength(7)
+                        .HasColumnType("varchar(7)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(2000)
+                        .HasColumnType("varchar(2000)");
+
+                    b.Property<DateTime?>("EndTime")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<bool>("IsCancelled")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<string>("Location")
+                        .HasMaxLength(255)
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<int>("MasterEventId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("OriginalDate")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<DateTime?>("ReminderTime")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<DateTime?>("StartTime")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<int?>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Title")
+                        .HasColumnType("longtext");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime(6)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("MasterEventId", "OriginalDate")
+                        .IsUnique();
+
+                    b.ToTable("EventOccurrenceExceptions");
                 });
 
             modelBuilder.Entity("CalendarApp.Domain.Entities.Notification", b =>
@@ -162,9 +412,82 @@ namespace CalendarApp.Infrastructure.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("Notifications");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = -1,
+                            CreatedAt = new DateTime(2025, 12, 5, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            EventId = -6,
+                            IsRead = true,
+                            Message = "Alex Johnson invited you to 'Friday Night Drinks'",
+                            NotifyAt = new DateTime(2025, 12, 4, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Type = 0,
+                            UpdatedAt = new DateTime(2025, 12, 5, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            UserId = -2
+                        },
+                        new
+                        {
+                            Id = -2,
+                            CreatedAt = new DateTime(2025, 12, 4, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            EventId = -6,
+                            IsRead = false,
+                            Message = "Alex Johnson invited you to 'Friday Night Drinks'",
+                            NotifyAt = new DateTime(2025, 12, 4, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Type = 0,
+                            UpdatedAt = new DateTime(2025, 12, 4, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            UserId = -3
+                        },
+                        new
+                        {
+                            Id = -3,
+                            CreatedAt = new DateTime(2025, 12, 3, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            EventId = -7,
+                            IsRead = true,
+                            Message = "Sarah Chen invited you to 'Birthday Party - Emma'",
+                            NotifyAt = new DateTime(2025, 12, 2, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Type = 0,
+                            UpdatedAt = new DateTime(2025, 12, 3, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            UserId = -1
+                        },
+                        new
+                        {
+                            Id = -4,
+                            CreatedAt = new DateTime(2025, 12, 13, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            EventId = -4,
+                            IsRead = false,
+                            Message = "Reminder: 'Dentist Appointment' tomorrow at 3:00 PM",
+                            NotifyAt = new DateTime(2025, 12, 14, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Type = 2,
+                            UpdatedAt = new DateTime(2025, 12, 13, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            UserId = -2
+                        },
+                        new
+                        {
+                            Id = -5,
+                            CreatedAt = new DateTime(2025, 12, 5, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            EventId = -2,
+                            IsRead = true,
+                            Message = "Event 'Client Call - Project X' has been confirmed",
+                            NotifyAt = new DateTime(2025, 12, 5, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Type = 1,
+                            UpdatedAt = new DateTime(2025, 12, 5, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            UserId = -1
+                        },
+                        new
+                        {
+                            Id = -6,
+                            CreatedAt = new DateTime(2025, 12, 15, 10, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsRead = false,
+                            Message = "Don't forget to bring your gym card for tomorrow's workout!",
+                            NotifyAt = new DateTime(2025, 12, 15, 10, 0, 0, 0, DateTimeKind.Unspecified),
+                            Type = 3,
+                            UpdatedAt = new DateTime(2025, 12, 15, 10, 0, 0, 0, DateTimeKind.Unspecified),
+                            UserId = -3
+                        });
                 });
 
-            modelBuilder.Entity("CalendarApp.Domain.Entities.Role", b =>
+            modelBuilder.Entity("CalendarApp.Infrastructure.Identity.Role", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -191,9 +514,25 @@ namespace CalendarApp.Infrastructure.Migrations
                         .HasDatabaseName("RoleNameIndex");
 
                     b.ToTable("AspNetRoles", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            ConcurrencyStamp = "439ed2ac-e661-4015-9964-e15b29afcdac",
+                            Name = "Admin",
+                            NormalizedName = "ADMIN"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            ConcurrencyStamp = "fd9ceb09-569e-47d5-b17a-c30ad8117f24",
+                            Name = "User",
+                            NormalizedName = "USER"
+                        });
                 });
 
-            modelBuilder.Entity("CalendarApp.Domain.Entities.User", b =>
+            modelBuilder.Entity("CalendarApp.Infrastructure.Identity.User", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -267,6 +606,80 @@ namespace CalendarApp.Infrastructure.Migrations
                         .HasDatabaseName("UserNameIndex");
 
                     b.ToTable("AspNetUsers", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = -1,
+                            AccessFailedCount = 0,
+                            ConcurrencyStamp = "ceec1c53-5dcc-4c96-bd72-51cfd20c3fe6",
+                            CreatedAt = new DateTime(2025, 11, 7, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Email = "admin@calendarapp.com",
+                            EmailConfirmed = true,
+                            LockoutEnabled = true,
+                            NormalizedEmail = "ADMIN@CALENDARAPP.COM",
+                            NormalizedUserName = "ADMIN",
+                            PasswordHash = "AQAAAAEAACcQAAAAEKOgH5peMUVS21nMyfE9tbpcPn6U31VL+vpcE3Y/wMAqvGY4JPaPsBV6MFZBx2KPQw==",
+                            PhoneNumberConfirmed = false,
+                            SecurityStamp = "c670b2c6-19b9-4603-9de7-6490e7b1b734",
+                            TwoFactorEnabled = false,
+                            UpdatedAt = new DateTime(2025, 11, 7, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            UserName = "admin"
+                        },
+                        new
+                        {
+                            Id = -2,
+                            AccessFailedCount = 0,
+                            ConcurrencyStamp = "309cf6b3-a538-47f8-acd7-740ee59362b6",
+                            CreatedAt = new DateTime(2025, 11, 7, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Email = "alex.johnson@email.com",
+                            EmailConfirmed = true,
+                            LockoutEnabled = true,
+                            NormalizedEmail = "ALEX.JOHNSON@EMAIL.COM",
+                            NormalizedUserName = "ALEXJOHNSON",
+                            PasswordHash = "AQAAAAEAACcQAAAAECGadj9TUQS2u76DLVVo/kkCqwpE1KhvYmrPbxvqQlST8uXxecrCduBUsoGbnC7vTQ==",
+                            PhoneNumberConfirmed = false,
+                            SecurityStamp = "d71c3ace-94d7-4576-9d7b-9c5aa98c5a7c",
+                            TwoFactorEnabled = false,
+                            UpdatedAt = new DateTime(2025, 11, 7, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            UserName = "alexjohnson"
+                        },
+                        new
+                        {
+                            Id = -3,
+                            AccessFailedCount = 0,
+                            ConcurrencyStamp = "48037745-2d59-43a2-b196-d384b9187764",
+                            CreatedAt = new DateTime(2025, 11, 12, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Email = "sarah.chen@email.com",
+                            EmailConfirmed = true,
+                            LockoutEnabled = true,
+                            NormalizedEmail = "SARAH.CHEN@EMAIL.COM",
+                            NormalizedUserName = "SARAHCHEN",
+                            PasswordHash = "AQAAAAEAACcQAAAAECGadj9TUQS2u76DLVVo/kkCqwpE1KhvYmrPbxvqQlST8uXxecrCduBUsoGbnC7vTQ==",
+                            PhoneNumberConfirmed = false,
+                            SecurityStamp = "5904b64c-0089-4b6f-a5cd-cd3fb2a4947b",
+                            TwoFactorEnabled = false,
+                            UpdatedAt = new DateTime(2025, 11, 12, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            UserName = "sarahchen"
+                        },
+                        new
+                        {
+                            Id = -4,
+                            AccessFailedCount = 0,
+                            ConcurrencyStamp = "8bb62e2b-1506-42fe-b72e-3dac0cd41c64",
+                            CreatedAt = new DateTime(2025, 11, 17, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Email = "mike.davis@email.com",
+                            EmailConfirmed = true,
+                            LockoutEnabled = true,
+                            NormalizedEmail = "MIKE.DAVIS@EMAIL.COM",
+                            NormalizedUserName = "MIKEDAVIS",
+                            PasswordHash = "AQAAAAEAACcQAAAAECGadj9TUQS2u76DLVVo/kkCqwpE1KhvYmrPbxvqQlST8uXxecrCduBUsoGbnC7vTQ==",
+                            PhoneNumberConfirmed = false,
+                            SecurityStamp = "0253c2be-83bf-4bde-a547-0ea099be7c10",
+                            TwoFactorEnabled = false,
+                            UpdatedAt = new DateTime(2025, 11, 17, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            UserName = "mikedavis"
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>
@@ -351,6 +764,28 @@ namespace CalendarApp.Infrastructure.Migrations
                     b.HasIndex("RoleId");
 
                     b.ToTable("AspNetUserRoles", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            UserId = -1,
+                            RoleId = 1
+                        },
+                        new
+                        {
+                            UserId = -2,
+                            RoleId = 2
+                        },
+                        new
+                        {
+                            UserId = -3,
+                            RoleId = 2
+                        },
+                        new
+                        {
+                            UserId = -4,
+                            RoleId = 2
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<int>", b =>
@@ -374,13 +809,11 @@ namespace CalendarApp.Infrastructure.Migrations
 
             modelBuilder.Entity("CalendarApp.Domain.Entities.Event", b =>
                 {
-                    b.HasOne("CalendarApp.Domain.Entities.User", "Owner")
-                        .WithMany("OwnedEvents")
+                    b.HasOne("CalendarApp.Infrastructure.Identity.User", null)
+                        .WithMany()
                         .HasForeignKey("OwnerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Owner");
                 });
 
             modelBuilder.Entity("CalendarApp.Domain.Entities.EventAttendee", b =>
@@ -391,15 +824,24 @@ namespace CalendarApp.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("CalendarApp.Domain.Entities.User", "User")
-                        .WithMany("EventAttendees")
+                    b.HasOne("CalendarApp.Infrastructure.Identity.User", null)
+                        .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Event");
+                });
 
-                    b.Navigation("User");
+            modelBuilder.Entity("CalendarApp.Domain.Entities.EventOccurrenceException", b =>
+                {
+                    b.HasOne("CalendarApp.Domain.Entities.Event", "MasterEvent")
+                        .WithMany("Exceptions")
+                        .HasForeignKey("MasterEventId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("MasterEvent");
                 });
 
             modelBuilder.Entity("CalendarApp.Domain.Entities.Notification", b =>
@@ -408,20 +850,18 @@ namespace CalendarApp.Infrastructure.Migrations
                         .WithMany("Notifications")
                         .HasForeignKey("EventId");
 
-                    b.HasOne("CalendarApp.Domain.Entities.User", "User")
-                        .WithMany("Notifications")
+                    b.HasOne("CalendarApp.Infrastructure.Identity.User", null)
+                        .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Event");
-
-                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>
                 {
-                    b.HasOne("CalendarApp.Domain.Entities.Role", null)
+                    b.HasOne("CalendarApp.Infrastructure.Identity.Role", null)
                         .WithMany()
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -430,7 +870,7 @@ namespace CalendarApp.Infrastructure.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<int>", b =>
                 {
-                    b.HasOne("CalendarApp.Domain.Entities.User", null)
+                    b.HasOne("CalendarApp.Infrastructure.Identity.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -439,7 +879,7 @@ namespace CalendarApp.Infrastructure.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<int>", b =>
                 {
-                    b.HasOne("CalendarApp.Domain.Entities.User", null)
+                    b.HasOne("CalendarApp.Infrastructure.Identity.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -448,13 +888,13 @@ namespace CalendarApp.Infrastructure.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<int>", b =>
                 {
-                    b.HasOne("CalendarApp.Domain.Entities.Role", null)
+                    b.HasOne("CalendarApp.Infrastructure.Identity.Role", null)
                         .WithMany()
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("CalendarApp.Domain.Entities.User", null)
+                    b.HasOne("CalendarApp.Infrastructure.Identity.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -463,7 +903,7 @@ namespace CalendarApp.Infrastructure.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<int>", b =>
                 {
-                    b.HasOne("CalendarApp.Domain.Entities.User", null)
+                    b.HasOne("CalendarApp.Infrastructure.Identity.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -474,16 +914,9 @@ namespace CalendarApp.Infrastructure.Migrations
                 {
                     b.Navigation("EventAttendees");
 
-                    b.Navigation("Notifications");
-                });
-
-            modelBuilder.Entity("CalendarApp.Domain.Entities.User", b =>
-                {
-                    b.Navigation("EventAttendees");
+                    b.Navigation("Exceptions");
 
                     b.Navigation("Notifications");
-
-                    b.Navigation("OwnedEvents");
                 });
 #pragma warning restore 612, 618
         }

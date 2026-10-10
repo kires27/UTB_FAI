@@ -1,5 +1,6 @@
 @model CalendarApp.Domain.Entities.Event
 @using CalendarApp.Domain.Entities
+@{ var users = (Dictionary<int, User>)ViewBag.Users; }
 @using System.Security.Claims
 @{
     ViewData["Title"] = "Event Details";
@@ -10,6 +11,15 @@
     {
         <div class="alert alert-success alert-dismissible fade show" role="alert">
             <i class="bi bi-check-circle me-2"></i>@TempData["Success"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    @if ((bool)(ViewBag.OccurrenceMissing ?? false))
+    {
+        <div class="alert alert-warning alert-dismissible fade show" role="alert">
+            <i class="bi bi-exclamation-triangle me-2"></i>
+            This date is not part of the series (deleted occurrence or outside the repeat range). Showing the series details instead.
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
     }
@@ -61,9 +71,9 @@
                     @if (Model.IsRecurring && !string.IsNullOrEmpty(Model.RecurrenceRule))
                     {
                         <div class="row mb-3">
-                            <div class="col-sm-3"><strong>Recurring:</strong></div>
+                            <div class="col-sm-3"><strong>Repeat:</strong></div>
                             <div class="col-sm-9">
-                                <span class="badge bg-warning text-dark">Yes (@Model.RecurrenceRule)</span>
+                                @(CalendarApp.Application.Helpers.RecurrenceExpander.Describe(Model) ?? "Custom")
                             </div>
                         </div>
                     }
@@ -104,24 +114,14 @@
                                 else
                                 {
                                     <text>
-                                        <strong>@Model.Owner?.UserName</strong>
+                                        <strong>@users.GetValueOrDefault(Model.OwnerId)?.UserName</strong>
                                         <br>
-                                        <small class="text-muted">@Model.Owner?.Email</small>
+                                        <small class="text-muted">@users.GetValueOrDefault(Model.OwnerId)?.Email</small>
                                     </text>
                                 }
                             </div>
                         </div>
                     }
-
-                    <div class="row mb-3">
-                        <div class="col-sm-3"><strong>Created:</strong></div>
-                        <div class="col-sm-9">@Model.CreatedAt.ToString("f")</div>
-                    </div>
-
-                    <div class="row mb-3">
-                        <div class="col-sm-3"><strong>Updated:</strong></div>
-                        <div class="col-sm-9">@Model.UpdatedAt.ToString("f")</div>
-                    </div>
                 </div>
             </div>
         </div>
@@ -130,20 +130,20 @@
             <div class="card border-primary">
                 <div class="card-header bg-primary text-white">
                     <h5 class="mb-0">
-                        <i class="bi bi-people me-2"></i>Attendees (@(Model.EventAttendees?.Count ?? 0))
+                        <i class="bi bi-people me-2"></i>Attendees (@(Model.EventAttendees?.Count(a => a.Role != AttendeeRole.Owner) ?? 0))
                     </h5>
                 </div>
                 <div class="card-body">
-                    @if (Model.EventAttendees?.Any() == true)
+                    @if (Model.EventAttendees?.Any(a => a.Role != AttendeeRole.Owner) == true)
                     {
                         <ul class="list-group list-group-flush">
-                            @foreach (var attendee in Model.EventAttendees)
+                            @foreach (var attendee in Model.EventAttendees.Where(a => a.Role != AttendeeRole.Owner))
                             {
                                 <li class="list-group-item d-flex justify-content-between align-items-center">
                                     <div>
-                                        <strong>@attendee.User.UserName</strong>
+                                        <strong>@users.GetValueOrDefault(attendee.UserId)?.UserName</strong>
                                         <br>
-                                        <small class="text-muted">@attendee.User.Email</small>
+                                        <small class="text-muted">@users.GetValueOrDefault(attendee.UserId)?.Email</small>
                                     </div>
                                     <div>
                                         <span class="badge bg-@(attendee.Status == AttendeeStatus.Accepted ? "success" : 
@@ -174,21 +174,58 @@
                     </h5>
                 </div>
                 <div class="card-body">
-                    <a href="@Url.Action("Index", "Events")" class="btn btn-secondary me-2">
+                    @if ((string?)ViewBag.ReturnView == "notifications")
+                    {
+                        <a href="@Url.Action("Index", "Notifications")" class="btn btn-secondary me-2">
+                            <i class="bi bi-arrow-left me-1"></i>Back to Notifications
+                        </a>
+                    }
+                    else
+                    {
+                    <a href="@Url.Action("Index", "Events", new { view = (string?)ViewBag.ReturnView ?? "list", date = ((DateTime?)ViewBag.ReturnDate)?.ToString("yyyy-MM-dd") })" class="btn btn-secondary me-2">
                         <i class="bi bi-arrow-left me-1"></i>Back to Events
                     </a>
+                    }
                     @if (User.IsInRole("Admin") || Model.OwnerId == int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!))
                     {
-                        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary me-2">
-                            <i class="bi bi-pencil me-1"></i>Edit Event
-                        </a>
-                        <form asp-action="Delete" asp-route-id="@Model.Id" method="post" 
-                              onsubmit="return confirm('Are you sure you want to delete this event?');" 
-                              style="display: inline;">
-                            <button type="submit" class="btn btn-danger">
-                                <i class="bi bi-trash me-1"></i>Delete Event
+                        @if (Model.IsRecurring && (bool)(ViewBag.IsOccurrence ?? false))
+                        {
+                            <div class="btn-group me-2">
+                                <button type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <i class="bi bi-pencil me-1"></i>Edit Event
+                                </button>
+                                <ul class="dropdown-menu">
+                                    <li>
+                                        <a class="dropdown-item" asp-action="Edit" asp-route-id="@Model.Id"
+                                           asp-route-occurrenceDate="@Model.StartTime.ToString("yyyy-MM-dd")" asp-route-scope="this">Edit only this occurrence</a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item" asp-action="Edit" asp-route-id="@Model.Id"
+                                           asp-route-occurrenceDate="@Model.StartTime.ToString("yyyy-MM-dd")" asp-route-scope="all">Edit all occurrences</a>
+                                    </li>
+                                </ul>
+                            </div>
+                        }
+                        else
+                        {
+                            <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary me-2">
+                                <i class="bi bi-pencil me-1"></i>Edit Event
+                            </a>
+                        }
+                    }
+                    @if ((bool)(ViewBag.CanDecline ?? false))
+                    {
+                        <form asp-action="Decline" asp-route-id="@Model.Id" asp-route-returnView="@((string?)ViewBag.ReturnView ?? "list")"
+                              asp-route-returnDate="@((DateTime?)ViewBag.ReturnDate)?.ToString("yyyy-MM-dd")" method="post" class="d-inline"
+                              onsubmit="return confirm('Decline this event? This cannot be undone.');">
+                            <button type="submit" class="btn btn-outline-danger">
+                                <i class="bi bi-x-circle me-1"></i>Decline
                             </button>
                         </form>
+                    }
+                    @if ((bool)(ViewBag.IsDeclined ?? false))
+                    {
+                        <span class="text-danger ms-2"><i class="bi bi-x-circle-fill"></i> You declined this event</span>
                     }
                 </div>
             </div>

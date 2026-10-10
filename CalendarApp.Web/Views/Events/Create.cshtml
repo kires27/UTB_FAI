@@ -1,6 +1,17 @@
-@model CalendarApp.Web.Models.EventCreateViewModel
+@model CalendarApp.Application.Models.EventCreateViewModel
+@using System.Security.Claims
 @{
     ViewData["Title"] = "Create Event";
+
+    // Return context (the calendar view the user came from)
+    var returnView = Model.ReturnView ?? "list";
+    var returnDate = (Model.ReturnDate ?? Model.StartTime).ToString("yyyy-MM-dd");
+    var cancelUrl = returnView == "list"
+        ? Url.Action("Index", "Events")
+        : Url.Action("Index", "Events", new { view = returnView, date = returnDate });
+
+    // Current user id — must never be invitable (you cannot invite yourself)
+    var currentUserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "0";
 }
 
 <div class="container-fluid">
@@ -12,9 +23,9 @@
         </div>
     }
 
-    <div class="row">
-        <div class="col-lg-6">
-            <div class="card shadow-sm">
+    <div class="row justify-content-center">
+        <div class="col-12 col-xl-10">
+            <div class="card shadow-sm event-form">
                 <div class="card-header bg-primary text-white">
                     <h4 class="mb-0">
                         <i class="bi bi-plus-circle me-2"></i>Create New Event
@@ -23,117 +34,173 @@
                 <div class="card-body">
                     <form asp-action="Create">
                         <div asp-validation-summary="All" class="text-danger"></div>
-                        
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-group mb-3">
-                                    <label asp-for="Title" class="control-label"></label>
-                                    <input asp-for="Title" class="form-control" />
-                                    <span asp-validation-for="Title" class="text-danger"></span>
-                                </div>
+                        <input type="hidden" asp-for="ReturnView" />
+                        <input type="hidden" asp-for="ReturnDate" />
+
+                        <div class="ef-row">
+                            <label asp-for="Title" class="ef-label"></label>
+                            <div class="ef-control">
+                                <input asp-for="Title" class="form-control" autofocus />
+                                <span asp-validation-for="Title" class="text-danger"></span>
                             </div>
-                            <div class="col-md-6">
-                                <div class="form-group mb-3">
-                                    <label asp-for="Location" class="control-label"></label>
-                                    <input asp-for="Location" class="form-control" />
-                                    <span asp-validation-for="Location" class="text-danger"></span>
+                        </div>
+
+                        <div class="ef-row">
+                            <label asp-for="Location" class="ef-label"></label>
+                            <div class="ef-control">
+                                <input asp-for="Location" class="form-control" />
+                                <span asp-validation-for="Location" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="ef-row">
+                            <label asp-for="Color" class="ef-label"></label>
+                            <div class="ef-control">
+                                <div class="d-flex align-items-center gap-2 flex-wrap" id="colorSwatches">
+                                    <button type="button" class="color-swatch" data-color="#00f0ff" style="background:#00f0ff" title="Cyan"></button>
+                                    <button type="button" class="color-swatch" data-color="#39ff14" style="background:#39ff14" title="Green"></button>
+                                    <button type="button" class="color-swatch" data-color="#ff2ec4" style="background:#ff2ec4" title="Magenta"></button>
+                                    <button type="button" class="color-swatch" data-color="#ffe600" style="background:#ffe600" title="Yellow"></button>
+                                    <button type="button" class="color-swatch" data-color="#ff9f43" style="background:#ff9f43" title="Orange"></button>
+                                    <button type="button" class="color-swatch" data-color="#3788d8" style="background:#3788d8" title="Blue"></button>
+                                    <label class="color-swatch-custom" for="colorCustom" title="Custom color">
+                                        <input type="color" id="colorCustom" value="@(Model.Color ?? "#3788d8")" />
+                                        <i class="bi bi-eyedropper"></i>
+                                    </label>
+                                    <input type="hidden" asp-for="Color" />
+                                </div>
+                                <span asp-validation-for="Color" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="ef-row">
+                            <span class="ef-label"></span>
+                            <div class="ef-control">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" asp-for="AllDay">
+                                    <label class="form-check-label" for="AllDay">All day</label>
                                 </div>
                             </div>
                         </div>
 
-                        <div class="form-group mb-3">
-                            <label asp-for="Description" class="control-label"></label>
-                            <textarea asp-for="Description" class="form-control" rows="3"></textarea>
-                            <span asp-validation-for="Description" class="text-danger"></span>
-                        </div>
-
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-group mb-3">
-                                    <label asp-for="StartTime" class="control-label"></label>
-                                    <input asp-for="StartTime" class="form-control" type="datetime-local" />
-                                    <span asp-validation-for="StartTime" class="text-danger"></span>
+                        <div class="ef-row">
+                            <label class="ef-label" for="startDate">Start</label>
+                            <div class="ef-control">
+                                <div class="ef-when">
+                                    <input type="date" id="startDate" class="form-control" />
+                                    <input type="time" id="startTime" class="form-control" />
+                                    <input type="hidden" asp-for="StartTime" />
                                 </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group mb-3">
-                                    <label asp-for="EndTime" class="control-label"></label>
-                                    <input asp-for="EndTime" class="form-control" type="datetime-local" />
-                                    <span asp-validation-for="EndTime" class="text-danger"></span>
-                                </div>
+                                <span asp-validation-for="StartTime" class="text-danger"></span>
                             </div>
                         </div>
 
-                        <div class="row">
-                            <div class="col-md-4">
-                                <div class="form-group mb-3">
-                                    <label asp-for="Status" class="control-label"></label>
-                                    <select asp-for="Status" class="form-control">
+                        <div class="ef-row">
+                            <label class="ef-label" for="endDate">End</label>
+                            <div class="ef-control">
+                                <div class="ef-when">
+                                    <input type="date" id="endDate" class="form-control" />
+                                    <input type="time" id="endTime" class="form-control" />
+                                    <input type="hidden" asp-for="EndTime" />
+                                </div>
+                                <span asp-validation-for="EndTime" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="ef-row">
+                            <label class="ef-label" for="repeatFreq">Repeat</label>
+                            <div class="ef-control">
+                                <div class="ef-when">
+                                    <select id="repeatFreq" class="form-select">
+                                        <option value="">Does not repeat</option>
+                                        <option value="DAILY">Daily</option>
+                                        <option value="WEEKLY">Weekly</option>
+                                        <option value="MONTHLY">Monthly</option>
+                                        <option value="YEARLY">Yearly</option>
+                                    </select>
+                                    <span class="text-muted small align-self-center d-none" id="untilLabel">until</span>
+                                    <input type="date" id="repeatUntil" class="form-control d-none" title="Repeat until" />
+                                </div>
+                                <div class="chip-row d-none" id="intervalRow">
+                                    <span class="text-muted small align-self-center">every</span>
+                                    <input type="number" id="repeatInterval" class="form-control ef-num" min="1" max="999" value="1" />
+                                    <span class="text-muted small align-self-center" id="unitLabel">days</span>
+                                    <span class="text-muted small align-self-center d-none" id="monthlyNote">on day <span id="monthlyDay"></span></span>
+                                </div>
+                                <div class="chip-row d-none" id="weeklyChips">
+                                    <span class="text-muted small align-self-center">on</span>
+                                    <button type="button" class="chip-toggle" data-day="MO">Mon</button>
+                                    <button type="button" class="chip-toggle" data-day="TU">Tue</button>
+                                    <button type="button" class="chip-toggle" data-day="WE">Wed</button>
+                                    <button type="button" class="chip-toggle" data-day="TH">Thu</button>
+                                    <button type="button" class="chip-toggle" data-day="FR">Fri</button>
+                                    <button type="button" class="chip-toggle" data-day="SA">Sat</button>
+                                    <button type="button" class="chip-toggle" data-day="SU">Sun</button>
+                                </div>
+                                <span asp-validation-for="RecurrenceRule" class="text-danger"></span>
+                                <input type="hidden" asp-for="RecurrenceRule" />
+                                <input type="hidden" asp-for="IsRecurring" />
+                            </div>
+                        </div>
+
+                        <div class="ef-row">
+                            <label class="ef-label" for="reminderPreset">Reminder</label>
+                            <div class="ef-control">
+                                <div class="ef-when">
+                                    <select id="reminderPreset" class="form-select">
+                                        <option value="">No reminder</option>
+                                        <option value="0">At time of event</option>
+                                        <option value="5">5 minutes before</option>
+                                        <option value="15">15 minutes before</option>
+                                        <option value="30">30 minutes before</option>
+                                        <option value="60">1 hour before</option>
+                                        <option value="1440">1 day before</option>
+                                        <option value="custom">Custom</option>
+                                    </select>
+                                    <input type="datetime-local" id="reminderCustom" class="form-control d-none" />
+                                </div>
+                                <span asp-validation-for="ReminderTime" class="text-danger"></span>
+                                <input type="hidden" asp-for="ReminderTime" />
+                            </div>
+                        </div>
+
+                        <div class="ef-row">
+                            <label class="ef-label" asp-for="Status"></label>
+                            <div class="ef-control">
+                                <div class="ef-when">
+                                    <select asp-for="Status" class="form-select">
                                         <option value="0">Confirmed</option>
                                         <option value="1">Tentative</option>
                                         <option value="2">Cancelled</option>
                                     </select>
-                                    <span asp-validation-for="Status" class="text-danger"></span>
                                 </div>
-                            </div>
-                            <div class="col-md-4">
-                                <div class="form-group mb-3">
-                                    <label asp-for="Color" class="control-label"></label>
-                                    <input asp-for="Color" class="form-control" type="color" />
-                                    <span asp-validation-for="Color" class="text-danger"></span>
-                                </div>
-                            </div>
-                            <div class="col-md-4">
-                                <div class="form-group mb-3">
-                                    <label asp-for="ReminderTime" class="control-label"></label>
-                                    <input asp-for="ReminderTime" class="form-control" type="datetime-local" />
-                                    <span asp-validation-for="ReminderTime" class="text-danger"></span>
-                                </div>
+                                <span asp-validation-for="Status" class="text-danger"></span>
                             </div>
                         </div>
 
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-check mb-3">
-                                    <input class="form-check-input" asp-for="AllDay">
-                                    <label class="form-check-label" asp-for="AllDay"></label>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-check mb-3">
-                                    <input class="form-check-input" asp-for="IsRecurring">
-                                    <label class="form-check-label" asp-for="IsRecurring"></label>
-                                </div>
+                        <div class="ef-row">
+                            <label asp-for="Description" class="ef-label"></label>
+                            <div class="ef-control">
+                                <textarea asp-for="Description" class="form-control" rows="2"></textarea>
+                                <span asp-validation-for="Description" class="text-danger"></span>
                             </div>
                         </div>
 
-                        <div id="recurringFields" class="row" style="display: none;">
-                            <div class="col-md-6">
-                                <div class="form-group mb-3">
-                                    <label asp-for="RecurrenceRule" class="control-label"></label>
-                                    <input asp-for="RecurrenceRule" class="form-control" placeholder="e.g., FREQ=WEEKLY;BYDAY=MO" />
-                                    <span asp-validation-for="RecurrenceRule" class="text-danger"></span>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group mb-3">
-                                    <label asp-for="RecurrenceEnd" class="control-label"></label>
-                                    <input asp-for="RecurrenceEnd" class="form-control" type="datetime-local" />
-                                    <span asp-validation-for="RecurrenceEnd" class="text-danger"></span>
-                                </div>
+                        <div class="ef-row">
+                            <label class="ef-label" for="inviteSearch">Invite</label>
+                            <div class="ef-control position-relative">
+                                <input type="text" id="inviteSearch" class="form-control" autocomplete="off"
+                                       placeholder="Type at least 3 characters to search users" />
+                                <div id="inviteResults" class="list-group invite-results"></div>
+                                <div id="inviteChips" class="mt-2 d-flex flex-wrap gap-2"></div>
+                                <span asp-validation-for="InviteEmails" class="text-danger"></span>
+                                <input type="hidden" asp-for="InviteEmails" />
                             </div>
                         </div>
 
-                        <div class="form-group mb-3">
-                            <label asp-for="InviteEmails" class="control-label"></label>
-                            <textarea asp-for="InviteEmails" class="form-control" rows="2" placeholder="Enter email addresses separated by commas"></textarea>
-                            <span asp-validation-for="InviteEmails" class="text-danger"></span>
-                            <small class="form-text text-muted">Enter email addresses of users to invite to this event</small>
-                        </div>
-
-                        <div class="form-group">
+                        <div class="d-flex gap-2 mt-3">
                             <input type="submit" value="Create Event" class="btn btn-primary" />
-                            <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+                            <a href="@cancelUrl" class="btn btn-secondary">Cancel</a>
                         </div>
                     </form>
                 </div>
@@ -144,16 +211,10 @@
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const isRecurringCheckbox = document.querySelector('input[name="IsRecurring"]');
-            const recurringFields = document.getElementById('recurringFields');
-            
-            if (isRecurringCheckbox && recurringFields) {
-                isRecurringCheckbox.addEventListener('change', function() {
-                    recurringFields.style.display = this.checked ? 'block' : 'none';
-                });
-            }
-        });
-    </script>
+    <script src="~/js/event-form.js" asp-append-version="true"></script>
 }
+
+@* Data consumed by event-form.js (not executed) *@
+<script type="application/json" id="editData">
+{ "attendeeEmails": [], "attendeeIds": [], "excludedIds": [@currentUserId] }
+</script>
