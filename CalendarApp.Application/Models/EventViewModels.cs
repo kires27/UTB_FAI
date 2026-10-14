@@ -1,13 +1,13 @@
 using System.ComponentModel.DataAnnotations;
 using CalendarApp.Domain.Entities;
-using CalendarApp.Domain.Validations;
 using CalendarApp.Application.Abstraction;
+using CalendarApp.Application.Validations;
 
 namespace CalendarApp.Application.Models
 {
     public class EventCreateViewModel
     {
-        [Required, StringLength(255)]
+        [Required, TextLengthRange(3, 255)]
         public string Title { get; set; } = string.Empty;
 
         [StringLength(2000)]
@@ -26,19 +26,21 @@ namespace CalendarApp.Application.Models
 
         public bool IsRecurring { get; set; } = false;
 
-        [StringLength(255)]
+        [RequiredIf("IsRecurring", true), StringLength(255)]
         public string? RecurrenceRule { get; set; }
 
+        [DateNotBefore("StartTime")]
         public DateTime? RecurrenceEnd { get; set; }
 
         public DateTime? ReminderTime { get; set; }
 
+        [RegularExpression("^#([0-9A-Fa-f]{6}|[0-9A-Fa-f]{3})$", ErrorMessage = "Color must be a valid hex color (e.g. #3788d8).")]
         [StringLength(7)]
         public string? Color { get; set; } = "#3788d8";
 
         public EventStatus Status { get; set; } = EventStatus.Confirmed;
 
-        [StringLength(1000)]
+        [StringLength(1000), EmailList]
         public string? InviteEmails { get; set; } = null;
 
         // Where to return after creation (calendar view context)
@@ -51,7 +53,7 @@ namespace CalendarApp.Application.Models
         [Required]
         public int Id { get; set; }
 
-        [Required, StringLength(255)]
+        [Required, TextLengthRange(3, 255)]
         public string Title { get; set; } = string.Empty;
 
         [StringLength(2000)]
@@ -70,9 +72,10 @@ namespace CalendarApp.Application.Models
 
         public bool IsRecurring { get; set; } = false;
 
-        [StringLength(255)]
+        [RequiredIf("IsRecurring", true), StringLength(255)]
         public string? RecurrenceRule { get; set; }
 
+        [DateNotBefore("StartTime")]
         public DateTime? RecurrenceEnd { get; set; }
 
         [Required]
@@ -80,12 +83,13 @@ namespace CalendarApp.Application.Models
 
         public DateTime? ReminderTime { get; set; }
 
+        [RegularExpression("^#([0-9A-Fa-f]{6}|[0-9A-Fa-f]{3})$", ErrorMessage = "Color must be a valid hex color (e.g. #3788d8).")]
         [StringLength(7)]
         public string? Color { get; set; }
 
         public EventStatus Status { get; set; } = EventStatus.Confirmed;
 
-        [StringLength(1000)]
+        [StringLength(1000), EmailList]
         public string? InviteEmails { get; set; } = null;
 
         public List<int> RemoveAttendeeIds { get; set; } = new List<int>();
@@ -113,13 +117,8 @@ namespace CalendarApp.Application.Models
         [Required]
         [Display(Name = "Event Owner")]
         public int OwnerId { get; set; }
-        
-        [Display(Name = "Additional Attendees")]
-        public List<int> AttendeeIds { get; set; } = new List<int>();
-        
+
         public IList<UserWithRoleDto> AllUsers { get; set; } = new List<UserWithRoleDto>();
-        public IList<UserWithRoleDto> FilteredUsers { get; set; } = new List<UserWithRoleDto>();
-        public string? SearchTerm { get; set; }
     }
 
     public class MonthlyCalendarViewModel
@@ -128,5 +127,9 @@ namespace CalendarApp.Application.Models
         public DateTime DisplayMonth { get; set; }
         public List<CalendarDayViewModel> Days { get; set; } = new List<CalendarDayViewModel>();
         public string CurrentView { get; set; } = "list";
+
+        // Used by the time-grid view to enable drag & drop only for events the
+        // current user owns (the server enforces this again on move).
+        public int CurrentUserId { get; set; }
     }
 }

@@ -23,6 +23,15 @@ namespace CalendarApp.Application.Implementation
                 .ToList();
         }
 
+        public IList<Event> SelectByOwner(int ownerId)
+        {
+            return _calendarDbContext.Events
+                .Include(e => e.EventAttendees)
+                .Include(e => e.Exceptions)
+                .Where(e => e.OwnerId == ownerId)
+                .ToList();
+        }
+
         public Event? GetById(int id)
         {
             return _calendarDbContext.Events
@@ -65,8 +74,73 @@ namespace CalendarApp.Application.Implementation
             _calendarDbContext.SaveChanges();
         }
 
+        /// <summary>
+        /// Moves an event to a new start/end (drag & drop in the week view).
+        /// Non-recurring events are updated directly; for recurring events only the
+        /// single occurrence identified by <paramref name="occurrenceDate"/> is moved
+        /// via an exception row (all other occurrences keep their original schedule).
+        /// Returns false when the event (or the occurrence slot) does not exist.
+        /// </summary>
+        public bool MoveOccurrence(int eventId, DateTime? occurrenceDate, DateTime newStart, DateTime newEnd, bool allDay)
+        {
+            var @event = _calendarDbContext.Events.FirstOrDefault(e => e.Id == eventId);
+            if (@event == null)
+            {
+                return false;
+            }
+
+            // Business backstop: end must not be before start; only non-all-day
+            // events may start and end at the exact same instant (zero-length).
+            if (newEnd < newStart || (!allDay && newEnd == newStart))
+            {
+                throw new ArgumentException("End time must be after start time.");
+            }
+
+            if (@event.IsRecurring)
+            {
+                if (!occurrenceDate.HasValue)
+                {
+                    return false;
+                }
+
+                // Preserve text/color overrides a previous per-occurrence edit may
+                // have stored — a drag only changes the schedule fields.
+                var existing = GetOccurrenceException(eventId, occurrenceDate.Value.Date);
+
+                UpsertOccurrenceException(new EventOccurrenceException
+                {
+                    MasterEventId = eventId,
+                    OriginalDate = occurrenceDate.Value.Date,
+                    IsCancelled = false,
+                    Title = existing?.Title,
+                    Description = existing?.Description,
+                    StartTime = newStart,
+                    EndTime = newEnd,
+                    AllDay = allDay,
+                    Location = existing?.Location,
+                    ReminderTime = existing?.ReminderTime,
+                    Color = existing?.Color,
+                    Status = existing?.Status,
+                    CreatedAt = existing?.CreatedAt ?? DateTime.Now,
+                    UpdatedAt = DateTime.Now
+                });
+            }
+            else
+            {
+                @event.StartTime = newStart;
+                @event.EndTime = newEnd;
+                @event.AllDay = allDay;
+                @event.UpdatedAt = DateTime.UtcNow;
+                _calendarDbContext.SaveChanges();
+            }
+
+            return true;
+        }
+
         public void Create(Event @event)
         {
+            ValidateEventBusinessRules(@event);
+
             _calendarDbContext.Events.Add(@event);
             _calendarDbContext.SaveChanges();
 
@@ -104,6 +178,8 @@ namespace CalendarApp.Application.Implementation
 
         public void Update(Event @event)
         {
+            ValidateEventBusinessRules(@event);
+
             var existingEvent = _calendarDbContext.Events.Find(@event.Id);
             if (existingEvent != null)
             {
@@ -123,6 +199,26 @@ namespace CalendarApp.Application.Implementation
                 existingEvent.UpdatedAt = DateTime.UtcNow;
                 
                 _calendarDbContext.SaveChanges();
+            }
+        }
+
+        /// <summary>
+        /// Business-level backstop for event time rules, behind the ViewModel validation.
+        /// Throws ArgumentException so callers (controllers) can surface a model error.
+        /// </summary>
+        private static void ValidateEventBusinessRules(Event @event)
+        {
+            // End must not be before start; only non-all-day events may start and end at the
+            // exact same instant (zero-length).
+            if (@event.EndTime < @event.StartTime || (!@event.AllDay && @event.EndTime == @event.StartTime))
+            {
+                throw new ArgumentException("End time must be after start time for a non-all-day event.");
+            }
+
+            // Recurrence may not end before the day the series starts.
+            if (@event.RecurrenceEnd.HasValue && @event.RecurrenceEnd.Value < @event.StartTime.Date)
+            {
+                throw new ArgumentException("Recurrence end cannot be before the event start.");
             }
         }
 

@@ -4,6 +4,14 @@ namespace CalendarApp.Domain.Validations
 {
     public class DateRangeAttribute : ValidationAttribute
     {
+        public const string StartTimePropertyName = "StartTime";
+        public const string EndTimePropertyName = "EndTime";
+
+        public DateRangeAttribute()
+        {
+            ErrorMessage = "Start time cannot be later than end time.";
+        }
+
         protected override ValidationResult? IsValid(object? value, ValidationContext validationContext)
         {
             if (value == null || validationContext.ObjectInstance == null)
@@ -11,8 +19,8 @@ namespace CalendarApp.Domain.Validations
 
             var instance = validationContext.ObjectInstance;
             
-            var startTimeProperty = instance.GetType().GetProperty("StartTime");
-            var endTimeProperty = instance.GetType().GetProperty("EndTime");
+            var startTimeProperty = instance.GetType().GetProperty(StartTimePropertyName);
+            var endTimeProperty = instance.GetType().GetProperty(EndTimePropertyName);
             
             if (startTimeProperty == null || endTimeProperty == null)
                 return ValidationResult.Success;
@@ -24,7 +32,7 @@ namespace CalendarApp.Domain.Validations
             {
                 if (startTime.Value > endTime.Value)
                 {
-                    return new ValidationResult("Start time cannot be later than end time.");
+                    return new ValidationResult(ErrorMessage);
                 }
             }
 

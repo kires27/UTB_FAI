@@ -6,6 +6,7 @@ namespace CalendarApp.Application.Abstraction
     public interface IEventAppService
     {
         IList<Event> SelectAll();
+        IList<Event> SelectByOwner(int ownerId);
         Event? GetById(int id);
         void Create(Event @event);
         bool Delete(int id);
@@ -18,5 +19,6 @@ namespace CalendarApp.Application.Abstraction
         Task<bool> DeclineEventAsync(int eventId, int userId);
         EventOccurrenceException? GetOccurrenceException(int masterEventId, DateTime originalDate);
         void UpsertOccurrenceException(EventOccurrenceException exception);
+        bool MoveOccurrence(int eventId, DateTime? occurrenceDate, DateTime newStart, DateTime newEnd, bool allDay);
     }
 }

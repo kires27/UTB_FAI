@@ -23,11 +23,10 @@
 - [x] change default styling
 - [x] events from monthly view wont return user to list view
 - [x] change the frequency ui
-- [ ] admin will be able to edit invited users on existing events
-- [ ] calendar week view: event can be moved even between lanes to change it date and time. this always applies only for 1 occurrence
-- [ ] proper client and server validation
-- [ ] restructure project
-	- [ ] use vue for frontend
-	- [ ] add correct project structure and requirements into agents.md
-	- [ ] responsive design
-	
+- [x] calendar week view: event can be moved even between lanes to change it date and time. this always applies only for 1 occurrence
+- [x] proper client and server validation
+- [x] add correct project structure and requirements into agents.md
+- [x] responsive design
+- [x] send document for design draft 
+- [x] admin will be able to edit invited users on existing events
+

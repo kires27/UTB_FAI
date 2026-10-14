@@ -1,0 +1,21 @@
+using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
+
+namespace CalendarApp.Application.Validations
+{
+    /// <summary>
+    /// Client-validatable variant of <see cref="Domain.Validations.DateRangeAttribute"/>.
+    /// Server logic stays in the Domain attribute (single source of truth); this class only
+    /// emits the unobtrusive data-* attributes consumed by custom-validators.js.
+    /// </summary>
+    public class DateRangeAttribute : Domain.Validations.DateRangeAttribute, IClientModelValidator
+    {
+        public void AddValidation(ClientModelValidationContext context)
+        {
+            ClientValidationHelper.MergeAttribute(context.Attributes, "data-val", "true");
+            ClientValidationHelper.MergeAttribute(context.Attributes, "data-val-daterange", ErrorMessage ?? "Invalid date range.");
+            ClientValidationHelper.MergeAttribute(context.Attributes, "data-val-daterange-start", Domain.Validations.DateRangeAttribute.StartTimePropertyName);
+            ClientValidationHelper.MergeAttribute(context.Attributes, "data-val-daterange-end", Domain.Validations.DateRangeAttribute.EndTimePropertyName);
+        }
+    }
+}

@@ -3,8 +3,17 @@ namespace CalendarApp.Application.Abstraction
     public interface IUserAppService
     {
         Task<IList<UserWithRoleDto>> GetAllUsersAsync();
+        Task<UserWithRoleDto?> GetUserByIdAsync(int userId);
         Task<bool> CreateUserAsync(string username, string email, string password, string role);
+        Task<UserOperationResultDto> UpdateUserAsync(int userId, string username, string email, string role);
+        Task<UserOperationResultDto> SetPasswordAsync(int userId, string newPassword);
         Task<bool> DeleteUserAsync(int userId);
+    }
+
+    public class UserOperationResultDto
+    {
+        public bool Success => Errors.Count == 0;
+        public IList<string> Errors { get; } = new List<string>();
     }
 
     public class UserWithRoleDto

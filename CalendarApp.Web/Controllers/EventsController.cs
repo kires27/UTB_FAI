@@ -77,6 +77,7 @@ namespace CalendarApp.Web.Controllers
 
                 var gridViewModel = BuildTimeGrid(displayEvents, gridDays);
                 gridViewModel.CurrentView = view;
+                gridViewModel.CurrentUserId = userId;
                 ViewBag.UserEvents = userEvents;
                 return View("Index", gridViewModel);
             }
@@ -470,13 +471,10 @@ namespace CalendarApp.Web.Controllers
                         TempData["Success"] = "Event saved!";
                     }
 
-                    // Remove selected attendees
-                    if (viewModel.RemoveAttendeeIds.Any())
+                    // Remove selected attendees (ignore malformed ids)
+                    foreach (var attendeeId in viewModel.RemoveAttendeeIds.Where(id => id > 0))
                     {
-                        foreach (var attendeeId in viewModel.RemoveAttendeeIds)
-                        {
-                            await _eventAppService.RemoveAttendeeFromEvent(viewModel.Id, attendeeId);
-                        }
+                        await _eventAppService.RemoveAttendeeFromEvent(viewModel.Id, attendeeId);
                     }
 
                     // Invite users by email
@@ -528,6 +526,43 @@ namespace CalendarApp.Web.Controllers
             ViewBag.Users = _eventAppService.GetUsersByIds(existingEvent.EventAttendees.Select(ea => ea.UserId).Append(existingEvent.OwnerId));
 
             return View(viewModel);
+        }
+
+        // Drag & drop move from the week view: changes the date/time of one event.
+        // For recurring events only the occurrence identified by occurrenceDate is
+        // affected (stored as an exception row); the series master stays untouched.
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult MoveOccurrence(int id, DateTime? occurrenceDate, DateTime newStart, DateTime newEnd, bool allDay = false)
+        {
+            // Get current user ID from Identity claims
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(userIdClaim) || !int.TryParse(userIdClaim, out var userId))
+            {
+                return Unauthorized();
+            }
+
+            var existingEvent = _eventAppService.GetById(id);
+            if (existingEvent == null)
+            {
+                return NotFound();
+            }
+
+            // Only the owner may reschedule an event (same rule as Edit)
+            if (existingEvent.OwnerId != userId)
+            {
+                return Forbid();
+            }
+
+            try
+            {
+                var moved = _eventAppService.MoveOccurrence(id, occurrenceDate, newStart, newEnd, allDay);
+                return moved ? NoContent() : NotFound();
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(new { error = ex.Message });
+            }
         }
 
         [HttpPost]

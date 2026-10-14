@@ -1,0 +1,117 @@
+@model CalendarApp.Application.Models.UserEditViewModel
+@{
+    ViewData["Title"] = "Edit User";
+    var isSelf = Model.Id == int.Parse(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value ?? "0");
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header bg-warning text-dark">
+                    <h5 class="mb-0">
+                        <i class="bi bi-person-gear me-2"></i>Edit User: @Model.Username
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <form asp-action="Edit" method="post">
+                        <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+                        <input type="hidden" asp-for="Id" />
+
+                        <div class="mb-3">
+                            <label asp-for="Username" class="form-label"></label>
+                            <input asp-for="Username" class="form-control" />
+                            <span asp-validation-for="Username" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Email" class="form-label"></label>
+                            <input asp-for="Email" class="form-control" />
+                            <span asp-validation-for="Email" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Role" class="form-label"></label>
+                            @if (isSelf)
+                            {
+                                <select asp-for="Role" class="form-select" disabled>
+                                    <option value="Admin">Admin</option>
+                                </select>
+                                <input type="hidden" asp-for="Role" />
+                                <small class="text-muted">You cannot change your own role.</small>
+                            }
+                            else
+                            {
+                                <select asp-for="Role" class="form-select">
+                                    <option value="">-- Select Role --</option>
+                                    <option value="User">User</option>
+                                    <option value="Admin">Admin</option>
+                                </select>
+                            }
+                            <span asp-validation-for="Role" class="text-danger"></span>
+                        </div>
+
+                        <hr />
+                        <h6><i class="bi bi-key me-2"></i>Change Password (optional)</h6>
+                        <p class="text-muted small">
+                            Leave blank to keep the current password. Requirements: at least 8 characters,
+                            6 unique characters, one digit, one uppercase letter, one lowercase letter
+                            and one non-alphanumeric character.
+                        </p>
+
+                        <div class="mb-3">
+                            <label asp-for="NewPassword" class="form-label"></label>
+                            <input asp-for="NewPassword" class="form-control" autocomplete="new-password" />
+                            <span asp-validation-for="NewPassword" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="ConfirmNewPassword" class="form-label"></label>
+                            <input asp-for="ConfirmNewPassword" class="form-control" autocomplete="new-password" />
+                            <span asp-validation-for="ConfirmNewPassword" class="text-danger"></span>
+                        </div>
+
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-warning">
+                                <i class="bi bi-check-circle"></i> Save Changes
+                            </button>
+                            <a asp-action="Index" class="btn btn-secondary">
+                                <i class="bi bi-arrow-left"></i> Back to List
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="alert alert-info">
+                <h6><i class="bi bi-info-circle me-2"></i>Editing User</h6>
+                <ul class="mb-0">
+                    <li>Username and email must be unique</li>
+                    <li>Password stays unchanged when fields are left blank</li>
+                    <li>New password takes effect at the user's next login</li>
+                    <li>Changing the role signs the user out</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        // Client-side confirmation match check (password itself is validated server-side).
+        $(function () {
+            $('form').on('submit', function () {
+                var pw = $('#NewPassword').val();
+                var confirm = $('#ConfirmNewPassword').val();
+                if ((pw || confirm) && pw !== confirm) {
+                    event.preventDefault();
+                    $('#ConfirmNewPassword').addClass('input-validation-error');
+                    $('<span class="text-danger field-validation-error">The new password and confirmation password do not match.</span>')
+                        .insertAfter('#ConfirmNewPassword');
+                }
+            });
+        });
+    </script>
+}

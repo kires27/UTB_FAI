@@ -7,6 +7,9 @@ namespace CalendarApp.Domain.Validations
         private readonly int _minLength;
         private readonly int _maxLength;
 
+        public int MinLength => _minLength;
+        public int MaxLength => _maxLength;
+
         public TextLengthRangeAttribute(int minLength, int maxLength)
         {
             _minLength = minLength;

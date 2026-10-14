@@ -11,7 +11,8 @@
         ? first.ToString("dddd, MMMM d, yyyy")
         : string.Format("{0:MMM d} \u2013 {1:MMM d, yyyy}", first, last);
 }
-<div class="time-grid-wrap" data-view="@Model.CurrentView">
+<div class="time-grid-wrap" data-view="@Model.CurrentView" data-user="@Model.CurrentUserId">
+    @Html.AntiForgeryToken()
     <div class="time-grid-nav">
         <a class="btn btn-sm btn-outline-secondary" href="/Events/Index?view=@Model.CurrentView&date=@prev" title="Previous" aria-label="Previous">
             <i class="bi bi-chevron-left"></i>
@@ -48,8 +49,16 @@
                     @foreach (var evt in day.Events.Where(e => e.AllDay))
                     {
                         <a class="tg-allday-chip" style="background-color:@(evt.Color ?? "#3788d8")"
+                           data-id="@evt.Id"
+                           data-recurring="@(evt.IsRecurring ? "true" : "false")"
+                           data-occurrence="@(evt.IsRecurring ? (evt.OccurrenceOriginalDate ?? evt.StartTime).ToString("yyyy-MM-dd") : null)"
+                           data-owner="@evt.OwnerId"
+                           data-editable="@(evt.OwnerId == Model.CurrentUserId ? "true" : "false")"
+                           data-allday="true"
+                           data-timeofday="@evt.StartTime.ToString("HH:mm")"
+                           data-duration="@((int)Math.Round((evt.EndTime - evt.StartTime).TotalMinutes))"
                            asp-controller="Events" asp-action="Details" asp-route-id="@evt.Id"
-                           asp-route-occurrenceDate="@(evt.IsRecurring ? evt.StartTime.ToString("yyyy-MM-dd") : null)"
+                           asp-route-occurrenceDate="@(evt.IsRecurring ? (evt.OccurrenceOriginalDate ?? evt.StartTime).ToString("yyyy-MM-dd") : null)"
                            asp-route-returnView="@Model.CurrentView" asp-route-returnDate="@first.ToString("yyyy-MM-dd")">@evt.Title <i class="bi bi-arrow-repeat" title="Recurring"></i></a>
                     }
                 </div>
@@ -79,8 +88,15 @@
                            style="background-color:@(evt.Color ?? "#3788d8"); top:@(Math.Round(startMins * 0.8))px; height:@(Math.Max(20, Math.Round((endMins - startMins) * 0.8)))px;"
                            data-start="@((int)startMins)"
                            data-end="@((int)endMins)"
+                           data-id="@evt.Id"
+                           data-recurring="@(evt.IsRecurring ? "true" : "false")"
+                           data-occurrence="@(evt.IsRecurring ? (evt.OccurrenceOriginalDate ?? evt.StartTime).ToString("yyyy-MM-dd") : null)"
+                           data-owner="@evt.OwnerId"
+                           data-editable="@(evt.OwnerId == Model.CurrentUserId ? "true" : "false")"
+                           data-allday="false"
+                           data-duration="@((int)Math.Round((evt.EndTime - evt.StartTime).TotalMinutes))"
                            asp-controller="Events" asp-action="Details" asp-route-id="@evt.Id"
-                           asp-route-occurrenceDate="@(evt.IsRecurring ? evt.StartTime.ToString("yyyy-MM-dd") : null)"
+                           asp-route-occurrenceDate="@(evt.IsRecurring ? (evt.OccurrenceOriginalDate ?? evt.StartTime).ToString("yyyy-MM-dd") : null)"
                            asp-route-returnView="@Model.CurrentView" asp-route-returnDate="@first.ToString("yyyy-MM-dd")">
                             <span class="tg-event-time">@evt.StartTime.ToString("HH:mm")</span>@evt.Title@if (evt.IsRecurring) {<i class="bi bi-arrow-repeat" title="Recurring"></i>}
                         </a>

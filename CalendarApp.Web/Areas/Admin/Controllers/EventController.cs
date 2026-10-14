@@ -13,46 +13,54 @@ namespace CalendarApp.Web.Areas.Admin.Controllers
     {
         private readonly IEventAppService _eventAppService;
         private readonly IUserAppService _userAppService;
+        private readonly IRecurrenceAppService _recurrenceAppService;
 
-        public EventController(IEventAppService eventAppService, IUserAppService userAppService)
+        public EventController(IEventAppService eventAppService, IUserAppService userAppService, IRecurrenceAppService recurrenceAppService)
         {
             _eventAppService = eventAppService;
             _userAppService = userAppService;
+            _recurrenceAppService = recurrenceAppService;
         }
 
-        public IActionResult Select()
+        public async Task<IActionResult> Select(int? ownerId)
         {
-            var events = _eventAppService.SelectAll();
+            var events = ownerId.HasValue
+                ? _eventAppService.SelectByOwner(ownerId.Value)
+                : _eventAppService.SelectAll();
+
             ViewBag.Users = _eventAppService.GetUsersByIds(events.Select(e => e.OwnerId));
+
+            var allUsers = await _userAppService.GetAllUsersAsync();
+            ViewBag.AllUsers = allUsers;
+            ViewBag.SelectedOwnerId = ownerId;
+
             return View(events);
         }
 
         [HttpGet]
-        public async Task<IActionResult> Create()
+        public async Task<IActionResult> Create(int? ownerId)
         {
             var allUsers = await _userAppService.GetAllUsersAsync();
             var currentAdminId = GetCurrentUserId();
-            
+
             var viewModel = new AdminEventCreateViewModel
             {
                 AllUsers = allUsers.ToList(),
-                FilteredUsers = allUsers.ToList(),
-                OwnerId = currentAdminId,
+                OwnerId = ownerId ?? currentAdminId,
                 StartTime = DateTime.Now,
                 EndTime = DateTime.Now.AddHours(1),
                 Color = "#3788d8"
             };
-            
+
             return View(viewModel);
         }
 
         [HttpPost]
         public async Task<IActionResult> Create(AdminEventCreateViewModel viewModel)
         {
-            // Re-populate users for view return
+            // Re-populate owner dropdown for view return
             var allUsers = await _userAppService.GetAllUsersAsync();
             viewModel.AllUsers = allUsers.ToList();
-            viewModel.FilteredUsers = FilterUsersBySearch(allUsers.ToList(), viewModel.SearchTerm);
 
             if (ModelState.IsValid)
             {
@@ -65,8 +73,8 @@ namespace CalendarApp.Web.Areas.Admin.Controllers
                     AllDay = viewModel.AllDay,
                     Location = viewModel.Location,
                     IsRecurring = viewModel.IsRecurring,
-                    RecurrenceRule = viewModel.RecurrenceRule,
-                    RecurrenceEnd = viewModel.RecurrenceEnd,
+                    RecurrenceRule = viewModel.IsRecurring ? viewModel.RecurrenceRule : null,
+                    RecurrenceEnd = viewModel.IsRecurring ? viewModel.RecurrenceEnd : null,
                     OwnerId = viewModel.OwnerId,
                     ReminderTime = viewModel.ReminderTime,
                     Color = viewModel.Color,
@@ -77,15 +85,11 @@ namespace CalendarApp.Web.Areas.Admin.Controllers
                 {
                     _eventAppService.Create(@event);
 
-                    // Invite additional attendees (excluding owner)
-                    if (viewModel.AttendeeIds.Any())
-                    {
-                        await _eventAppService.InviteUsersToEvent(@event.Id, viewModel.AttendeeIds);
-                    }
+                    var invitedCount = await InviteByEmailsAsync(@event.Id, viewModel.InviteEmails, viewModel.OwnerId);
 
                     var ownerName = allUsers.FirstOrDefault(u => u.Id == viewModel.OwnerId)?.UserName ?? "Unknown";
-                    TempData["Success"] = $"Event created for {ownerName} with {viewModel.AttendeeIds.Count} additional attendees!";
-                    return RedirectToAction(nameof(Select));
+                    TempData["Success"] = $"Event created for {ownerName} with {invitedCount} additional attendees!";
+                    return RedirectToAction(nameof(Select), new { ownerId = viewModel.OwnerId });
                 }
                 catch (Exception ex)
                 {
@@ -102,68 +106,223 @@ namespace CalendarApp.Web.Areas.Admin.Controllers
             return int.TryParse(userIdClaim, out var userId) ? userId : 0;
         }
 
-        private IList<UserWithRoleDto> FilterUsersBySearch(IList<UserWithRoleDto> users, string? searchTerm)
+        /// <summary>
+        /// Resolves the comma-separated invite list to users and invites them.
+        /// Emails that belong to the event owner are ignored (owner attends by definition).
+        /// </summary>
+        private async Task<int> InviteByEmailsAsync(int eventId, string? inviteEmails, int ownerId)
         {
-            if (string.IsNullOrEmpty(searchTerm) || searchTerm.Length < 2)
-                return users;
+            if (string.IsNullOrEmpty(inviteEmails))
+            {
+                return 0;
+            }
 
-            return users.Where(u => 
-                u.Email.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)
-            ).ToList();
+            var emailList = inviteEmails
+                .Split(',')
+                .Select(e => e.Trim())
+                .Where(e => !string.IsNullOrEmpty(e) && e.Contains("@"))
+                .ToList();
+
+            if (!emailList.Any())
+            {
+                return 0;
+            }
+
+            var usersToInvite = await _eventAppService.FindUsersByEmailsAsync(emailList);
+            var userIdsToInvite = usersToInvite
+                .Where(u => u.Id != ownerId)
+                .Select(u => u.Id)
+                .ToList();
+
+            if (userIdsToInvite.Any())
+            {
+                await _eventAppService.InviteUsersToEvent(eventId, userIdsToInvite);
+            }
+
+            return userIdsToInvite.Count;
         }
 
-        public IActionResult Details(int id)
+        public IActionResult Details(int id, DateTime? occurrenceDate)
         {
             var @event = _eventAppService.GetById(id);
             if (@event == null)
             {
                 return NotFound();
             }
+
             ViewBag.Users = _eventAppService.GetUsersByIds(@event.EventAttendees.Select(ea => ea.UserId).Append(@event.OwnerId));
+            ViewBag.RecurrenceDescription = _recurrenceAppService.Describe(@event);
+
+            // Recurring series: resolve the requested occurrence (exception overrides applied)
+            if (@event.IsRecurring && occurrenceDate.HasValue)
+            {
+                var target = occurrenceDate.Value.Date;
+                var occurrences = _recurrenceAppService.Expand(@event, target, target.AddDays(1));
+                var occurrence = occurrences.FirstOrDefault(o => o.StartTime.Date == target) ?? occurrences.FirstOrDefault();
+                if (occurrence != null)
+                {
+                    ViewBag.IsOccurrence = true;
+                    return View(occurrence);
+                }
+                ViewBag.OccurrenceMissing = true;
+            }
+
             return View(@event);
         }
 
         [HttpGet]
-        public IActionResult Edit(int id)
+        public async Task<IActionResult> Edit(int id, DateTime? occurrenceDate, string? scope)
         {
             var @event = _eventAppService.GetById(id);
             if (@event == null)
             {
                 return NotFound();
             }
-            
-            return View(@event);
+
+            var allUsers = await _userAppService.GetAllUsersAsync();
+            ViewBag.OwnerName = allUsers.FirstOrDefault(u => u.Id == @event.OwnerId)?.UserName ?? "Unknown";
+            ViewBag.Users = _eventAppService.GetUsersByIds(@event.EventAttendees.Select(ea => ea.UserId).Append(@event.OwnerId));
+
+            var viewModel = new EventEditViewModel
+            {
+                Id = @event.Id,
+                Title = @event.Title,
+                Description = @event.Description,
+                StartTime = @event.StartTime,
+                EndTime = @event.EndTime,
+                AllDay = @event.AllDay,
+                Location = @event.Location,
+                IsRecurring = @event.IsRecurring,
+                RecurrenceRule = @event.RecurrenceRule,
+                RecurrenceEnd = @event.RecurrenceEnd,
+                OwnerId = @event.OwnerId,
+                ReminderTime = @event.ReminderTime,
+                Color = @event.Color,
+                Status = @event.Status,
+                CurrentAttendees = @event.EventAttendees.Where(ea => ea.Role != AttendeeRole.Owner).ToList()
+            };
+
+            // Recurring series opened from an occurrence link: prefill the single
+            // occurrence (exception overrides applied), defaulting to "this" scope
+            if (@event.IsRecurring && occurrenceDate.HasValue)
+            {
+                var target = occurrenceDate.Value.Date;
+                var occurrences = _recurrenceAppService.Expand(@event, target, target.AddDays(1));
+                var occurrence = occurrences.FirstOrDefault(o => o.StartTime.Date == target) ?? occurrences.FirstOrDefault();
+                if (occurrence != null)
+                {
+                    viewModel.Scope = string.Equals(scope, "all", StringComparison.OrdinalIgnoreCase) ? "all" : "this";
+                    viewModel.OccurrenceDate = occurrence.StartTime.Date;
+                    viewModel.Title = occurrence.Title;
+                    viewModel.Description = occurrence.Description;
+                    viewModel.StartTime = occurrence.StartTime;
+                    viewModel.EndTime = occurrence.EndTime;
+                    viewModel.AllDay = occurrence.AllDay;
+                    viewModel.Location = occurrence.Location;
+                    viewModel.ReminderTime = occurrence.ReminderTime;
+                    viewModel.Color = occurrence.Color;
+                    viewModel.Status = occurrence.Status;
+                }
+            }
+
+            return View(viewModel);
         }
 
         [HttpPost]
-        public IActionResult Edit(Event @event)
+        public async Task<IActionResult> Edit(EventEditViewModel viewModel)
         {
-            // Remove Owner validation error since we're using OwnerId
-            ModelState.Remove("Owner");
-            
+            var existingEvent = _eventAppService.GetById(viewModel.Id);
+            if (existingEvent == null)
+            {
+                return NotFound();
+            }
+
+            // Update event from view model (Owner is taken from the stored event, never from the form)
+            var @event = new Event
+            {
+                Id = viewModel.Id,
+                Title = viewModel.Title,
+                Description = viewModel.Description,
+                StartTime = viewModel.StartTime,
+                EndTime = viewModel.EndTime,
+                AllDay = viewModel.AllDay,
+                Location = viewModel.Location,
+                IsRecurring = viewModel.IsRecurring,
+                RecurrenceRule = viewModel.IsRecurring ? viewModel.RecurrenceRule : null,
+                RecurrenceEnd = viewModel.IsRecurring ? viewModel.RecurrenceEnd : null,
+                OwnerId = existingEvent.OwnerId,
+                ReminderTime = viewModel.ReminderTime,
+                Color = viewModel.Color,
+                Status = viewModel.Status
+            };
+
             if (ModelState.IsValid)
             {
                 try
                 {
+                    // Per-occurrence edit: store an exception row, leave the series master untouched
+                    if (existingEvent.IsRecurring
+                        && viewModel.Scope == "this"
+                        && viewModel.OccurrenceDate is DateTime occurrenceDay)
+                    {
+                        _eventAppService.UpsertOccurrenceException(new EventOccurrenceException
+                        {
+                            MasterEventId = existingEvent.Id,
+                            OriginalDate = occurrenceDay.Date,
+                            IsCancelled = false,
+                            Title = viewModel.Title,
+                            Description = viewModel.Description,
+                            StartTime = viewModel.StartTime,
+                            EndTime = viewModel.EndTime,
+                            AllDay = viewModel.AllDay,
+                            Location = viewModel.Location,
+                            ReminderTime = viewModel.ReminderTime,
+                            Color = viewModel.Color,
+                            Status = viewModel.Status,
+                            CreatedAt = DateTime.Now,
+                            UpdatedAt = DateTime.Now
+                        });
+                        TempData["Success"] = "Occurrence saved!";
+                        return RedirectToAction(nameof(Details), new { id = existingEvent.Id, occurrenceDate = occurrenceDay.Date });
+                    }
+
                     _eventAppService.Update(@event);
                     TempData["Success"] = "Event updated successfully!";
-                    return RedirectToAction(nameof(Select));
+
+                    // Remove selected attendees (ignore malformed ids)
+                    foreach (var attendeeId in viewModel.RemoveAttendeeIds.Where(id => id > 0))
+                    {
+                        await _eventAppService.RemoveAttendeeFromEvent(viewModel.Id, attendeeId);
+                    }
+
+                    await InviteByEmailsAsync(viewModel.Id, viewModel.InviteEmails, existingEvent.OwnerId);
+
+                    return RedirectToAction(nameof(Select), new { ownerId = existingEvent.OwnerId });
                 }
                 catch (Exception ex)
                 {
                     ModelState.AddModelError("", "Error updating event: " + ex.Message);
                 }
             }
-            return View(@event);
+
+            // Repopulate data on error
+            var allUsers = await _userAppService.GetAllUsersAsync();
+            ViewBag.OwnerName = allUsers.FirstOrDefault(u => u.Id == existingEvent.OwnerId)?.UserName ?? "Unknown";
+            viewModel.CurrentAttendees = existingEvent.EventAttendees
+                .Where(ea => ea.Role != AttendeeRole.Owner)
+                .ToList();
+            ViewBag.Users = _eventAppService.GetUsersByIds(existingEvent.EventAttendees.Select(ea => ea.UserId).Append(existingEvent.OwnerId));
+
+            return View(viewModel);
         }
 
         [HttpPost]
-        public IActionResult Delete(int id)
+        public IActionResult Delete(int id, int? ownerId)
         {
             bool deleted = _eventAppService.Delete(id);
             if (deleted)
             {
-                return RedirectToAction(nameof(Select));
+                return RedirectToAction(nameof(Select), new { ownerId });
             }
             return NotFound();
         }

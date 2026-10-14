@@ -263,10 +263,13 @@ document.addEventListener('DOMContentLoaded', function () {
     // ---------- Invite user search (typeahead) ----------
     var dataEl = document.getElementById('editData');
     var cfg = { attendeeEmails: [], attendeeIds: [], excludedIds: [] };
-    try { if (dataEl) cfg = JSON.parse(dataEl.textContent); } catch (e) { /* defaults */ }
-    cfg.attendeeEmails = cfg.attendeeEmails || [];
-    cfg.attendeeIds = cfg.attendeeIds || [];
-    cfg.excludedIds = cfg.excludedIds || [];
+    function refreshCfg() {
+        try { if (dataEl) cfg = JSON.parse(dataEl.textContent); } catch (e) { /* defaults */ }
+        cfg.attendeeEmails = cfg.attendeeEmails || [];
+        cfg.attendeeIds = cfg.attendeeIds || [];
+        cfg.excludedIds = cfg.excludedIds || [];
+    }
+    refreshCfg();
 
     var searchInput = document.getElementById('inviteSearch');
     var resultsBox = document.getElementById('inviteResults');
@@ -318,6 +321,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 fetch('/Events/SearchUsers?term=' + encodeURIComponent(term))
                     .then(function (r) { return r.json(); })
                     .then(function (users) {
+                        refreshCfg(); // admin pages update excludedIds when the owner changes
                         var invited = getInvited();
                         resultsBox.innerHTML = '';
                         users.forEach(function (u) {

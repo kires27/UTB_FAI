@@ -42,20 +42,27 @@
             <span class="sidebar-label">Month</span>
         </a>
 
+        @if (User.IsInRole("Admin"))
+        {
+            <div class="sidebar-section">Admin</div>
+            <a class="sidebar-item @(currentArea == "Admin" && currentController == "Event" ? "active" : "")"
+               asp-area="Admin" asp-controller="Event" asp-action="Select" title="Admin Events">
+                <i class="bi bi-calendar3"></i>
+                <span class="sidebar-label">Events</span>
+            </a>
+            <a class="sidebar-item @(currentArea == "Admin" && currentController == "UserManagement" ? "active" : "")"
+               asp-area="Admin" asp-controller="UserManagement" asp-action="Index" title="User Management">
+                <i class="bi bi-people"></i>
+                <span class="sidebar-label">User Management</span>
+            </a>
+        }
+
         <div class="sidebar-section">Others</div>
         <a class="sidebar-item @(currentController == "Home" && currentAction == "About" ? "active" : "")"
            asp-area="" asp-controller="Home" asp-action="About" title="About">
             <i class="bi bi-info-circle"></i>
             <span class="sidebar-label">About</span>
         </a>
-        @if (User.IsInRole("Admin"))
-        {
-            <a class="sidebar-item @(currentArea == "Admin" ? "active" : "")"
-               asp-area="Admin" asp-controller="UserManagement" asp-action="Index" title="User Management">
-                <i class="bi bi-people"></i>
-                <span class="sidebar-label">User Management</span>
-            </a>
-        }
     </nav>
 
     <div class="sidebar-bottom">

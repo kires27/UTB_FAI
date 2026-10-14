@@ -38,6 +38,23 @@ namespace CalendarApp.Application.Implementation
             return userDtos;
         }
 
+        public async Task<UserWithRoleDto?> GetUserByIdAsync(int userId)
+        {
+            var user = await _userManager.FindByIdAsync(userId.ToString());
+            if (user == null)
+                return null;
+
+            var roles = await _userManager.GetRolesAsync(user);
+            return new UserWithRoleDto
+            {
+                Id = user.Id,
+                UserName = user.UserName ?? string.Empty,
+                Email = user.Email ?? string.Empty,
+                Role = roles.FirstOrDefault() ?? "User",
+                CreatedAt = user.CreatedAt
+            };
+        }
+
         public async Task<bool> CreateUserAsync(string username, string email, string password, string role)
         {
             var user = new User
@@ -56,6 +73,99 @@ namespace CalendarApp.Application.Implementation
 
             var roleResult = await _userManager.AddToRoleAsync(user, role);
             return roleResult.Succeeded;
+        }
+
+        public async Task<UserOperationResultDto> UpdateUserAsync(int userId, string username, string email, string role)
+        {
+            var result = new UserOperationResultDto();
+            var user = await _userManager.FindByIdAsync(userId.ToString());
+            if (user == null)
+            {
+                result.Errors.Add("User not found.");
+                return result;
+            }
+
+            // Pre-check uniqueness so the user gets a clear message instead of a store exception.
+            if (!string.Equals(user.UserName, username, StringComparison.Ordinal))
+            {
+                var existingByName = await _userManager.FindByNameAsync(username);
+                if (existingByName != null && existingByName.Id != user.Id)
+                    result.Errors.Add($"Username '{username}' is already taken.");
+            }
+
+            if (!string.Equals(user.Email, email, StringComparison.OrdinalIgnoreCase))
+            {
+                var existingByEmail = await _userManager.FindByEmailAsync(email);
+                if (existingByEmail != null && existingByEmail.Id != user.Id)
+                    result.Errors.Add($"Email '{email}' is already taken.");
+            }
+
+            if (!await _roleManager.RoleExistsAsync(role))
+                result.Errors.Add($"Role '{role}' does not exist.");
+
+            if (!result.Success)
+                return result;
+
+            if (!string.Equals(user.UserName, username, StringComparison.Ordinal))
+                AddErrors(result, await _userManager.SetUserNameAsync(user, username));
+
+            if (result.Success && !string.Equals(user.Email, email, StringComparison.OrdinalIgnoreCase))
+                AddErrors(result, await _userManager.SetEmailAsync(user, email));
+
+            if (result.Success)
+            {
+                var currentRoles = await _userManager.GetRolesAsync(user);
+                if (!currentRoles.Contains(role, StringComparer.OrdinalIgnoreCase))
+                {
+                    if (currentRoles.Count > 0)
+                        AddErrors(result, await _userManager.RemoveFromRolesAsync(user, currentRoles));
+
+                    if (result.Success)
+                        AddErrors(result, await _userManager.AddToRoleAsync(user, role));
+                }
+            }
+
+            if (result.Success)
+            {
+                // Invalidate the edited user's cookie so role claims refresh on next login.
+                await _userManager.UpdateSecurityStampAsync(user);
+
+                user.UpdatedAt = DateTime.UtcNow;
+                await _userManager.UpdateAsync(user);
+            }
+
+            return result;
+        }
+
+        public async Task<UserOperationResultDto> SetPasswordAsync(int userId, string newPassword)
+        {
+            var result = new UserOperationResultDto();
+            var user = await _userManager.FindByIdAsync(userId.ToString());
+            if (user == null)
+            {
+                result.Errors.Add("User not found.");
+                return result;
+            }
+
+            // Reset flow keeps password hashing inside Identity; the admin never sees the hash.
+            var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+            AddErrors(result, await _userManager.ResetPasswordAsync(user, token, newPassword));
+
+            if (result.Success)
+            {
+                user.UpdatedAt = DateTime.UtcNow;
+                await _userManager.UpdateAsync(user);
+            }
+
+            return result;
+        }
+
+        private static void AddErrors(UserOperationResultDto result, IdentityResult identityResult)
+        {
+            foreach (var error in identityResult.Errors)
+            {
+                result.Errors.Add(error.Description);
+            }
         }
 
         public async Task<bool> DeleteUserAsync(int userId)

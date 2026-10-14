@@ -169,8 +169,11 @@ namespace CalendarApp.Application.Helpers
         {
             var start = @event.StartTime.Date;
 
-            // Latest occurrence date to consider
-            var horizon = DateTime.MaxValue.Date;
+            // Latest occurrence date to consider. Unbounded rules (no UNTIL / RecurrenceEnd)
+            // must not iterate towards DateTime.MaxValue — the AddDays/AddMonths arithmetic
+            // overflows near it and it would mean millions of pointless iterations.
+            // 30 years out is far beyond any real calendar usage.
+            var horizon = DateTime.Today.AddYears(30);
             if (rule.Until.HasValue && rule.Until.Value.Date < horizon) horizon = rule.Until.Value.Date;
             if (@event.RecurrenceEnd.HasValue && @event.RecurrenceEnd.Value.Date < horizon) horizon = @event.RecurrenceEnd.Value.Date;
 
@@ -304,6 +307,10 @@ namespace CalendarApp.Application.Helpers
                 EventAttendees = master.EventAttendees,
                 Exceptions = master.Exceptions
             };
+
+            // Remember the slot this occurrence occupies in the series so "this occurrence
+            // only" operations (drag-move, edit, delete) address the right exception row.
+            clone.OccurrenceOriginalDate = (ex != null ? ex.OriginalDate : occurrenceStart).Date;
 
             if (ex != null)
             {
