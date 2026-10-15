@@ -555,10 +555,28 @@ body {
 .list-calendar .table > tbody td {
   border-color: var(--line);
   vertical-align: middle;
+  /* Long titles/descriptions wrap instead of stretching their column
+     (overflow-wrap:anywhere also shrinks min-content, so an unbroken
+     300-char title cannot blow up the table layout) */
+  overflow-wrap: anywhere;
 }
 
 .list-calendar .table > tbody tr:last-child > * {
   border-bottom: none;
+}
+
+/* Row-click-to-details: title link styled as plain text, whole row is the target */
+.list-calendar .table > tbody tr[data-event-url] {
+  cursor: pointer;
+}
+
+.list-calendar .list-event-link {
+  color: var(--text);
+  text-decoration: none;
+}
+
+.list-calendar .list-event-link:hover {
+  color: var(--bs-primary);
 }
 
 /* light theme needs a stronger tint — 5% cyan on white is invisible */

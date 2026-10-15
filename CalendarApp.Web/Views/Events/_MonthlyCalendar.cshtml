@@ -60,7 +60,7 @@
                                     <a href="@GetEventActionUrl(evt)" class="event-link">
                                         @if (evt.AllDay)
                                         {
-                                            <span class="event-time-all-day">@evt.Title <i class="bi bi-arrow-repeat" title="Recurring"></i></span>
+                                            <span class="event-time-all-day">@evt.Title @if (evt.IsRecurring) {<i class="bi bi-arrow-repeat" title="Recurring"></i>}</span>
                                         }
                                         else
                                         {

@@ -110,6 +110,16 @@ namespace CalendarApp.Web.Areas.Admin.Controllers
         /// Resolves the comma-separated invite list to users and invites them.
         /// Emails that belong to the event owner are ignored (owner attends by definition).
         /// </summary>
+        private async Task ApplyAttendeeChangesAsync(EventEditViewModel viewModel, int ownerId)
+        {
+            foreach (var attendeeId in viewModel.RemoveAttendeeIds)
+            {
+                await _eventAppService.RemoveAttendeeFromEvent(viewModel.Id, attendeeId);
+            }
+
+            await InviteByEmailsAsync(viewModel.Id, viewModel.InviteEmails, ownerId);
+        }
+
         private async Task<int> InviteByEmailsAsync(int eventId, string? inviteEmails, int ownerId)
         {
             if (string.IsNullOrEmpty(inviteEmails))
@@ -282,6 +292,7 @@ namespace CalendarApp.Web.Areas.Admin.Controllers
                             CreatedAt = DateTime.Now,
                             UpdatedAt = DateTime.Now
                         });
+                        await ApplyAttendeeChangesAsync(viewModel, existingEvent.OwnerId);
                         TempData["Success"] = "Occurrence saved!";
                         return RedirectToAction(nameof(Details), new { id = existingEvent.Id, occurrenceDate = occurrenceDay.Date });
                     }
@@ -289,13 +300,7 @@ namespace CalendarApp.Web.Areas.Admin.Controllers
                     _eventAppService.Update(@event);
                     TempData["Success"] = "Event updated successfully!";
 
-                    // Remove selected attendees (ignore malformed ids)
-                    foreach (var attendeeId in viewModel.RemoveAttendeeIds.Where(id => id > 0))
-                    {
-                        await _eventAppService.RemoveAttendeeFromEvent(viewModel.Id, attendeeId);
-                    }
-
-                    await InviteByEmailsAsync(viewModel.Id, viewModel.InviteEmails, existingEvent.OwnerId);
+                    await ApplyAttendeeChangesAsync(viewModel, existingEvent.OwnerId);
 
                     return RedirectToAction(nameof(Select), new { ownerId = existingEvent.OwnerId });
                 }

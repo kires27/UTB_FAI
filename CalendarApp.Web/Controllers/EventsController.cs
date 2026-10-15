@@ -227,7 +227,7 @@ namespace CalendarApp.Web.Controllers
         }
 
         [HttpGet]
-        public IActionResult Create(DateTime? date = null, bool allDay = false, string view = "list")
+        public IActionResult Create(DateTime? date = null, bool allDay = false, string view = "list", DateTime? returnDate = null)
         {
             var startTime = date ?? DateTime.Now;
             var viewModel = new EventCreateViewModel
@@ -237,7 +237,9 @@ namespace CalendarApp.Web.Controllers
                 AllDay = allDay,
                 Color = "#3788d8",
                 ReturnView = view,
-                ReturnDate = date ?? DateTime.Now
+                // Return context = the calendar view anchor; when absent, the requested
+                // start (or now) keeps the user anchored where they came from
+                ReturnDate = returnDate ?? date ?? DateTime.Now
             };
 
             return View(viewModel);
@@ -298,9 +300,10 @@ namespace CalendarApp.Web.Controllers
                         }
                     }
 
-                    TempData["Success"] = "Event saved!";
-
-                    // Return the user to the calendar view they came from
+                    // Return the user to the calendar view they came from.
+                    // No success toast here: Index views render no toast, and leaving
+                    // TempData["Success"] set would leak it into the next page that
+                    // does (e.g. the next Create form or event details).
                     var returnView = viewModel.ReturnView;
                     if (returnView != "daily" && returnView != "weekly" && returnView != "monthly")
                     {
@@ -463,16 +466,14 @@ namespace CalendarApp.Web.Controllers
                             CreatedAt = DateTime.Now,
                             UpdatedAt = DateTime.Now
                         });
-                        TempData["Success"] = "Occurrence saved!";
                     }
                     else
                     {
                         _eventAppService.Update(@event);
-                        TempData["Success"] = "Event saved!";
                     }
 
-                    // Remove selected attendees (ignore malformed ids)
-                    foreach (var attendeeId in viewModel.RemoveAttendeeIds.Where(id => id > 0))
+                    // Remove selected attendees (service ignores unknown ids and never removes the owner)
+                    foreach (var attendeeId in viewModel.RemoveAttendeeIds)
                     {
                         await _eventAppService.RemoveAttendeeFromEvent(viewModel.Id, attendeeId);
                     }
@@ -497,8 +498,6 @@ namespace CalendarApp.Web.Controllers
                             }
                         }
                     }
-
-                    TempData["Success"] = TempData["Success"] ?? "Event saved!";
 
                     // Return the user to the view they came from
                     var returnView = viewModel.ReturnView;
@@ -566,7 +565,7 @@ namespace CalendarApp.Web.Controllers
         }
 
         [HttpPost]
-        public IActionResult Delete(int id, string? scope, DateTime? occurrenceDate)
+        public IActionResult Delete(int id, string? scope, DateTime? occurrenceDate, string? returnView, DateTime? returnDate)
         {
             // Get current user ID from Identity claims
             var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
@@ -606,14 +605,14 @@ namespace CalendarApp.Web.Controllers
                             UpdatedAt = DateTime.Now
                         });
                         TempData["Success"] = "Occurrence deleted.";
-                        return RedirectToAction(nameof(Index));
+                        return RedirectToAction(nameof(Index), BuildIndexRoute(returnView, returnDate));
                     }
 
                     bool deleted = _eventAppService.Delete(id);
                     if (deleted)
                     {
                         TempData["Success"] = "Event deleted successfully!";
-                        return RedirectToAction(nameof(Index));
+                        return RedirectToAction(nameof(Index), BuildIndexRoute(returnView, returnDate));
                     }
                     ModelState.AddModelError("", "Error deleting event");
                 }
@@ -622,7 +621,17 @@ namespace CalendarApp.Web.Controllers
                     ModelState.AddModelError("", "Error deleting event: " + ex.Message);
                 }
             }
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction(nameof(Index), BuildIndexRoute(returnView, returnDate));
+        }
+
+        // Route back to the calendar view the user came from ("daily"/"weekly"/"monthly";
+        // anything else falls back to the default list view).
+        private static object BuildIndexRoute(string? returnView, DateTime? returnDate)
+        {
+            var view = returnView == "daily" || returnView == "weekly" || returnView == "monthly"
+                ? returnView
+                : "list";
+            return new { view, date = returnDate };
         }
 
         [HttpGet]

@@ -59,7 +59,7 @@
                            data-duration="@((int)Math.Round((evt.EndTime - evt.StartTime).TotalMinutes))"
                            asp-controller="Events" asp-action="Details" asp-route-id="@evt.Id"
                            asp-route-occurrenceDate="@(evt.IsRecurring ? (evt.OccurrenceOriginalDate ?? evt.StartTime).ToString("yyyy-MM-dd") : null)"
-                           asp-route-returnView="@Model.CurrentView" asp-route-returnDate="@first.ToString("yyyy-MM-dd")">@evt.Title <i class="bi bi-arrow-repeat" title="Recurring"></i></a>
+                           asp-route-returnView="@Model.CurrentView" asp-route-returnDate="@first.ToString("yyyy-MM-dd")">@evt.Title @if (evt.IsRecurring) {<i class="bi bi-arrow-repeat" title="Recurring"></i>}</a>
                     }
                 </div>
             }

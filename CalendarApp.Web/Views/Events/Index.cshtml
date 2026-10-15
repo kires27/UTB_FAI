@@ -4,6 +4,9 @@
 @{
     ViewData["Title"] = "Events";
     var currentView = Model?.CurrentView ?? "list";
+    // Anchor date of the current view: displayed month for monthly, grid start for daily/weekly.
+    // Carried to Create so the form can send the user back to the view they came from.
+    var anchorDate = (currentView == "monthly" ? Model?.DisplayMonth : Model?.CurrentDate) ?? DateTime.Now;
 }
 
 <div class="container-fluid">
@@ -12,7 +15,7 @@
             <h2>Events</h2>
         </div>
         <div class="col-auto">
-            <a asp-action="Create" class="btn btn-primary">
+            <a asp-action="Create" asp-route-view="@currentView" asp-route-returnDate="@anchorDate.ToString("yyyy-MM-dd")" class="btn btn-primary">
                 <i class="bi bi-plus-circle"></i> Create New Event
             </a>
         </div>

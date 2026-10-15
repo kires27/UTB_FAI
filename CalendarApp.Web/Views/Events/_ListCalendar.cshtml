@@ -1,8 +1,5 @@
 @model List<Event>
 @using CalendarApp.Domain.Entities
-@{
-    var currentUserId = int.Parse(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value ?? "0");
-}
 
 @if (!Model.Any())
 {
@@ -20,20 +17,30 @@ else
                     <th>Title</th>
                     <th>Date & Time</th>
                     <th>Location</th>
-                    <th>Actions</th>
                 </tr>
             </thead>
             <tbody>
                 @foreach (var eventItem in Model)
                 {
-                    <tr>
+                    // Clicking anywhere on the row opens the event details.
+                    // Recurring rows carry the occurrence date so Details resolves that instance.
+                    var detailsUrl = Url.Action("Details", "Events", new
+                    {
+                        id = eventItem.Id,
+                        occurrenceDate = eventItem.IsRecurring ? eventItem.StartTime.ToString("yyyy-MM-dd") : null
+                    });
+                    <tr data-event-url="@detailsUrl">
                         <td>
                             <div style="display: inline-block; width: 12px; height: 12px; background-color: @(eventItem.Color ?? "#3788d8"); border-radius: 2px; margin-right: 8px;"></div>
-                            <strong>@eventItem.Title</strong>
-                            @if (eventItem.IsRecurring)
-                            {
-                                <i class="bi bi-arrow-repeat text-muted" title="Recurring series occurrence"></i>
-                            }
+                            <strong>
+                                <a class="list-event-link" href="@detailsUrl">
+                                    @eventItem.Title
+                                    @if (eventItem.IsRecurring)
+                                    {
+                                        <i class="bi bi-arrow-repeat text-muted" title="Recurring series occurrence"></i>
+                                    }
+                                </a>
+                            </strong>
                             @if (!string.IsNullOrEmpty(eventItem.Description))
                             {
                                 <br><small class="text-muted">@eventItem.Description.Substring(0, Math.Min(eventItem.Description.Length, 100))@(eventItem.Description.Length > 100 ? "..." : "")</small>
@@ -59,42 +66,21 @@ else
                                 <span class="text-muted">No location</span>
                             }
                         </td>
-                        <td>
-                            <a href="@Url.Action("Details", "Events", new { id = eventItem.Id, occurrenceDate = eventItem.IsRecurring ? eventItem.StartTime.ToString("yyyy-MM-dd") : null })"
-                               class="btn btn-sm btn-outline-primary me-1">
-                                <i class="bi bi-eye"></i> View
-                            </a>
-                            @if (eventItem.OwnerId == currentUserId)
-                            {
-                                if (eventItem.IsRecurring)
-                                {
-                                    @* Recurring rows are occurrences — choose "this occurrence" or "all occurrences" *@
-                                    <div class="btn-group btn-group-sm">
-                                        <button type="button" class="btn btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-                                            <i class="bi bi-pencil"></i> Edit
-                                        </button>
-                                        <ul class="dropdown-menu">
-                                            <li>
-                                                <a class="dropdown-item" href="@Url.Action("Edit", "Events", new { id = eventItem.Id, occurrenceDate = eventItem.StartTime.ToString("yyyy-MM-dd"), scope = "this" })">Edit only this occurrence</a>
-                                            </li>
-                                            <li>
-                                                <a class="dropdown-item" href="@Url.Action("Edit", "Events", new { id = eventItem.Id, occurrenceDate = eventItem.StartTime.ToString("yyyy-MM-dd"), scope = "all" })">Edit all occurrences</a>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                }
-                                else
-                                {
-                                    <a href="@Url.Action("Edit", "Events", new { id = eventItem.Id })"
-                                       class="btn btn-sm btn-outline-secondary">
-                                        <i class="bi bi-pencil"></i> Edit
-                                    </a>
-                                }
-                            }
-                        </td>
                     </tr>
                 }
             </tbody>
         </table>
     </div>
 }
+
+@* Row click -> details; inner anchors already navigate on their own *@
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        document.querySelectorAll('.list-calendar tbody tr[data-event-url]').forEach(function (row) {
+            row.addEventListener('click', function (e) {
+                if (e.target.closest('a, button')) return;
+                window.location.href = row.dataset.eventUrl;
+            });
+        });
+    });
+</script>

@@ -240,7 +240,10 @@
                     </form>
 
                     @* Danger zone — separate form, cannot be nested *@
-                    <form id="deleteForm" asp-action="Delete" asp-route-id="@Model.Id" method="post"
+                    <form id="deleteForm" asp-action="Delete" asp-route-id="@Model.Id"
+                          asp-route-returnView="@Model.ReturnView"
+                          asp-route-returnDate="@((Model.ReturnDate ?? Model.StartTime).ToString("yyyy-MM-dd"))"
+                          method="post"
                           class="mt-3 pt-3 border-top">
                         @if (Model.IsRecurring && Model.OccurrenceDate.HasValue)
                         {
@@ -255,11 +258,7 @@
                             {
                                 <text>Removes the entire series, invitations and reminders.</text>
                             }
-                            else if (Model.IsRecurring && Model.OccurrenceDate.HasValue)
-                            {
-                                <text>Removes only this occurrence, its invitations and reminders.</text>
-                            }
-                            else
+                            else if (!(Model.IsRecurring && Model.OccurrenceDate.HasValue))
                             {
                                 <text>Permanently removes this event, its invitations and reminders.</text>
                             }

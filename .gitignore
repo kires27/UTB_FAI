@@ -316,6 +316,9 @@ paket-files/
 __pycache__/
 *.pyc
 
+TODO.md
+MEMORY.md
+AGENTS.md
 # Cake - Uncomment if you are using it
 # tools/**
 # !tools/packages.config
@@ -368,4 +371,3 @@ FodyWeavers.xsd
 
 .dump
 .docker/
-TODO.md
