@@ -3,11 +3,6 @@ using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 
 namespace CalendarApp.Application.Validations
 {
-    /// <summary>
-    /// Property is required, but only when another property on the same object
-    /// equals <paramref name="targetValue"/>. Works server-side and client-side
-    /// (unobtrusive adapter in custom-validators.js).
-    /// </summary>
     [AttributeUsage(AttributeTargets.Property, AllowMultiple = false)]
     public class RequiredIfAttribute : ValidationAttribute, IClientModelValidator
     {

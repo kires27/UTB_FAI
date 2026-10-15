@@ -3,15 +3,8 @@ using CalendarApp.Domain.Entities;
 
 namespace CalendarApp.Application.Helpers
 {
-    // Expands RecurrenceRule strings produced by the event form
-    // (FREQ/INTERVAL/BYDAY/UNTIL, e.g. "FREQ=WEEKLY;BYDAY=MO,FR;UNTIL=20261231T000000")
-    // into concrete occurrences inside a date range.
-    //
-    // Returned events are shallow display clones with shifted StartTime/EndTime;
-    // the master Id (and scalar fields) is preserved so Details/Edit links keep working.
     public static class RecurrenceExpander
     {
-        // Safety cap per event so unbounded rules with distant UNTIL cannot explode the page
         private const int MaxOccurrencesPerEvent = 500;
 
         private static readonly Dictionary<string, DayOfWeek> WeekdayCodes = new()
@@ -27,7 +20,6 @@ namespace CalendarApp.Application.Helpers
 
         private sealed record ParsedRule(string Freq, int Interval, List<DayOfWeek>? ByDay, DateTime? Until);
 
-        // Expand a batch of events and return all occurrences overlapping [rangeStart, rangeEnd]
         public static List<Event> Expand(IEnumerable<Event> events, DateTime rangeStart, DateTime rangeEnd)
         {
             var result = new List<Event>();
@@ -38,7 +30,6 @@ namespace CalendarApp.Application.Helpers
             return result;
         }
 
-        // Expand one event. Non-recurring events (or unparseable rules) pass through unchanged.
         public static IEnumerable<Event> Expand(Event @event, DateTime rangeStart, DateTime rangeEnd)
         {
             var rule = (@event.IsRecurring && !string.IsNullOrWhiteSpace(@event.RecurrenceRule))
@@ -62,7 +53,7 @@ namespace CalendarApp.Application.Helpers
                 var ex = exceptions.FirstOrDefault(x => x.OriginalDate.Date == occurrenceDate.Date);
                 if (ex != null && ex.IsCancelled)
                 {
-                    continue; // occurrence deleted ("this occurrence only")
+                    continue; // occurrence deleted (this occurrence only)
                 }
 
                 var occurrenceStart = occurrenceDate.Date + @event.StartTime.TimeOfDay;
@@ -81,7 +72,7 @@ namespace CalendarApp.Application.Helpers
             }
         }
 
-        // Human-readable summary, e.g. "Every 2 weeks on Monday, Wednesday until Dec 12, 2026"
+        // Human-readable summary
         public static string? Describe(Event @event)
         {
             if (!@event.IsRecurring || string.IsNullOrWhiteSpace(@event.RecurrenceRule)) return null;
@@ -162,17 +153,10 @@ namespace CalendarApp.Application.Helpers
             return new ParsedRule(freq, interval, byDay, until);
         }
 
-        // Generate the occurrence START DATES (at 00:00) for one event, chronologically.
-        // Always includes the master's own start date (the series anchor), even when the
-        // pattern itself would skip its weekday.
         private static IEnumerable<DateTime> OccurrenceDates(Event @event, ParsedRule rule)
         {
             var start = @event.StartTime.Date;
 
-            // Latest occurrence date to consider. Unbounded rules (no UNTIL / RecurrenceEnd)
-            // must not iterate towards DateTime.MaxValue — the AddDays/AddMonths arithmetic
-            // overflows near it and it would mean millions of pointless iterations.
-            // 30 years out is far beyond any real calendar usage.
             var horizon = DateTime.Today.AddYears(30);
             if (rule.Until.HasValue && rule.Until.Value.Date < horizon) horizon = rule.Until.Value.Date;
             if (@event.RecurrenceEnd.HasValue && @event.RecurrenceEnd.Value.Date < horizon) horizon = @event.RecurrenceEnd.Value.Date;
@@ -201,7 +185,6 @@ namespace CalendarApp.Application.Helpers
 
                 if (!anchorYielded && date > start)
                 {
-                    // pattern's first slot is past the anchor — emit the anchor first
                     if (AnchorInSeries(start, rule))
                     {
                         yield return start;
@@ -247,7 +230,6 @@ namespace CalendarApp.Application.Helpers
             }
         }
 
-        // Weeks are anchored Monday-first on the anchor's week; INTERVAL selects every Nth week
         private static IEnumerable<DateTime> WeeklyByDay(DateTime start, int interval, List<DayOfWeek> byDay, DateTime horizon)
         {
             var anchorWeek = start.AddDays(-(((int)start.DayOfWeek + 6) % 7)); // Monday of anchor week
@@ -269,7 +251,7 @@ namespace CalendarApp.Application.Helpers
                 var daysInMonth = DateTime.DaysInMonth(month.Year, month.Month);
                 if (start.Day > daysInMonth)
                 {
-                    continue; // e.g. the 31st in a 30-day month
+                    continue;
                 }
                 yield return new DateTime(month.Year, month.Month, start.Day);
             }
@@ -283,7 +265,6 @@ namespace CalendarApp.Application.Helpers
             }
         }
 
-        // Shallow display clone; shared navigation references are fine (display-only)
         private static Event BuildOccurrence(Event master, DateTime occurrenceStart, DateTime occurrenceEnd, EventOccurrenceException? ex)
         {
             var clone = new Event
@@ -308,8 +289,6 @@ namespace CalendarApp.Application.Helpers
                 Exceptions = master.Exceptions
             };
 
-            // Remember the slot this occurrence occupies in the series so "this occurrence
-            // only" operations (drag-move, edit, delete) address the right exception row.
             clone.OccurrenceOriginalDate = (ex != null ? ex.OriginalDate : occurrenceStart).Date;
 
             if (ex != null)
@@ -329,7 +308,7 @@ namespace CalendarApp.Application.Helpers
         }
     }
 
-    // Tiny regex helper used by ParseRule (kept local to the expander)
+    // regex helper used by ParseRule 
     internal static class StringMatchExtensions
     {
         public static string? Match(this string input, string pattern)

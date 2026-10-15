@@ -4,12 +4,7 @@ using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 
 namespace CalendarApp.Application.Validations
 {
-    /// <summary>
-    /// Validates a free-text list of email addresses separated by commas or
-    /// semicolons (e.g. the InviteEmails field). Null/empty passes — combine
-    /// with [Required] when the field is mandatory. Works server-side and
-    /// client-side (unobtrusive adapter in custom-validators.js).
-    /// </summary>
+    // Validates email addresses separated by commas or semicolons
     [AttributeUsage(AttributeTargets.Property, AllowMultiple = false)]
     public class EmailListAttribute : ValidationAttribute, IClientModelValidator
     {

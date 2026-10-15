@@ -3,11 +3,7 @@ using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 
 namespace CalendarApp.Application.Validations
 {
-    /// <summary>
-    /// Client-validatable variant of <see cref="Domain.Validations.TextLengthRangeAttribute"/>.
-    /// Server logic stays in the Domain attribute (single source of truth); this class only
-    /// emits the unobtrusive data-* attributes consumed by custom-validators.js.
-    /// </summary>
+    /// emits the data-* attributes consumed by custom-validators.js.
     public class TextLengthRangeAttribute : Domain.Validations.TextLengthRangeAttribute, IClientModelValidator
     {
         public TextLengthRangeAttribute(int minLength, int maxLength) : base(minLength, maxLength)

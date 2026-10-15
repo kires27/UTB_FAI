@@ -3,11 +3,7 @@ using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 
 namespace CalendarApp.Application.Validations
 {
-    /// <summary>
-    /// Client-validatable variant of <see cref="Domain.Validations.DateRangeAttribute"/>.
-    /// Server logic stays in the Domain attribute (single source of truth); this class only
-    /// emits the unobtrusive data-* attributes consumed by custom-validators.js.
-    /// </summary>
+    // emits the unobtrusive data-* attributes consumed by custom-validators.js.
     public class DateRangeAttribute : Domain.Validations.DateRangeAttribute, IClientModelValidator
     {
         public void AddValidation(ClientModelValidationContext context)

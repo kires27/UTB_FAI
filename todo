@@ -1,0 +1,9 @@
+IEventRepository ... repository patern . 
+repository interface do Domain
+
+repository class do infrastructure
+
+ve sluzbach pouzivat repository interface
+
+zrusit propojeni aplikacni vrstvy na vrstvu infrastructure
+

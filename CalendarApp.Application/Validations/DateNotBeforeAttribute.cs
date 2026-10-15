@@ -3,11 +3,7 @@ using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 
 namespace CalendarApp.Application.Validations
 {
-    /// <summary>
-    /// DateTime property must not be before another DateTime property on the same object
-    /// (e.g. RecurrenceEnd must not be before StartTime). Works server-side and
-    /// client-side (unobtrusive adapter in custom-validators.js).
-    /// </summary>
+    // DateTime property must not be before another DateTime property on the same object
     [AttributeUsage(AttributeTargets.Property, AllowMultiple = false)]
     public class DateNotBeforeAttribute : ValidationAttribute, IClientModelValidator
     {
