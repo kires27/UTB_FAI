@@ -153,8 +153,8 @@ namespace CalendarApp.Infrastructure.Database
 					OwnerId = -1,
 					Status = EventStatus.Confirmed,
 					Color = "#007bff",
-					CreatedAt = new DateTime(2025, 11, 30),
-					UpdatedAt = new DateTime(2025, 11, 30)
+					CreatedAt = new DateTime(2026, 11, 30),
+					UpdatedAt = new DateTime(2026, 11, 30)
 				},
 				new
 				{
@@ -169,8 +169,8 @@ namespace CalendarApp.Infrastructure.Database
 					OwnerId = -1,
 					Status = EventStatus.Confirmed,
 					Color = "#007bff",
-					CreatedAt = new DateTime(2025, 12, 5),
-					UpdatedAt = new DateTime(2025, 12, 5)
+					CreatedAt = new DateTime(2026, 12, 5),
+					UpdatedAt = new DateTime(2026, 12, 5)
 				},
 				new
 				{
@@ -186,8 +186,8 @@ namespace CalendarApp.Infrastructure.Database
 					OwnerId = -2,
 					Status = EventStatus.Confirmed,
 					Color = "#28a745",
-					CreatedAt = new DateTime(2025, 11, 23),
-					UpdatedAt = new DateTime(2025, 11, 23)
+					CreatedAt = new DateTime(2026, 11, 23),
+					UpdatedAt = new DateTime(2026, 11, 23)
 				},
 				new
 				{
@@ -202,8 +202,8 @@ namespace CalendarApp.Infrastructure.Database
 					OwnerId = -2,
 					Status = EventStatus.Confirmed,
 					Color = "#6f42c1",
-					CreatedAt = new DateTime(2025, 11, 27),
-					UpdatedAt = new DateTime(2025, 11, 27)
+					CreatedAt = new DateTime(2026, 11, 27),
+					UpdatedAt = new DateTime(2026, 11, 27)
 				},
 				new
 				{
@@ -219,8 +219,8 @@ namespace CalendarApp.Infrastructure.Database
 					OwnerId = -3,
 					Status = EventStatus.Confirmed,
 					Color = "#dc3545",
-					CreatedAt = new DateTime(2025, 11, 7),
-					UpdatedAt = new DateTime(2025, 11, 7)
+					CreatedAt = new DateTime(2026, 11, 7),
+					UpdatedAt = new DateTime(2026, 11, 7)
 				},
 				new
 				{
@@ -235,8 +235,8 @@ namespace CalendarApp.Infrastructure.Database
 					OwnerId = -1,
 					Status = EventStatus.Confirmed,
 					Color = "#ffc107",
-					CreatedAt = new DateTime(2025, 12, 4),
-					UpdatedAt = new DateTime(2025, 12, 4)
+					CreatedAt = new DateTime(2026, 12, 4),
+					UpdatedAt = new DateTime(2026, 12, 4)
 				},
 				new
 				{
@@ -251,8 +251,8 @@ namespace CalendarApp.Infrastructure.Database
 					OwnerId = -2,
 					Status = EventStatus.Confirmed,
 					Color = "#e83e8c",
-					CreatedAt = new DateTime(2025, 12, 2),
-					UpdatedAt = new DateTime(2025, 12, 2)
+					CreatedAt = new DateTime(2026, 12, 2),
+					UpdatedAt = new DateTime(2026, 12, 2)
 				},
 				new
 				{
@@ -268,8 +268,8 @@ namespace CalendarApp.Infrastructure.Database
 					OwnerId = -3,
 					Status = EventStatus.Confirmed,
 					Color = "#fd7e14",
-					CreatedAt = new DateTime(2025, 11, 22),
-					UpdatedAt = new DateTime(2025, 11, 22)
+					CreatedAt = new DateTime(2026, 11, 22),
+					UpdatedAt = new DateTime(2026, 11, 22)
 				},
 				new
 				{
@@ -328,8 +328,8 @@ namespace CalendarApp.Infrastructure.Database
 					UserId = -2,
 					Status = AttendeeStatus.Accepted,
 					Role = AttendeeRole.Participant,
-					CreatedAt = new DateTime(2025, 12, 5),
-					UpdatedAt = new DateTime(2025, 12, 5)
+					CreatedAt = new DateTime(2026, 12, 5),
+					UpdatedAt = new DateTime(2026, 12, 5)
 				},
 				new
 				{
@@ -337,8 +337,8 @@ namespace CalendarApp.Infrastructure.Database
 					UserId = -3,
 					Status = AttendeeStatus.Tentative,
 					Role = AttendeeRole.Participant,
-					CreatedAt = new DateTime(2025, 12, 6),
-					UpdatedAt = new DateTime(2025, 12, 6)
+					CreatedAt = new DateTime(2026, 12, 6),
+					UpdatedAt = new DateTime(2026, 12, 6)
 				},
 				new
 				{
@@ -346,8 +346,8 @@ namespace CalendarApp.Infrastructure.Database
 					UserId = -1,
 					Status = AttendeeStatus.Accepted,
 					Role = AttendeeRole.Participant,
-					CreatedAt = new DateTime(2025, 12, 3),
-					UpdatedAt = new DateTime(2025, 12, 3)
+					CreatedAt = new DateTime(2026, 12, 3),
+					UpdatedAt = new DateTime(2026, 12, 3)
 				},
 				new
 				{
@@ -355,8 +355,8 @@ namespace CalendarApp.Infrastructure.Database
 					UserId = -2,
 					Status = AttendeeStatus.Invited,
 					Role = AttendeeRole.Participant,
-					CreatedAt = new DateTime(2025, 11, 30),
-					UpdatedAt = new DateTime(2025, 11, 30)
+					CreatedAt = new DateTime(2026, 11, 30),
+					UpdatedAt = new DateTime(2026, 11, 30)
 				},
 				new
 				{
@@ -364,8 +364,8 @@ namespace CalendarApp.Infrastructure.Database
 					UserId = -1,
 					Status = AttendeeStatus.Accepted,
 					Role = AttendeeRole.Owner,
-					CreatedAt = new DateTime(2025, 11, 30),
-					UpdatedAt = new DateTime(2025, 11, 30)
+					CreatedAt = new DateTime(2026, 11, 30),
+					UpdatedAt = new DateTime(2026, 11, 30)
 				},
 				new
 				{
@@ -373,8 +373,8 @@ namespace CalendarApp.Infrastructure.Database
 					UserId = -2,
 					Status = AttendeeStatus.Accepted,
 					Role = AttendeeRole.Owner,
-					CreatedAt = new DateTime(2025, 11, 23),
-					UpdatedAt = new DateTime(2025, 11, 23)
+					CreatedAt = new DateTime(2026, 11, 23),
+					UpdatedAt = new DateTime(2026, 11, 23)
 				},
 				new
 				{
