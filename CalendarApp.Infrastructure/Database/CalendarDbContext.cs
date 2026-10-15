@@ -75,8 +75,8 @@ namespace CalendarApp.Infrastructure.Database
 					TwoFactorEnabled = false,
 					LockoutEnabled = true,
 					AccessFailedCount = 0,
-					CreatedAt = new DateTime(2025, 11, 7),
-					UpdatedAt = new DateTime(2025, 11, 7)
+					CreatedAt = new DateTime(2026, 9, 7),
+					UpdatedAt = new DateTime(2026, 9, 7)
 				},
 				new
 				{
@@ -93,8 +93,8 @@ namespace CalendarApp.Infrastructure.Database
 					TwoFactorEnabled = false,
 					LockoutEnabled = true,
 					AccessFailedCount = 0,
-					CreatedAt = new DateTime(2025, 11, 7),
-					UpdatedAt = new DateTime(2025, 11, 7)
+					CreatedAt = new DateTime(2026, 9, 7),
+					UpdatedAt = new DateTime(2026, 9, 7)
 				},
 				new
 				{
@@ -111,8 +111,8 @@ namespace CalendarApp.Infrastructure.Database
 					TwoFactorEnabled = false,
 					LockoutEnabled = true,
 					AccessFailedCount = 0,
-					CreatedAt = new DateTime(2025, 11, 12),
-					UpdatedAt = new DateTime(2025, 11, 12)
+					CreatedAt = new DateTime(2026, 9, 12),
+					UpdatedAt = new DateTime(2026, 9, 12)
 				},
 				new
 				{
@@ -129,8 +129,8 @@ namespace CalendarApp.Infrastructure.Database
 					TwoFactorEnabled = false,
 					LockoutEnabled = true,
 					AccessFailedCount = 0,
-					CreatedAt = new DateTime(2025, 11, 17),
-					UpdatedAt = new DateTime(2025, 11, 17)
+					CreatedAt = new DateTime(2026, 9, 17),
+					UpdatedAt = new DateTime(2026, 9, 17)
 				});
 
 			modelBuilder.Entity<IdentityUserRole<int>>().HasData(

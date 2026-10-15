@@ -94,7 +94,7 @@ namespace CalendarApp.Infrastructure.Migrations
                             Id = -1,
                             AllDay = false,
                             Color = "#007bff",
-                            CreatedAt = new DateTime(2025, 11, 30, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedAt = new DateTime(2026, 11, 30, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Description = "Quarterly business planning and strategy meeting",
                             EndTime = new DateTime(2026, 12, 15, 11, 0, 0, 0, DateTimeKind.Unspecified),
                             IsRecurring = false,
@@ -103,14 +103,14 @@ namespace CalendarApp.Infrastructure.Migrations
                             StartTime = new DateTime(2026, 12, 15, 9, 0, 0, 0, DateTimeKind.Unspecified),
                             Status = 0,
                             Title = "Q4 Planning Session",
-                            UpdatedAt = new DateTime(2025, 11, 30, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                            UpdatedAt = new DateTime(2026, 11, 30, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
                         {
                             Id = -2,
                             AllDay = false,
                             Color = "#007bff",
-                            CreatedAt = new DateTime(2025, 12, 5, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedAt = new DateTime(2026, 12, 5, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Description = "Discuss project requirements and timeline",
                             EndTime = new DateTime(2026, 12, 18, 12, 0, 0, 0, DateTimeKind.Unspecified),
                             IsRecurring = false,
@@ -119,14 +119,14 @@ namespace CalendarApp.Infrastructure.Migrations
                             StartTime = new DateTime(2026, 12, 18, 11, 0, 0, 0, DateTimeKind.Unspecified),
                             Status = 0,
                             Title = "Client Call - Project X",
-                            UpdatedAt = new DateTime(2025, 12, 5, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                            UpdatedAt = new DateTime(2026, 12, 5, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
                         {
                             Id = -3,
                             AllDay = false,
                             Color = "#28a745",
-                            CreatedAt = new DateTime(2025, 11, 23, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedAt = new DateTime(2026, 11, 23, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Description = "Weekly grocery run",
                             EndTime = new DateTime(2026, 12, 20, 15, 0, 0, 0, DateTimeKind.Unspecified),
                             IsRecurring = true,
@@ -136,14 +136,14 @@ namespace CalendarApp.Infrastructure.Migrations
                             StartTime = new DateTime(2026, 12, 20, 14, 0, 0, 0, DateTimeKind.Unspecified),
                             Status = 0,
                             Title = "Grocery Shopping",
-                            UpdatedAt = new DateTime(2025, 11, 23, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                            UpdatedAt = new DateTime(2026, 11, 23, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
                         {
                             Id = -4,
                             AllDay = false,
                             Color = "#6f42c1",
-                            CreatedAt = new DateTime(2025, 11, 27, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedAt = new DateTime(2026, 11, 27, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Description = "Regular dental checkup",
                             EndTime = new DateTime(2026, 12, 17, 16, 0, 0, 0, DateTimeKind.Unspecified),
                             IsRecurring = false,
@@ -152,14 +152,14 @@ namespace CalendarApp.Infrastructure.Migrations
                             StartTime = new DateTime(2026, 12, 17, 15, 0, 0, 0, DateTimeKind.Unspecified),
                             Status = 0,
                             Title = "Dentist Appointment",
-                            UpdatedAt = new DateTime(2025, 11, 27, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                            UpdatedAt = new DateTime(2026, 11, 27, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
                         {
                             Id = -5,
                             AllDay = false,
                             Color = "#dc3545",
-                            CreatedAt = new DateTime(2025, 11, 7, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedAt = new DateTime(2026, 11, 7, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Description = "Cardio and strength training",
                             EndTime = new DateTime(2026, 12, 16, 7, 30, 0, 0, DateTimeKind.Unspecified),
                             IsRecurring = true,
@@ -169,14 +169,14 @@ namespace CalendarApp.Infrastructure.Migrations
                             StartTime = new DateTime(2026, 12, 16, 6, 30, 0, 0, DateTimeKind.Unspecified),
                             Status = 0,
                             Title = "Morning Workout",
-                            UpdatedAt = new DateTime(2025, 11, 7, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                            UpdatedAt = new DateTime(2026, 11, 7, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
                         {
                             Id = -6,
                             AllDay = false,
                             Color = "#ffc107",
-                            CreatedAt = new DateTime(2025, 12, 4, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedAt = new DateTime(2026, 12, 4, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Description = "Team happy hour after work",
                             EndTime = new DateTime(2026, 12, 19, 22, 0, 0, 0, DateTimeKind.Unspecified),
                             IsRecurring = false,
@@ -185,14 +185,14 @@ namespace CalendarApp.Infrastructure.Migrations
                             StartTime = new DateTime(2026, 12, 19, 19, 0, 0, 0, DateTimeKind.Unspecified),
                             Status = 0,
                             Title = "Friday Night Drinks",
-                            UpdatedAt = new DateTime(2025, 12, 4, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                            UpdatedAt = new DateTime(2026, 12, 4, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
                         {
                             Id = -7,
                             AllDay = false,
                             Color = "#e83e8c",
-                            CreatedAt = new DateTime(2025, 12, 2, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedAt = new DateTime(2026, 12, 2, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Description = "Emma's 30th birthday celebration",
                             EndTime = new DateTime(2026, 12, 20, 23, 0, 0, 0, DateTimeKind.Unspecified),
                             IsRecurring = false,
@@ -201,14 +201,14 @@ namespace CalendarApp.Infrastructure.Migrations
                             StartTime = new DateTime(2026, 12, 20, 18, 0, 0, 0, DateTimeKind.Unspecified),
                             Status = 0,
                             Title = "Birthday Party - Emma",
-                            UpdatedAt = new DateTime(2025, 12, 2, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                            UpdatedAt = new DateTime(2026, 12, 2, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
                         {
                             Id = -8,
                             AllDay = false,
                             Color = "#fd7e14",
-                            CreatedAt = new DateTime(2025, 11, 22, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedAt = new DateTime(2026, 11, 22, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Description = "Monthly catch-up lunch",
                             EndTime = new DateTime(2026, 12, 21, 14, 0, 0, 0, DateTimeKind.Unspecified),
                             IsRecurring = true,
@@ -218,7 +218,7 @@ namespace CalendarApp.Infrastructure.Migrations
                             StartTime = new DateTime(2026, 12, 21, 12, 30, 0, 0, DateTimeKind.Unspecified),
                             Status = 0,
                             Title = "Lunch with Mom",
-                            UpdatedAt = new DateTime(2025, 11, 22, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                            UpdatedAt = new DateTime(2026, 11, 22, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
                         {
@@ -305,55 +305,55 @@ namespace CalendarApp.Infrastructure.Migrations
                         {
                             EventId = -6,
                             UserId = -2,
-                            CreatedAt = new DateTime(2025, 12, 5, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedAt = new DateTime(2026, 12, 5, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Role = 1,
                             Status = 1,
-                            UpdatedAt = new DateTime(2025, 12, 5, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                            UpdatedAt = new DateTime(2026, 12, 5, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
                         {
                             EventId = -6,
                             UserId = -3,
-                            CreatedAt = new DateTime(2025, 12, 6, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedAt = new DateTime(2026, 12, 6, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Role = 1,
                             Status = 3,
-                            UpdatedAt = new DateTime(2025, 12, 6, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                            UpdatedAt = new DateTime(2026, 12, 6, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
                         {
                             EventId = -7,
                             UserId = -1,
-                            CreatedAt = new DateTime(2025, 12, 3, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedAt = new DateTime(2026, 12, 3, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Role = 1,
                             Status = 1,
-                            UpdatedAt = new DateTime(2025, 12, 3, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                            UpdatedAt = new DateTime(2026, 12, 3, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
                         {
                             EventId = -5,
                             UserId = -2,
-                            CreatedAt = new DateTime(2025, 11, 30, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedAt = new DateTime(2026, 11, 30, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Role = 1,
                             Status = 0,
-                            UpdatedAt = new DateTime(2025, 11, 30, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                            UpdatedAt = new DateTime(2026, 11, 30, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
                         {
                             EventId = -1,
                             UserId = -1,
-                            CreatedAt = new DateTime(2025, 11, 30, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedAt = new DateTime(2026, 11, 30, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Role = 0,
                             Status = 1,
-                            UpdatedAt = new DateTime(2025, 11, 30, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                            UpdatedAt = new DateTime(2026, 11, 30, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
                         {
                             EventId = -3,
                             UserId = -2,
-                            CreatedAt = new DateTime(2025, 11, 23, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedAt = new DateTime(2026, 11, 23, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Role = 0,
                             Status = 1,
-                            UpdatedAt = new DateTime(2025, 11, 23, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                            UpdatedAt = new DateTime(2026, 11, 23, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
                         {
