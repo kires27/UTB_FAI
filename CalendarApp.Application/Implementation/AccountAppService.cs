@@ -29,7 +29,6 @@ namespace CalendarApp.Application.Implementation
                 return result.Errors.Select(e => e.Description).ToList();
             }
 
-            // Assign User role by default
             await _userManager.AddToRoleAsync(user, "User");
 
             await _signInManager.SignInAsync(user, isPersistent: false);

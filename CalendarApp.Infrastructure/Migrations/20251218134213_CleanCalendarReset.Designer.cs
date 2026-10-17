@@ -15,7 +15,7 @@ namespace CalendarApp.Infrastructure.Migrations
     [Migration("20251218134213_CleanCalendarReset")]
     partial class CleanCalendarReset
     {
-        /// <inheritdoc />
+        
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618

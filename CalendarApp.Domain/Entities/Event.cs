@@ -52,14 +52,11 @@ namespace CalendarApp.Domain.Entities
 
         public DateTime UpdatedAt { get; set; }
 
-        // Not persisted: when this instance is an expanded occurrence of a recurring
-        // series, the date (00:00) of the ORIGINAL slot in the series — i.e. the
-        // exception's OriginalDate when the occurrence was moved, otherwise the
-        // occurrence's own date. Used for "this occurrence only" operations.
+        // Not persisted: for an expanded occurrence, the date of the ORIGINAL series slot
+        // (used for "this occurrence only" operations)
         [NotMapped]
         public DateTime? OccurrenceOriginalDate { get; set; }
 
-        // Navigation properties
         public virtual ICollection<EventAttendee> EventAttendees { get; set; } = new List<EventAttendee>();
         public virtual ICollection<EventOccurrenceException> Exceptions { get; set; } = new List<EventOccurrenceException>();
         public virtual ICollection<Notification> Notifications { get; set; } = new List<Notification>();

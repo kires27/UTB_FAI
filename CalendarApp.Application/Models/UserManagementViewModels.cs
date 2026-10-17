@@ -60,7 +60,6 @@ namespace CalendarApp.Application.Models
         public string? ConfirmNewPassword { get; set; }
 
         // Password is optional: blank = keep current password.
-        // Rules mirror the Identity options configured in Program.cs.
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
             var password = NewPassword ?? string.Empty;

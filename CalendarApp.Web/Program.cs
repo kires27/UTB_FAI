@@ -1,14 +1,15 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
 using CalendarApp.Domain.Entities;
+using CalendarApp.Domain.Repositories;
 using CalendarApp.Infrastructure.Identity;
 using CalendarApp.Application.Abstraction;
 using CalendarApp.Application.Implementation;
 using CalendarApp.Infrastructure.Database;
+using CalendarApp.Infrastructure.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
 builder.Services.AddControllersWithViews();
 
 var connectionString = builder.Configuration.GetConnectionString("MySQL");
@@ -16,7 +17,6 @@ ServerVersion serverVersion = new MySqlServerVersion("8.0.29");
 
 builder.Services.AddDbContext<CalendarDbContext>(options => options.UseMySql(connectionString, serverVersion));
 
-// Add ASP.NET Core Identity
 builder.Services.AddIdentity<User, Role>()
     .AddEntityFrameworkStores<CalendarDbContext>()
     .AddDefaultTokenProviders();
@@ -49,10 +49,13 @@ builder.Services.AddScoped<INotificationAppService, NotificationAppService>();
 builder.Services.AddScoped<IUserAppService, UserAppService>();
 builder.Services.AddScoped<IAccountAppService, AccountAppService>();
 builder.Services.AddScoped<IRecurrenceAppService, RecurrenceAppService>();
+builder.Services.AddScoped<ICalendarViewAppService, CalendarViewAppService>();
+builder.Services.AddScoped<IEventRepository, EventRepository>();
+builder.Services.AddScoped<INotificationRepository, NotificationRepository>();
 
 var app = builder.Build();
 
-// Ensure Identity roles exist (Admin/User) — needed for registration
+// Ensure Identity roles exist (Admin/User), needed for registration
 using (var scope = app.Services.CreateScope())
 {
     var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<Role>>();
@@ -65,11 +68,9 @@ using (var scope = app.Services.CreateScope())
     }
 }
 
-// Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
-    // The default HSTS value is 30 days. you may want to change this for production scenarios, see https://aka.ms/aspnetcore/hsts.
     app.UseHsts();
 }
 

@@ -15,10 +15,8 @@ namespace CalendarApp.Web.Controllers
 
         public IActionResult Index()
         {
-            // Check if user is logged in via Identity
             if (User.Identity?.IsAuthenticated == true)
             {
-                // User is logged in, redirect based on role
                 if (User.IsInRole("Admin"))
                 {
                     return RedirectToAction("Select", "Event", new { area = "Admin" });
@@ -29,7 +27,6 @@ namespace CalendarApp.Web.Controllers
                 }
             }
 
-            // User not logged in, show home page
             return View();
         }
 

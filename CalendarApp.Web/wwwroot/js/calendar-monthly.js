@@ -27,7 +27,6 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     // Highlight the day while hovering its events
-    // (day hover styling comes from CSS, see .calendar-day:hover)
     document.querySelectorAll('.event-item').forEach(function (chip) {
         chip.addEventListener('mouseenter', function () {
             var d = chip.closest('.calendar-day');

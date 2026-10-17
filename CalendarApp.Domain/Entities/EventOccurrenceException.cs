@@ -18,7 +18,7 @@ namespace CalendarApp.Domain.Entities
         // True when the user deleted only this occurrence
         public bool IsCancelled { get; set; }
 
-        // Field overrides — null = inherit from the master event
+        // Field overrides: null = inherit from the master event
         public string? Title { get; set; }
 
         [StringLength(2000)]
@@ -44,7 +44,6 @@ namespace CalendarApp.Domain.Entities
 
         public DateTime UpdatedAt { get; set; }
 
-        // Navigation properties
         [ForeignKey(nameof(MasterEventId))]
         public virtual Event MasterEvent { get; set; } = null!;
     }

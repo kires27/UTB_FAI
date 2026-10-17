@@ -65,11 +65,10 @@ $.validator.addMethod('requiredif', function (value, element, params) {
     }
 
     if (String(dependentValue).toLowerCase() !== String(params.targetvalue).toLowerCase()) {
-        return true; // Condition not met — field not required
+        return true; // Condition not met, field not required
     }
 
-    // Condition met: field must be filled (required validator also runs, but this
-    // keeps the rule self-contained)
+    // Condition met: field must be filled (self-contained, though the required validator also runs)
     return $.trim(value || '').length > 0;
 });
 

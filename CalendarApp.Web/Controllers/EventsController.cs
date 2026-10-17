@@ -12,16 +12,19 @@ namespace CalendarApp.Web.Controllers
     {
         private readonly IEventAppService _eventAppService;
         private readonly IRecurrenceAppService _recurrenceAppService;
+        private readonly ICalendarViewAppService _calendarViewAppService;
+        private readonly IUserAppService _userAppService;
 
-        public EventsController(IEventAppService eventAppService, IRecurrenceAppService recurrenceAppService)
+        public EventsController(IEventAppService eventAppService, IRecurrenceAppService recurrenceAppService, ICalendarViewAppService calendarViewAppService, IUserAppService userAppService)
         {
             _eventAppService = eventAppService;
             _recurrenceAppService = recurrenceAppService;
+            _calendarViewAppService = calendarViewAppService;
+            _userAppService = userAppService;
         }
 
-        public IActionResult Index(string view = "list", int year = 0, int month = 0, DateTime? date = null)
+        public async Task<IActionResult> Index(string view = "list", int year = 0, int month = 0, DateTime? date = null)
         {
-            // Get current user ID from Identity claims
             var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             if (string.IsNullOrEmpty(userIdClaim) || !int.TryParse(userIdClaim, out var userId))
             {
@@ -29,9 +32,9 @@ namespace CalendarApp.Web.Controllers
             }
 
             var username = User.Identity?.Name ?? "";
-            
+
             // Get all events for the user (owner or attendee with accepted status)
-            var allEvents = _eventAppService.SelectAll();
+            var allEvents = await _eventAppService.SelectAllAsync();
             var userEvents = allEvents.Where(e => e.OwnerId == userId || 
                 e.EventAttendees.Any(ea => ea.UserId == userId && ea.Status == AttendeeStatus.Accepted))
                 .OrderBy(e => e.StartTime)
@@ -39,25 +42,21 @@ namespace CalendarApp.Web.Controllers
 
             ViewBag.Username = username;
 
-            // If monthly view is requested
             if (view == "monthly")
             {
-                // Default to current month if not specified
                 var displayDate = date ?? ((year > 0 && month > 0) ? new DateTime(year, month, 1) : DateTime.Now);
 
-                // The 42-day grid can start before the month — expand over its full span
-                // (weeks start Monday, same as the weekly view)
+                // 42-day grid starts before the month; weeks start Monday
                 var firstDayOfMonth = new DateTime(displayDate.Year, displayDate.Month, 1);
                 var firstDayOfWeek = firstDayOfMonth.AddDays(-(((int)firstDayOfMonth.DayOfWeek + 6) % 7));
                 var displayEvents = _recurrenceAppService.Expand(userEvents, firstDayOfWeek, firstDayOfWeek.AddDays(42));
 
-                var monthlyViewModel = BuildMonthlyCalendar(displayEvents, displayDate);
+                var monthlyViewModel = _calendarViewAppService.BuildMonthlyCalendar(displayEvents, displayDate);
                 monthlyViewModel.CurrentView = "monthly";
                 ViewBag.UserEvents = userEvents;
                 return View("Index", monthlyViewModel);
             }
 
-            // Daily / weekly time-grid views (shared lane layout)
             if (view == "daily" || view == "weekly")
             {
                 var anchor = (date ?? DateTime.Now).Date;
@@ -75,108 +74,42 @@ namespace CalendarApp.Web.Controllers
 
                 var displayEvents = _recurrenceAppService.Expand(userEvents, gridDays[0], gridDays[^1].Date.AddDays(1));
 
-                var gridViewModel = BuildTimeGrid(displayEvents, gridDays);
+                var gridViewModel = _calendarViewAppService.BuildTimeGrid(displayEvents, gridDays);
                 gridViewModel.CurrentView = view;
                 gridViewModel.CurrentUserId = userId;
                 ViewBag.UserEvents = userEvents;
                 return View("Index", gridViewModel);
             }
 
-            // Default list view — expand recurring occurrences over a bounded window
-            // (unbounded rules would otherwise grow the list forever)
+            // Expand over a bounded window; unbounded rules would grow forever
             var listStart = DateTime.Today.AddDays(-30);
             var listEnd = DateTime.Today.AddMonths(6);
             var listEvents = _recurrenceAppService.Expand(userEvents, listStart, listEnd)
                 .OrderBy(e => e.StartTime)
                 .ToList();
 
-            var listViewModel = new MonthlyCalendarViewModel
-            {
-                CurrentDate = DateTime.Now,
-                DisplayMonth = DateTime.Now,
-                CurrentView = "list",
-                Days = new List<CalendarDayViewModel>()
-            };
+            var listViewModel = _calendarViewAppService.BuildList();
             ViewBag.UserEvents = listEvents;
             return View("Index", listViewModel);
         }
 
-        private MonthlyCalendarViewModel BuildMonthlyCalendar(List<Event> events, DateTime displayDate)
-        {
-            var viewModel = new MonthlyCalendarViewModel
-            {
-                CurrentDate = DateTime.Now,
-                DisplayMonth = displayDate,
-                CurrentView = "monthly",
-                Days = new List<CalendarDayViewModel>()
-            };
-
-            // Get the first day of the month and the first day of the calendar week (weeks start Monday)
-            var firstDayOfMonth = new DateTime(displayDate.Year, displayDate.Month, 1);
-            var firstDayOfWeek = firstDayOfMonth.AddDays(-(((int)firstDayOfMonth.DayOfWeek + 6) % 7));
-
-            // Generate 6 weeks (42 days) to cover the entire month
-            for (int week = 0; week < 6; week++)
-            {
-                for (int day = 0; day < 7; day++)
-                {
-                    var currentDate = firstDayOfWeek.AddDays(week * 7 + day);
-                    var dayEvents = events.Where(e => 
-                        (e.StartTime.Date <= currentDate.Date && e.EndTime.Date >= currentDate.Date))
-                        .ToList();
-
-                    viewModel.Days.Add(new CalendarDayViewModel
-                    {
-                        Date = currentDate,
-                        IsCurrentMonth = currentDate.Month == displayDate.Month,
-                        IsToday = currentDate.Date == DateTime.Today,
-                        Events = dayEvents.OrderBy(e => e.StartTime).ToList()
-                    });
-                }
-            }
-
-            return viewModel;
-        }
-
-        private MonthlyCalendarViewModel BuildTimeGrid(List<Event> events, List<DateTime> days)
-        {
-            var today = DateTime.Today;
-            return new MonthlyCalendarViewModel
-            {
-                CurrentDate = days[0],
-                DisplayMonth = days[0],
-                Days = days.Select(d => new CalendarDayViewModel
-                {
-                    Date = d,
-                    IsCurrentMonth = true,
-                    IsToday = d.Date == today,
-                    Events = events
-                        .Where(e => e.StartTime.Date <= d && e.EndTime.Date >= d)
-                        .OrderBy(e => e.StartTime)
-                        .ToList()
-                }).ToList()
-            };
-        }
-
-        public IActionResult Details(int id, DateTime? occurrenceDate, string returnView = "list", DateTime? returnDate = null)
+        public async Task<IActionResult> Details(int id, DateTime? occurrenceDate, string returnView = "list", DateTime? returnDate = null)
         {
             ViewBag.ReturnView = returnView;
             ViewBag.ReturnDate = returnDate;
 
-            var @event = _eventAppService.GetById(id);
+            var @event = await _eventAppService.GetByIdAsync(id);
             if (@event == null)
             {
                 return NotFound();
             }
 
-            // Get current user ID from Identity claims
             var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             if (string.IsNullOrEmpty(userIdClaim) || !int.TryParse(userIdClaim, out var userId))
             {
                 return RedirectToAction("Login", "Account");
             }
 
-            // Check if user has access to this event
             if (@event.OwnerId != userId && !@event.EventAttendees.Any(ea => ea.UserId == userId))
             {
                 return Forbid();
@@ -185,7 +118,7 @@ namespace CalendarApp.Web.Controllers
             var myAttendance = @event.EventAttendees.FirstOrDefault(ea => ea.UserId == userId);
             ViewBag.CanDecline = myAttendance != null && myAttendance.Role != AttendeeRole.Owner && myAttendance.Status != AttendeeStatus.Declined;
             ViewBag.IsDeclined = myAttendance?.Status == AttendeeStatus.Declined;
-            ViewBag.Users = _eventAppService.GetUsersByIds(@event.EventAttendees.Select(ea => ea.UserId).Append(@event.OwnerId));
+            ViewBag.Users = await _userAppService.GetUsersByIdsAsync(@event.EventAttendees.Select(ea => ea.UserId).Append(@event.OwnerId));
             ViewBag.RecurrenceDescription = _recurrenceAppService.Describe(@event);
 
             // Recurring series: resolve the requested occurrence (exception overrides applied)
@@ -237,8 +170,7 @@ namespace CalendarApp.Web.Controllers
                 AllDay = allDay,
                 Color = "#3788d8",
                 ReturnView = view,
-                // Return context = the calendar view anchor; when absent, the requested
-                // start (or now) keeps the user anchored where they came from
+                // Return context = calendar view anchor; absent means requested start (or now)
                 ReturnDate = returnDate ?? date ?? DateTime.Now
             };
 
@@ -248,14 +180,12 @@ namespace CalendarApp.Web.Controllers
         [HttpPost]
         public async Task<IActionResult> Create(EventCreateViewModel viewModel)
         {
-            // Get current user ID from Identity claims
             var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             if (string.IsNullOrEmpty(userIdClaim) || !int.TryParse(userIdClaim, out var userId))
             {
                 return RedirectToAction("Login", "Account");
             }
 
-            // Create event from view model
             var @event = new Event
             {
                 Title = viewModel.Title,
@@ -277,9 +207,8 @@ namespace CalendarApp.Web.Controllers
             {
                 try
                 {
-                    _eventAppService.Create(@event);
+                    await _eventAppService.CreateAsync(@event);
 
-                    // Invite users by email
                     if (!string.IsNullOrEmpty(viewModel.InviteEmails))
                     {
                         var emailList = viewModel.InviteEmails
@@ -290,7 +219,7 @@ namespace CalendarApp.Web.Controllers
 
                         if (emailList.Any())
                         {
-                            var usersToInvite = await _eventAppService.FindUsersByEmailsAsync(emailList);
+                            var usersToInvite = await _userAppService.FindUsersByEmailsAsync(emailList);
                             var userIdsToInvite = usersToInvite.Select(u => u.Id).ToList();
 
                             if (userIdsToInvite.Any())
@@ -300,10 +229,7 @@ namespace CalendarApp.Web.Controllers
                         }
                     }
 
-                    // Return the user to the calendar view they came from.
-                    // No success toast here: Index views render no toast, and leaving
-                    // TempData["Success"] set would leak it into the next page that
-                    // does (e.g. the next Create form or event details).
+                    // No success toast: Index renders none, and TempData would leak into the next page that does
                     var returnView = viewModel.ReturnView;
                     if (returnView != "daily" && returnView != "weekly" && returnView != "monthly")
                     {
@@ -321,33 +247,30 @@ namespace CalendarApp.Web.Controllers
         }
 
         [HttpGet]
-        public IActionResult Edit(int id, string? scope, DateTime? occurrenceDate, string returnView = "details", DateTime? returnDate = null)
+        public async Task<IActionResult> Edit(int id, string? scope, DateTime? occurrenceDate, string returnView = "details", DateTime? returnDate = null)
         {
-            var @event = _eventAppService.GetById(id);
+            var @event = await _eventAppService.GetByIdAsync(id);
             if (@event == null)
             {
                 return NotFound();
             }
 
-            // Get current user ID from Identity claims
             var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             if (string.IsNullOrEmpty(userIdClaim) || !int.TryParse(userIdClaim, out var userId))
             {
                 return RedirectToAction("Login", "Account");
             }
 
-            // Check if user owns this event
             if (@event.OwnerId != userId)
             {
                 return Forbid();
             }
 
-            // Get current attendees (excluding owner)
             var currentAttendees = @event.EventAttendees
                 .Where(ea => ea.Role != AttendeeRole.Owner)
                 .ToList();
 
-            ViewBag.Users = _eventAppService.GetUsersByIds(@event.EventAttendees.Select(ea => ea.UserId).Append(@event.OwnerId));
+            ViewBag.Users = await _userAppService.GetUsersByIdsAsync(@event.EventAttendees.Select(ea => ea.UserId).Append(@event.OwnerId));
 
             var viewModel = new EventEditViewModel
             {
@@ -370,8 +293,7 @@ namespace CalendarApp.Web.Controllers
                 ReturnDate = returnDate ?? @event.StartTime
             };
 
-            // Recurring series opened from an occurrence link: prefill the single
-            // occurrence (exception overrides applied), defaulting to "this" scope
+            // Occurrence link: prefill the single occurrence, defaulting to "this" scope
             if (@event.IsRecurring && occurrenceDate.HasValue)
             {
                 var target = occurrenceDate.Value.Date;
@@ -399,27 +321,24 @@ namespace CalendarApp.Web.Controllers
         [HttpPost]
         public async Task<IActionResult> Edit(EventEditViewModel viewModel)
         {
-            // Get current user ID from Identity claims
             var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             if (string.IsNullOrEmpty(userIdClaim) || !int.TryParse(userIdClaim, out var userId))
             {
                 return RedirectToAction("Login", "Account");
             }
 
-            // Get existing event to verify ownership
-            var existingEvent = _eventAppService.GetById(viewModel.Id);
+            var existingEvent = await _eventAppService.GetByIdAsync(viewModel.Id);
             if (existingEvent == null)
             {
                 return NotFound();
             }
 
-            // Check if user owns this event
             if (existingEvent.OwnerId != userId)
             {
                 return Forbid();
             }
 
-            // Update event from view model (Owner is taken from the stored event, never from the form)
+            // Owner is always taken from the stored event, never from the form
             var @event = new Event
             {
                 Id = viewModel.Id,
@@ -443,16 +362,14 @@ namespace CalendarApp.Web.Controllers
                 try
                 {
                     // Per-occurrence edit: store an exception row, leave the series master untouched
-                    var isOccurrenceEdit = existingEvent.IsRecurring
+                    if (existingEvent.IsRecurring
                         && viewModel.Scope == "this"
-                        && viewModel.OccurrenceDate.HasValue;
-
-                    if (isOccurrenceEdit)
+                        && viewModel.OccurrenceDate is DateTime occurrenceDate)
                     {
-                        _eventAppService.UpsertOccurrenceException(new EventOccurrenceException
+                        await _eventAppService.UpsertOccurrenceExceptionAsync(new EventOccurrenceException
                         {
                             MasterEventId = existingEvent.Id,
-                            OriginalDate = viewModel.OccurrenceDate.Value.Date,
+                            OriginalDate = occurrenceDate.Date,
                             IsCancelled = false,
                             Title = viewModel.Title,
                             Description = viewModel.Description,
@@ -469,16 +386,15 @@ namespace CalendarApp.Web.Controllers
                     }
                     else
                     {
-                        _eventAppService.Update(@event);
+                        await _eventAppService.UpdateAsync(@event);
                     }
 
-                    // Remove selected attendees (service ignores unknown ids and never removes the owner)
+                    // Service ignores unknown ids and never removes the owner
                     foreach (var attendeeId in viewModel.RemoveAttendeeIds)
                     {
                         await _eventAppService.RemoveAttendeeFromEvent(viewModel.Id, attendeeId);
                     }
 
-                    // Invite users by email
                     if (!string.IsNullOrEmpty(viewModel.InviteEmails))
                     {
                         var emailList = viewModel.InviteEmails
@@ -489,7 +405,7 @@ namespace CalendarApp.Web.Controllers
 
                         if (emailList.Any())
                         {
-                            var usersToInvite = await _eventAppService.FindUsersByEmailsAsync(emailList);
+                            var usersToInvite = await _userAppService.FindUsersByEmailsAsync(emailList);
                             var userIdsToInvite = usersToInvite.Select(u => u.Id).ToList();
 
                             if (userIdsToInvite.Any())
@@ -499,7 +415,6 @@ namespace CalendarApp.Web.Controllers
                         }
                     }
 
-                    // Return the user to the view they came from
                     var returnView = viewModel.ReturnView;
                     if (returnView != "daily" && returnView != "weekly" && returnView != "monthly"
                         && returnView != "list" && returnView != "details")
@@ -518,30 +433,26 @@ namespace CalendarApp.Web.Controllers
                 }
             }
 
-            // Repopulate data on error
             viewModel.CurrentAttendees = existingEvent.EventAttendees
                 .Where(ea => ea.Role != AttendeeRole.Owner)
                 .ToList();
-            ViewBag.Users = _eventAppService.GetUsersByIds(existingEvent.EventAttendees.Select(ea => ea.UserId).Append(existingEvent.OwnerId));
+            ViewBag.Users = await _userAppService.GetUsersByIdsAsync(existingEvent.EventAttendees.Select(ea => ea.UserId).Append(existingEvent.OwnerId));
 
             return View(viewModel);
         }
 
-        // Drag & drop move from the week view: changes the date/time of one event.
-        // For recurring events only the occurrence identified by occurrenceDate is
-        // affected (stored as an exception row); the series master stays untouched.
+        // Drag & drop move: non-recurring rescheduled directly; one occurrence of a recurring series stored as exception row
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult MoveOccurrence(int id, DateTime? occurrenceDate, DateTime newStart, DateTime newEnd, bool allDay = false)
+        public async Task<IActionResult> MoveOccurrence(int id, DateTime? occurrenceDate, DateTime newStart, DateTime newEnd, bool allDay = false)
         {
-            // Get current user ID from Identity claims
             var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             if (string.IsNullOrEmpty(userIdClaim) || !int.TryParse(userIdClaim, out var userId))
             {
                 return Unauthorized();
             }
 
-            var existingEvent = _eventAppService.GetById(id);
+            var existingEvent = await _eventAppService.GetByIdAsync(id);
             if (existingEvent == null)
             {
                 return NotFound();
@@ -555,7 +466,7 @@ namespace CalendarApp.Web.Controllers
 
             try
             {
-                var moved = _eventAppService.MoveOccurrence(id, occurrenceDate, newStart, newEnd, allDay);
+                var moved = await _eventAppService.MoveOccurrenceAsync(id, occurrenceDate, newStart, newEnd, allDay);
                 return moved ? NoContent() : NotFound();
             }
             catch (ArgumentException ex)
@@ -565,23 +476,20 @@ namespace CalendarApp.Web.Controllers
         }
 
         [HttpPost]
-        public IActionResult Delete(int id, string? scope, DateTime? occurrenceDate, string? returnView, DateTime? returnDate)
+        public async Task<IActionResult> Delete(int id, string? scope, DateTime? occurrenceDate, string? returnView, DateTime? returnDate)
         {
-            // Get current user ID from Identity claims
             var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             if (string.IsNullOrEmpty(userIdClaim) || !int.TryParse(userIdClaim, out var userId))
             {
                 return RedirectToAction("Login", "Account");
             }
 
-            // Get existing event to verify ownership
-            var existingEvent = _eventAppService.GetById(id);
+            var existingEvent = await _eventAppService.GetByIdAsync(id);
             if (existingEvent == null)
             {
                 return NotFound();
             }
 
-            // Check if user owns this event
             if (existingEvent.OwnerId != userId)
             {
                 return Forbid();
@@ -596,7 +504,7 @@ namespace CalendarApp.Web.Controllers
                         && string.Equals(scope, "this", StringComparison.OrdinalIgnoreCase)
                         && occurrenceDate.HasValue)
                     {
-                        _eventAppService.UpsertOccurrenceException(new EventOccurrenceException
+                        await _eventAppService.UpsertOccurrenceExceptionAsync(new EventOccurrenceException
                         {
                             MasterEventId = existingEvent.Id,
                             OriginalDate = occurrenceDate.Value.Date,
@@ -608,7 +516,7 @@ namespace CalendarApp.Web.Controllers
                         return RedirectToAction(nameof(Index), BuildIndexRoute(returnView, returnDate));
                     }
 
-                    bool deleted = _eventAppService.Delete(id);
+                    bool deleted = await _eventAppService.DeleteAsync(id);
                     if (deleted)
                     {
                         TempData["Success"] = "Event deleted successfully!";
@@ -624,8 +532,7 @@ namespace CalendarApp.Web.Controllers
             return RedirectToAction(nameof(Index), BuildIndexRoute(returnView, returnDate));
         }
 
-        // Route back to the calendar view the user came from ("daily"/"weekly"/"monthly";
-        // anything else falls back to the default list view).
+        // daily/weekly/monthly pass through; anything else falls back to the list view
         private static object BuildIndexRoute(string? returnView, DateTime? returnDate)
         {
             var view = returnView == "daily" || returnView == "weekly" || returnView == "monthly"
@@ -642,7 +549,7 @@ namespace CalendarApp.Web.Controllers
                 return Json(Enumerable.Empty<object>());
             }
 
-            var users = await _eventAppService.SearchUsersAsync(term.Trim());
+            var users = await _userAppService.SearchUsersAsync(term.Trim());
             return Json(users.Select(u => new { u.Id, u.UserName, u.Email }));
         }
     }

@@ -1,24 +1,20 @@
 using CalendarApp.Domain.Entities;
-using CalendarApp.Infrastructure.Identity;
 
 namespace CalendarApp.Application.Abstraction
 {
     public interface IEventAppService
     {
-        IList<Event> SelectAll();
-        IList<Event> SelectByOwner(int ownerId);
-        Event? GetById(int id);
-        void Create(Event @event);
-        bool Delete(int id);
-        void Update(Event @event);
+        Task<IList<Event>> SelectAllAsync();
+        Task<IList<Event>> SelectByOwnerAsync(int ownerId);
+        Task<Event?> GetByIdAsync(int id);
+        Task CreateAsync(Event @event);
+        Task<bool> DeleteAsync(int id);
+        Task UpdateAsync(Event @event);
         Task<bool> InviteUsersToEvent(int eventId, List<int> userIds);
-        Dictionary<int, User> GetUsersByIds(IEnumerable<int> userIds);
-        Task<List<User>> FindUsersByEmailsAsync(List<string> emails);
-        Task<List<User>> SearchUsersAsync(string term);
         Task<bool> RemoveAttendeeFromEvent(int eventId, int userId);
         Task<bool> DeclineEventAsync(int eventId, int userId);
-        EventOccurrenceException? GetOccurrenceException(int masterEventId, DateTime originalDate);
-        void UpsertOccurrenceException(EventOccurrenceException exception);
-        bool MoveOccurrence(int eventId, DateTime? occurrenceDate, DateTime newStart, DateTime newEnd, bool allDay);
+        Task<EventOccurrenceException?> GetOccurrenceExceptionAsync(int masterEventId, DateTime originalDate);
+        Task UpsertOccurrenceExceptionAsync(EventOccurrenceException exception);
+        Task<bool> MoveOccurrenceAsync(int eventId, DateTime? occurrenceDate, DateTime newStart, DateTime newEnd, bool allDay);
     }
 }

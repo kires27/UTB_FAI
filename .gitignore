@@ -319,6 +319,8 @@ __pycache__/
 TODO.md
 MEMORY.md
 AGENTS.md
+PLAN.md
+design.md
 # Cake - Uncomment if you are using it
 # tools/**
 # !tools/packages.config

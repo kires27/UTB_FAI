@@ -7,10 +7,10 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace CalendarApp.Infrastructure.Migrations
 {
-    /// <inheritdoc />
+    
     public partial class UpdateSeedEventDates : Migration
     {
-        /// <inheritdoc />
+        
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.UpdateData(
@@ -139,7 +139,7 @@ namespace CalendarApp.Infrastructure.Migrations
                 values: new object[] { -7, -11, false, "Mike Davis invited you to 'Weekend Hiking Trip'", new DateTime(2026, 10, 8, 0, 0, 0, 0, DateTimeKind.Unspecified), 0, new DateTime(2026, 10, 8, 0, 0, 0, 0, DateTimeKind.Unspecified), -2 });
         }
 
-        /// <inheritdoc />
+        
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DeleteData(

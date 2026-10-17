@@ -13,7 +13,6 @@
 }
 
 <div class="monthly-calendar">
-    <!-- Calendar Header -->
     <div class="calendar-header d-flex justify-content-between align-items-center mb-3">
         <a href="/Events/Index?view=monthly&year=@(Model.DisplayMonth.AddMonths(-1).Year)&month=@(Model.DisplayMonth.AddMonths(-1).Month)" class="btn btn-outline-secondary">
             <i class="bi bi-chevron-left"></i> Previous
@@ -26,9 +25,7 @@
         </a>
     </div>
 
-    <!-- Calendar Grid -->
     <div class="calendar-grid">
-        <!-- Weekday Headers -->
         <div class="calendar-weekdays">
             <div class="calendar-weekday">Mon</div>
             <div class="calendar-weekday">Tue</div>
@@ -39,7 +36,6 @@
             <div class="calendar-weekday">Sun</div>
         </div>
 
-        <!-- Calendar Days -->
         <div class="calendar-days">
             @for (int i = 0; i < Model.Days.Count; i++)
             {

@@ -7,10 +7,10 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace CalendarApp.Infrastructure.Migrations
 {
-    /// <inheritdoc />
+    
     public partial class SeedDataInDbContext : Migration
     {
-        /// <inheritdoc />
+        
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.InsertData(
@@ -90,7 +90,7 @@ namespace CalendarApp.Infrastructure.Migrations
                 });
         }
 
-        /// <inheritdoc />
+        
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DeleteData(

@@ -15,7 +15,7 @@ namespace CalendarApp.Infrastructure.Migrations
     [Migration("20261015134200_UpdateSeedEventDates")]
     partial class UpdateSeedEventDates
     {
-        /// <inheritdoc />
+        
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618

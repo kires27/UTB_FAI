@@ -546,18 +546,6 @@ namespace CalendarApp.Infrastructure.Migrations
                         },
                         new
                         {
-                            Id = -4,
-                            CreatedAt = new DateTime(2026, 12, 13, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            EventId = -4,
-                            IsRead = false,
-                            Message = "Reminder: 'Dentist Appointment' tomorrow at 3:00 PM",
-                            NotifyAt = new DateTime(2026, 12, 14, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Type = 2,
-                            UpdatedAt = new DateTime(2026, 12, 13, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            UserId = -2
-                        },
-                        new
-                        {
                             Id = -5,
                             CreatedAt = new DateTime(2026, 12, 5, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             EventId = -2,
@@ -575,7 +563,7 @@ namespace CalendarApp.Infrastructure.Migrations
                             IsRead = false,
                             Message = "Don't forget to bring your gym card for tomorrow's workout!",
                             NotifyAt = new DateTime(2026, 12, 15, 10, 0, 0, 0, DateTimeKind.Unspecified),
-                            Type = 3,
+                            Type = 2,
                             UpdatedAt = new DateTime(2026, 12, 15, 10, 0, 0, 0, DateTimeKind.Unspecified),
                             UserId = -3
                         },
@@ -719,7 +707,7 @@ namespace CalendarApp.Infrastructure.Migrations
                             Id = -1,
                             AccessFailedCount = 0,
                             ConcurrencyStamp = "ceec1c53-5dcc-4c96-bd72-51cfd20c3fe6",
-                            CreatedAt = new DateTime(2025, 11, 7, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedAt = new DateTime(2026, 9, 7, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Email = "admin@calendarapp.com",
                             EmailConfirmed = true,
                             LockoutEnabled = true,
@@ -729,7 +717,7 @@ namespace CalendarApp.Infrastructure.Migrations
                             PhoneNumberConfirmed = false,
                             SecurityStamp = "c670b2c6-19b9-4603-9de7-6490e7b1b734",
                             TwoFactorEnabled = false,
-                            UpdatedAt = new DateTime(2025, 11, 7, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            UpdatedAt = new DateTime(2026, 9, 7, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             UserName = "admin"
                         },
                         new
@@ -737,7 +725,7 @@ namespace CalendarApp.Infrastructure.Migrations
                             Id = -2,
                             AccessFailedCount = 0,
                             ConcurrencyStamp = "309cf6b3-a538-47f8-acd7-740ee59362b6",
-                            CreatedAt = new DateTime(2025, 11, 7, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedAt = new DateTime(2026, 9, 7, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Email = "alex.johnson@email.com",
                             EmailConfirmed = true,
                             LockoutEnabled = true,
@@ -747,7 +735,7 @@ namespace CalendarApp.Infrastructure.Migrations
                             PhoneNumberConfirmed = false,
                             SecurityStamp = "d71c3ace-94d7-4576-9d7b-9c5aa98c5a7c",
                             TwoFactorEnabled = false,
-                            UpdatedAt = new DateTime(2025, 11, 7, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            UpdatedAt = new DateTime(2026, 9, 7, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             UserName = "alexjohnson"
                         },
                         new
@@ -755,7 +743,7 @@ namespace CalendarApp.Infrastructure.Migrations
                             Id = -3,
                             AccessFailedCount = 0,
                             ConcurrencyStamp = "48037745-2d59-43a2-b196-d384b9187764",
-                            CreatedAt = new DateTime(2025, 11, 12, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedAt = new DateTime(2026, 9, 12, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Email = "sarah.chen@email.com",
                             EmailConfirmed = true,
                             LockoutEnabled = true,
@@ -765,7 +753,7 @@ namespace CalendarApp.Infrastructure.Migrations
                             PhoneNumberConfirmed = false,
                             SecurityStamp = "5904b64c-0089-4b6f-a5cd-cd3fb2a4947b",
                             TwoFactorEnabled = false,
-                            UpdatedAt = new DateTime(2025, 11, 12, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            UpdatedAt = new DateTime(2026, 9, 12, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             UserName = "sarahchen"
                         },
                         new
@@ -773,7 +761,7 @@ namespace CalendarApp.Infrastructure.Migrations
                             Id = -4,
                             AccessFailedCount = 0,
                             ConcurrencyStamp = "8bb62e2b-1506-42fe-b72e-3dac0cd41c64",
-                            CreatedAt = new DateTime(2025, 11, 17, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedAt = new DateTime(2026, 9, 17, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Email = "mike.davis@email.com",
                             EmailConfirmed = true,
                             LockoutEnabled = true,
@@ -783,7 +771,7 @@ namespace CalendarApp.Infrastructure.Migrations
                             PhoneNumberConfirmed = false,
                             SecurityStamp = "0253c2be-83bf-4bde-a547-0ea099be7c10",
                             TwoFactorEnabled = false,
-                            UpdatedAt = new DateTime(2025, 11, 17, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            UpdatedAt = new DateTime(2026, 9, 17, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             UserName = "mikedavis"
                         });
                 });

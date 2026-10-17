@@ -7,7 +7,6 @@ namespace CalendarApp.Domain.Entities
     {
         EventInvite,
         EventUpdate,
-        Reminder,
         Custom
     }
 

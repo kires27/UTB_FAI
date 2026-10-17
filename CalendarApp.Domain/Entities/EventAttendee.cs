@@ -34,7 +34,6 @@ namespace CalendarApp.Domain.Entities
 
         public DateTime UpdatedAt { get; set; }
 
-        // Navigation properties
         [ForeignKey(nameof(EventId))]
         public virtual Event Event { get; set; } = null!;
     }

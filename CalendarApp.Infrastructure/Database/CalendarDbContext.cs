@@ -461,18 +461,6 @@ namespace CalendarApp.Infrastructure.Database
 				},
 				new
 				{
-					Id = -4,
-					UserId = -2,
-					EventId = (int?)-4,
-					Type = NotificationType.Reminder,
-					Message = "Reminder: 'Dentist Appointment' tomorrow at 3:00 PM",
-					IsRead = false,
-					NotifyAt = (DateTime?)new DateTime(2026, 12, 14),
-					CreatedAt = new DateTime(2026, 12, 13),
-					UpdatedAt = new DateTime(2026, 12, 13)
-				},
-				new
-				{
 					Id = -5,
 					UserId = -1,
 					EventId = (int?)-2,

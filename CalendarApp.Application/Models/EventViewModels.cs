@@ -43,7 +43,6 @@ namespace CalendarApp.Application.Models
         [StringLength(1000), EmailList]
         public string? InviteEmails { get; set; } = null;
 
-        // Where to return after creation (calendar view context)
         public string ReturnView { get; set; } = "list";
         public DateTime? ReturnDate { get; set; }
     }
@@ -99,7 +98,6 @@ namespace CalendarApp.Application.Models
         public string Scope { get; set; } = "all";
         public DateTime? OccurrenceDate { get; set; }
 
-        // Where to return after saving (calendar view context)
         public string ReturnView { get; set; } = "details";
         public DateTime? ReturnDate { get; set; }
     }
@@ -128,8 +126,7 @@ namespace CalendarApp.Application.Models
         public List<CalendarDayViewModel> Days { get; set; } = new List<CalendarDayViewModel>();
         public string CurrentView { get; set; } = "list";
 
-        // Used by the time-grid view to enable drag & drop only for events the
-        // current user owns (the server enforces this again on move).
+        // Used by the time-grid view to enable drag & drop only for events the current user owns (server enforces again)
         public int CurrentUserId { get; set; }
     }
 }

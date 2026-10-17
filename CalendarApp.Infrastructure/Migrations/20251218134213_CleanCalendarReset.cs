@@ -6,10 +6,10 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace CalendarApp.Infrastructure.Migrations
 {
-    /// <inheritdoc />
+    
     public partial class CleanCalendarReset : Migration
     {
-        /// <inheritdoc />
+        
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.AlterDatabase()
@@ -355,7 +355,7 @@ namespace CalendarApp.Infrastructure.Migrations
                 column: "UserId");
         }
 
-        /// <inheritdoc />
+        
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(

@@ -1,4 +1,5 @@
 using CalendarApp.Application.Abstraction;
+using CalendarApp.Application.Models;
 using CalendarApp.Domain.Entities;
 using CalendarApp.Infrastructure.Identity;
 using Microsoft.AspNetCore.Identity;
@@ -53,6 +54,52 @@ namespace CalendarApp.Application.Implementation
                 Role = roles.FirstOrDefault() ?? "User",
                 CreatedAt = user.CreatedAt
             };
+        }
+
+        public async Task<Dictionary<int, UserBasicDto>> GetUsersByIdsAsync(IEnumerable<int> userIds)
+        {
+            var ids = userIds.Distinct().ToList();
+            var users = await _userManager.Users
+                .Where(u => ids.Contains(u.Id))
+                .ToListAsync();
+
+            return users.ToDictionary(
+                u => u.Id,
+                u => new UserBasicDto
+                {
+                    Id = u.Id,
+                    UserName = u.UserName ?? string.Empty,
+                    Email = u.Email ?? string.Empty
+                });
+        }
+
+        public Task<List<UserBasicDto>> FindUsersByEmailsAsync(List<string> emails)
+        {
+            return _userManager.Users
+                .Where(u => u.Email != null && emails.Contains(u.Email))
+                .Select(u => new UserBasicDto
+                {
+                    Id = u.Id,
+                    UserName = u.UserName ?? string.Empty,
+                    Email = u.Email ?? string.Empty
+                })
+                .ToListAsync();
+        }
+
+        public Task<List<UserBasicDto>> SearchUsersAsync(string term)
+        {
+            return _userManager.Users
+                .Where(u => (u.UserName != null && u.UserName.Contains(term)) ||
+                            (u.Email != null && u.Email.Contains(term)))
+                .OrderBy(u => u.UserName)
+                .Take(10)
+                .Select(u => new UserBasicDto
+                {
+                    Id = u.Id,
+                    UserName = u.UserName ?? string.Empty,
+                    Email = u.Email ?? string.Empty
+                })
+                .ToListAsync();
         }
 
         public async Task<bool> CreateUserAsync(string username, string email, string password, string role)

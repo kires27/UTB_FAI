@@ -55,6 +55,11 @@
                 <i class="bi bi-people"></i>
                 <span class="sidebar-label">User Management</span>
             </a>
+            <a class="sidebar-item @(currentArea == "Admin" && currentController == "Notifications" ? "active" : "")"
+               asp-area="Admin" asp-controller="Notifications" asp-action="Index" title="Admin Notifications">
+                <i class="bi bi-bell"></i>
+                <span class="sidebar-label">Notifications</span>
+            </a>
         }
 
         <div class="sidebar-section">Others</div>

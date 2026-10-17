@@ -140,7 +140,6 @@ namespace CalendarApp.Web.Areas.Admin.Controllers
         {
             try
             {
-                // Get current user ID to prevent self-deletion
                 var currentUserIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
                 if (int.TryParse(currentUserIdClaim, out var currentUserId) && currentUserId == id)
                 {

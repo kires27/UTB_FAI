@@ -23,18 +23,15 @@ document.addEventListener('submit', function (e) {
         .then(response => response.json())
         .then(data => {
             if (data.success) {
-                // Update the UI
                 const listItem = form.closest('.list-group-item');
                 listItem.classList.remove('bg-white', 'border-start', 'border-4', 'border-primary');
                 listItem.classList.add('bg-light');
 
-                // Remove the New badge
                 const newBadge = listItem.querySelector('.badge.bg-primary');
                 if (newBadge) {
                     newBadge.remove();
                 }
 
-                // Replace buttons with success message
                 const buttonGroup = form.closest('.d-flex.gap-1');
                 if (action === 'accept') {
                     buttonGroup.innerHTML = '<span class="text-success"><i class="bi bi-check-circle-fill"></i> Accepted</span>';
@@ -42,7 +39,6 @@ document.addEventListener('submit', function (e) {
                     buttonGroup.innerHTML = '<span class="text-danger"><i class="bi bi-x-circle-fill"></i> Declined</span>';
                 }
 
-                // Update the sidebar unread badge directly from the response
                 var badge = document.getElementById('sidebarUnread');
                 if (badge) {
                     var count = (typeof data.unreadCount === 'number') ? data.unreadCount : 0;
@@ -57,7 +53,6 @@ document.addEventListener('submit', function (e) {
         })
         .catch(error => {
             console.error('Error:', error);
-            // Fallback to normal form submission
             form.submit();
         });
 });

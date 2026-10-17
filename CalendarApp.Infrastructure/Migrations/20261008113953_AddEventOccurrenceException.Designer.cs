@@ -15,7 +15,7 @@ namespace CalendarApp.Infrastructure.Migrations
     [Migration("20261008113953_AddEventOccurrenceException")]
     partial class AddEventOccurrenceException
     {
-        /// <inheritdoc />
+        
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618

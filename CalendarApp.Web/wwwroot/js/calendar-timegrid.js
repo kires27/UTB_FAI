@@ -184,10 +184,8 @@ document.addEventListener('DOMContentLoaded', function () {
                 if (hover) hover.el.classList.add('tg-drag-over');
             }
 
-            // Gutter time indicator during a drag: shows the landing time of the
-            // event (start - end), aligned to its snapped top edge. Driven from the
-            // drag loop because pointerdown preventDefault suppresses the ordinary
-            // mousemove handler while dragging. All-day drags hide it (no time).
+            // Gutter indicator: shows the drag landing time; driven from the drag loop
+            // because pointerdown preventDefault suppresses the ordinary mousemove handler.
             function updateDragLabel(target) {
                 if (!hoverLabel || !grid) return;
                 if (!target) {
@@ -266,7 +264,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     ev.stopPropagation();
                 }, { capture: true, once: true });
 
-                if (!dropTarget) return; // dropped outside a lane — nothing happens
+                if (!dropTarget) return; // dropped outside a lane, nothing happens
 
                 if (isAllDay) {
                     var alldayStart = new Date(dropTarget.el.dataset.date + 'T' + timeOfDay);

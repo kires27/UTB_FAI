@@ -1,102 +1,113 @@
 using CalendarApp.Application.Abstraction;
+using CalendarApp.Application.Models;
 using CalendarApp.Domain.Entities;
-using CalendarApp.Infrastructure.Database;
-using Microsoft.EntityFrameworkCore;
+using CalendarApp.Domain.Repositories;
 
 namespace CalendarApp.Application.Implementation
 {
     public class NotificationAppService : INotificationAppService
     {
-        private readonly CalendarDbContext _calendarDbContext;
+        private readonly INotificationRepository _notificationRepository;
+        private readonly IEventRepository _eventRepository;
+        private readonly IUserAppService _userAppService;
 
-        public NotificationAppService(CalendarDbContext calendarDbContext)
+        public NotificationAppService(INotificationRepository notificationRepository, IEventRepository eventRepository, IUserAppService userAppService)
         {
-            _calendarDbContext = calendarDbContext;
+            _notificationRepository = notificationRepository;
+            _eventRepository = eventRepository;
+            _userAppService = userAppService;
         }
 
-        public async Task<IList<Notification>> GetUserNotificationsAsync(int userId)
+        public Task<IList<Notification>> GetUserNotificationsAsync(int userId)
         {
-            return await _calendarDbContext.Notifications
-                .Include(n => n.Event)
-                .Include(n => n.Event!.EventAttendees)
-                .Where(n => n.UserId == userId)
-                .OrderByDescending(n => n.CreatedAt)
-                .ToListAsync();
+            return _notificationRepository.GetByUserAsync(userId);
+        }
+
+        public async Task<IList<AdminNotificationViewModel>> SelectAllForAdminAsync()
+        {
+            var notifications = await _notificationRepository.GetAllAsync();
+
+            var userNames = (await _userAppService.GetUsersByIdsAsync(
+                    notifications.Select(n => n.UserId).Distinct()))
+                .ToDictionary(u => u.Key, u => u.Value.UserName);
+
+            return notifications
+                .Select(n => new AdminNotificationViewModel
+                {
+                    Notification = n,
+                    RecipientUserName = userNames.TryGetValue(n.UserId, out var userName)
+                        ? userName
+                        : $"User {n.UserId}"
+                })
+                .ToList();
+        }
+
+        public Task<bool> DeleteAsync(int id)
+        {
+            return _notificationRepository.DeleteAsync(id);
         }
 
         public async Task<int> GetUnreadCountAsync(int userId)
         {
-            return await _calendarDbContext.Notifications
-                .CountAsync(n => n.UserId == userId && !n.IsRead);
+            return await _notificationRepository.CountUnreadAsync(userId);
         }
 
-        public async Task<bool> MarkAsReadAsync(int notificationId)
+        public async Task<bool> MarkAsReadAsync(int notificationId, int userId)
         {
-            var notification = await _calendarDbContext.Notifications.FindAsync(notificationId);
-            if (notification != null)
+            var notification = await _notificationRepository.GetByIdForUserAsync(notificationId, userId);
+            if (notification == null)
             {
-                notification.IsRead = true;
-                notification.UpdatedAt = DateTime.UtcNow;
-                await _calendarDbContext.SaveChangesAsync();
-                return true;
+                return false;
             }
-            return false;
+
+            notification.IsRead = true;
+            notification.UpdatedAt = DateTime.UtcNow;
+            await _notificationRepository.UpdateAsync(notification);
+            return true;
         }
 
         public async Task<bool> AcceptInvitationAsync(int notificationId, int userId)
         {
-            var notification = await _calendarDbContext.Notifications
-                .Include(n => n.Event)
-                .FirstOrDefaultAsync(n => n.Id == notificationId && n.UserId == userId);
-
-            if (notification == null || notification.Event == null)
+            var notification = await _notificationRepository.GetByIdForUserAsync(notificationId, userId);
+            if (notification?.Event == null)
+            {
                 return false;
+            }
 
-            // Update EventAttendee status to Accepted
-            var eventAttendee = await _calendarDbContext.EventAttendees
-                .FirstOrDefaultAsync(ea => ea.EventId == notification.EventId && ea.UserId == userId);
-
+            var eventAttendee = await _eventRepository.GetAttendeeAsync(notification.EventId!.Value, userId);
             if (eventAttendee?.Status == AttendeeStatus.Declined)
+            {
                 return false;
+            }
 
             if (eventAttendee != null)
             {
-                eventAttendee.Status = AttendeeStatus.Accepted;
-                eventAttendee.UpdatedAt = DateTime.UtcNow;
+                await _eventRepository.SetAttendeeStatusAsync(notification.EventId.Value, userId, AttendeeStatus.Accepted);
             }
 
-            // Mark notification as read
             notification.IsRead = true;
             notification.UpdatedAt = DateTime.UtcNow;
-
-            await _calendarDbContext.SaveChangesAsync();
+            await _notificationRepository.UpdateAsync(notification);
             return true;
         }
 
         public async Task<bool> DeclineInvitationAsync(int notificationId, int userId)
         {
-            var notification = await _calendarDbContext.Notifications
-                .Include(n => n.Event)
-                .FirstOrDefaultAsync(n => n.Id == notificationId && n.UserId == userId);
-
-            if (notification == null || notification.Event == null)
-                return false;
-
-            // Update EventAttendee status to Declined
-            var eventAttendee = await _calendarDbContext.EventAttendees
-                .FirstOrDefaultAsync(ea => ea.EventId == notification.EventId && ea.UserId == userId);
-
-            if (eventAttendee != null)
+            var notification = await _notificationRepository.GetByIdForUserAsync(notificationId, userId);
+            if (notification?.Event == null)
             {
-                eventAttendee.Status = AttendeeStatus.Declined;
-                eventAttendee.UpdatedAt = DateTime.UtcNow;
+                return false;
             }
 
-            // Mark notification as read
+            var eventAttendee = await _eventRepository.GetAttendeeAsync(notification.EventId!.Value, userId);
+            if (eventAttendee != null)
+            {
+                await _eventRepository.SetAttendeeStatusAsync(notification.EventId.Value, userId, AttendeeStatus.Declined);
+            }
+
             notification.IsRead = true;
             notification.UpdatedAt = DateTime.UtcNow;
-
-            await _calendarDbContext.SaveChangesAsync();
+            await _notificationRepository.UpdateAsync(notification);
             return true;
         }
     }

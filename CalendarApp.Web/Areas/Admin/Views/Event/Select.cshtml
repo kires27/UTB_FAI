@@ -1,7 +1,7 @@
 @model IEnumerable<CalendarApp.Domain.Entities.Event>
 @using CalendarApp.Domain.Entities
 @{ 
-    var users = (Dictionary<int, User>)ViewBag.Users;
+    var users = (Dictionary<int, CalendarApp.Application.Models.UserBasicDto>)ViewBag.Users;
     var allUsers = (IList<CalendarApp.Application.Abstraction.UserWithRoleDto>)ViewBag.AllUsers;
     var selectedOwnerId = (int?)ViewBag.SelectedOwnerId;
 }

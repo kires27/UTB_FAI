@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 
 namespace CalendarApp.Application.Validations
 {
-    /// emits the data-* attributes consumed by custom-validators.js.
     public class TextLengthRangeAttribute : Domain.Validations.TextLengthRangeAttribute, IClientModelValidator
     {
         public TextLengthRangeAttribute(int minLength, int maxLength) : base(minLength, maxLength)

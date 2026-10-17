@@ -15,7 +15,7 @@ namespace CalendarApp.Infrastructure.Migrations
     [Migration("20261009191035_SeedDataInDbContext")]
     partial class SeedDataInDbContext
     {
-        /// <inheritdoc />
+        
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618

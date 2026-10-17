@@ -1,9 +1,14 @@
+using CalendarApp.Application.Models;
+
 namespace CalendarApp.Application.Abstraction
 {
     public interface IUserAppService
     {
         Task<IList<UserWithRoleDto>> GetAllUsersAsync();
         Task<UserWithRoleDto?> GetUserByIdAsync(int userId);
+        Task<Dictionary<int, UserBasicDto>> GetUsersByIdsAsync(IEnumerable<int> userIds);
+        Task<List<UserBasicDto>> FindUsersByEmailsAsync(List<string> emails);
+        Task<List<UserBasicDto>> SearchUsersAsync(string term);
         Task<bool> CreateUserAsync(string username, string email, string password, string role);
         Task<UserOperationResultDto> UpdateUserAsync(int userId, string username, string email, string role);
         Task<UserOperationResultDto> SetPasswordAsync(int userId, string newPassword);

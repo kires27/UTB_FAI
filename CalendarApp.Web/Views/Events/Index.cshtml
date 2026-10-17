@@ -23,7 +23,6 @@
 
     @if (currentView == "monthly")
     {
-        @* Monthly Calendar View *@
         if (Model != null && Model.Days.Any())
         {
             <partial name="_MonthlyCalendar" model="Model" />
@@ -38,7 +37,6 @@
     }
     else if (currentView == "daily" || currentView == "weekly")
     {
-        @* Daily / weekly time-grid view *@
         if (Model != null && Model.Days.Any())
         {
             <partial name="_TimeGrid" model="Model" />
@@ -53,7 +51,6 @@
     }
     else
     {
-        @* List View *@
 		var userEvents = ViewBag.UserEvents as List<Event> ?? new List<Event>();
         
         <partial name="_ListCalendar" model="userEvents" />

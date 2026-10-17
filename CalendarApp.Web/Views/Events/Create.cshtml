@@ -10,7 +10,7 @@
         ? Url.Action("Index", "Events")
         : Url.Action("Index", "Events", new { view = returnView, date = returnDate });
 
-    // Current user id — must never be invitable (you cannot invite yourself)
+    // Current user id, must never be invitable (you cannot invite yourself)
     var currentUserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "0";
 }
 

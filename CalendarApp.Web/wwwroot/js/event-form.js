@@ -1,5 +1,5 @@
 // Create / Edit event form behaviour (Thunderbird-style layout, shared).
-// Vanilla JS only — jQuery loads after RenderBody, so $(...) is unavailable here.
+// Vanilla JS only: jQuery loads after RenderBody, so $(...) is unavailable here.
 document.addEventListener('DOMContentLoaded', function () {
     function pad2(n) { return (n < 10 ? '0' : '') + n; }
 

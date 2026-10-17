@@ -5,10 +5,10 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace CalendarApp.Infrastructure.Migrations
 {
-    /// <inheritdoc />
+    
     public partial class UpdateSeedTimestamps : Migration
     {
-        /// <inheritdoc />
+        
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.UpdateData(
@@ -110,7 +110,7 @@ namespace CalendarApp.Infrastructure.Migrations
                 value: new DateTime(2026, 11, 30, 0, 0, 0, 0, DateTimeKind.Unspecified));
         }
 
-        /// <inheritdoc />
+        
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.UpdateData(

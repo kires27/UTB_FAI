@@ -25,10 +25,10 @@ namespace CalendarApp.Web.Areas.Admin.Controllers
         public async Task<IActionResult> Select(int? ownerId)
         {
             var events = ownerId.HasValue
-                ? _eventAppService.SelectByOwner(ownerId.Value)
-                : _eventAppService.SelectAll();
+                ? await _eventAppService.SelectByOwnerAsync(ownerId.Value)
+                : await _eventAppService.SelectAllAsync();
 
-            ViewBag.Users = _eventAppService.GetUsersByIds(events.Select(e => e.OwnerId));
+            ViewBag.Users = await _userAppService.GetUsersByIdsAsync(events.Select(e => e.OwnerId));
 
             var allUsers = await _userAppService.GetAllUsersAsync();
             ViewBag.AllUsers = allUsers;
@@ -83,7 +83,7 @@ namespace CalendarApp.Web.Areas.Admin.Controllers
 
                 try
                 {
-                    _eventAppService.Create(@event);
+                    await _eventAppService.CreateAsync(@event);
 
                     var invitedCount = await InviteByEmailsAsync(@event.Id, viewModel.InviteEmails, viewModel.OwnerId);
 
@@ -106,10 +106,8 @@ namespace CalendarApp.Web.Areas.Admin.Controllers
             return int.TryParse(userIdClaim, out var userId) ? userId : 0;
         }
 
-        /// <summary>
-        /// Resolves the comma-separated invite list to users and invites them.
-        /// Emails that belong to the event owner are ignored (owner attends by definition).
-        /// </summary>
+        // Resolves the comma-separated invite list to users and invites them.
+        // Emails that belong to the event owner are ignored (owner attends by definition).
         private async Task ApplyAttendeeChangesAsync(EventEditViewModel viewModel, int ownerId)
         {
             foreach (var attendeeId in viewModel.RemoveAttendeeIds)
@@ -138,7 +136,7 @@ namespace CalendarApp.Web.Areas.Admin.Controllers
                 return 0;
             }
 
-            var usersToInvite = await _eventAppService.FindUsersByEmailsAsync(emailList);
+            var usersToInvite = await _userAppService.FindUsersByEmailsAsync(emailList);
             var userIdsToInvite = usersToInvite
                 .Where(u => u.Id != ownerId)
                 .Select(u => u.Id)
@@ -152,15 +150,15 @@ namespace CalendarApp.Web.Areas.Admin.Controllers
             return userIdsToInvite.Count;
         }
 
-        public IActionResult Details(int id, DateTime? occurrenceDate)
+        public async Task<IActionResult> Details(int id, DateTime? occurrenceDate)
         {
-            var @event = _eventAppService.GetById(id);
+            var @event = await _eventAppService.GetByIdAsync(id);
             if (@event == null)
             {
                 return NotFound();
             }
 
-            ViewBag.Users = _eventAppService.GetUsersByIds(@event.EventAttendees.Select(ea => ea.UserId).Append(@event.OwnerId));
+            ViewBag.Users = await _userAppService.GetUsersByIdsAsync(@event.EventAttendees.Select(ea => ea.UserId).Append(@event.OwnerId));
             ViewBag.RecurrenceDescription = _recurrenceAppService.Describe(@event);
 
             // Recurring series: resolve the requested occurrence (exception overrides applied)
@@ -183,7 +181,7 @@ namespace CalendarApp.Web.Areas.Admin.Controllers
         [HttpGet]
         public async Task<IActionResult> Edit(int id, DateTime? occurrenceDate, string? scope)
         {
-            var @event = _eventAppService.GetById(id);
+            var @event = await _eventAppService.GetByIdAsync(id);
             if (@event == null)
             {
                 return NotFound();
@@ -191,7 +189,7 @@ namespace CalendarApp.Web.Areas.Admin.Controllers
 
             var allUsers = await _userAppService.GetAllUsersAsync();
             ViewBag.OwnerName = allUsers.FirstOrDefault(u => u.Id == @event.OwnerId)?.UserName ?? "Unknown";
-            ViewBag.Users = _eventAppService.GetUsersByIds(@event.EventAttendees.Select(ea => ea.UserId).Append(@event.OwnerId));
+            ViewBag.Users = await _userAppService.GetUsersByIdsAsync(@event.EventAttendees.Select(ea => ea.UserId).Append(@event.OwnerId));
 
             var viewModel = new EventEditViewModel
             {
@@ -212,8 +210,7 @@ namespace CalendarApp.Web.Areas.Admin.Controllers
                 CurrentAttendees = @event.EventAttendees.Where(ea => ea.Role != AttendeeRole.Owner).ToList()
             };
 
-            // Recurring series opened from an occurrence link: prefill the single
-            // occurrence (exception overrides applied), defaulting to "this" scope
+            // Occurrence link: prefill the single occurrence, defaulting to "this" scope
             if (@event.IsRecurring && occurrenceDate.HasValue)
             {
                 var target = occurrenceDate.Value.Date;
@@ -241,13 +238,13 @@ namespace CalendarApp.Web.Areas.Admin.Controllers
         [HttpPost]
         public async Task<IActionResult> Edit(EventEditViewModel viewModel)
         {
-            var existingEvent = _eventAppService.GetById(viewModel.Id);
+            var existingEvent = await _eventAppService.GetByIdAsync(viewModel.Id);
             if (existingEvent == null)
             {
                 return NotFound();
             }
 
-            // Update event from view model (Owner is taken from the stored event, never from the form)
+            // Owner is always taken from the stored event, never from the form
             var @event = new Event
             {
                 Id = viewModel.Id,
@@ -275,7 +272,7 @@ namespace CalendarApp.Web.Areas.Admin.Controllers
                         && viewModel.Scope == "this"
                         && viewModel.OccurrenceDate is DateTime occurrenceDay)
                     {
-                        _eventAppService.UpsertOccurrenceException(new EventOccurrenceException
+                        await _eventAppService.UpsertOccurrenceExceptionAsync(new EventOccurrenceException
                         {
                             MasterEventId = existingEvent.Id,
                             OriginalDate = occurrenceDay.Date,
@@ -297,7 +294,7 @@ namespace CalendarApp.Web.Areas.Admin.Controllers
                         return RedirectToAction(nameof(Details), new { id = existingEvent.Id, occurrenceDate = occurrenceDay.Date });
                     }
 
-                    _eventAppService.Update(@event);
+                    await _eventAppService.UpdateAsync(@event);
                     TempData["Success"] = "Event updated successfully!";
 
                     await ApplyAttendeeChangesAsync(viewModel, existingEvent.OwnerId);
@@ -310,21 +307,20 @@ namespace CalendarApp.Web.Areas.Admin.Controllers
                 }
             }
 
-            // Repopulate data on error
             var allUsers = await _userAppService.GetAllUsersAsync();
             ViewBag.OwnerName = allUsers.FirstOrDefault(u => u.Id == existingEvent.OwnerId)?.UserName ?? "Unknown";
             viewModel.CurrentAttendees = existingEvent.EventAttendees
                 .Where(ea => ea.Role != AttendeeRole.Owner)
                 .ToList();
-            ViewBag.Users = _eventAppService.GetUsersByIds(existingEvent.EventAttendees.Select(ea => ea.UserId).Append(existingEvent.OwnerId));
+            ViewBag.Users = await _userAppService.GetUsersByIdsAsync(existingEvent.EventAttendees.Select(ea => ea.UserId).Append(existingEvent.OwnerId));
 
             return View(viewModel);
         }
 
         [HttpPost]
-        public IActionResult Delete(int id, int? ownerId)
+        public async Task<IActionResult> Delete(int id, int? ownerId)
         {
-            bool deleted = _eventAppService.Delete(id);
+            bool deleted = await _eventAppService.DeleteAsync(id);
             if (deleted)
             {
                 return RedirectToAction(nameof(Select), new { ownerId });

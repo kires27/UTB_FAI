@@ -1,0 +1,100 @@
+@model IList<CalendarApp.Application.Models.AdminNotificationViewModel>
+@{
+    ViewData["Title"] = "Notification Management";
+}
+
+<div class="container-fluid">
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="bi bi-check-circle me-2"></i>@TempData["Success"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="bi bi-exclamation-triangle me-2"></i>@TempData["Error"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    <div class="row mb-4">
+        <div class="col">
+            <h2>
+                Notification Management
+            </h2>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            @if (!Model.Any())
+            {
+                <div class="alert alert-info">
+                    <h4>No Notifications Found</h4>
+                    <p>There are no notifications in the system.</p>
+                </div>
+            }
+            else
+            {
+                <div class="table-responsive">
+                    <table class="table table-striped table-hover">
+                        <thead class="bg-warning text-dark">
+                            <tr>
+                                <th>Id</th>
+                                <th>Type</th>
+                                <th>Message</th>
+                                <th>Recipient</th>
+                                <th>Event</th>
+                                <th>Status</th>
+                                <th>Notify At</th>
+                                <th>Created At</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model)
+                            {
+                                var notification = item.Notification;
+                                <tr>
+                                    <td>@notification.Id</td>
+                                    <td>
+                                        <span class="badge @(notification.Type switch
+                                        {
+                                            CalendarApp.Domain.Entities.NotificationType.EventInvite => "bg-primary",
+                                            CalendarApp.Domain.Entities.NotificationType.EventUpdate => "bg-info text-dark",
+                                            _ => "bg-secondary"
+                                        })">
+                                            @notification.Type
+                                        </span>
+                                    </td>
+                                    <td>@notification.Message</td>
+                                    <td><strong>@item.RecipientUserName</strong></td>
+                                    <td>@(notification.Event?.Title ?? "-")</td>
+                                    <td>
+                                        <span class="badge @(notification.IsRead ? "bg-success" : "bg-danger")">
+                                            @(notification.IsRead ? "Read" : "Unread")
+                                        </span>
+                                    </td>
+                                    <td>@(notification.NotifyAt?.ToString("MMM dd yyyy HH:mm") ?? "-")</td>
+                                    <td>@notification.CreatedAt.ToString("MMM dd yyyy HH:mm")</td>
+                                    <td>
+                                        <form asp-action="Delete" asp-route-id="@notification.Id" method="post"
+                                              onsubmit="return confirm('Are you sure you want to delete this notification?');"
+                                              style="display: inline;">
+                                            <button type="submit" class="btn btn-sm btn-outline-danger">
+                                                <i class="bi bi-trash"></i> Delete
+                                            </button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+        </div>
+    </div>
+</div>

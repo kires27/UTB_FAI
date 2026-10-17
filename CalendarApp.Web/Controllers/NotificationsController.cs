@@ -16,10 +16,8 @@ namespace CalendarApp.Web.Controllers
             _notificationAppService = notificationAppService;
         }
 
-        // GET: Notifications
         public async Task<IActionResult> Index()
         {
-            // Get current user ID from Identity claims
             var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             if (string.IsNullOrEmpty(userIdClaim) || !int.TryParse(userIdClaim, out var userId))
             {
@@ -33,18 +31,16 @@ namespace CalendarApp.Web.Controllers
             return View(notifications);
         }
 
-        // POST: Notifications/MarkAsRead/5
         [HttpPost]
         public async Task<IActionResult> MarkAsRead(int id)
         {
-            // Get current user ID from Identity claims
             var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             if (string.IsNullOrEmpty(userIdClaim) || !int.TryParse(userIdClaim, out var userId))
             {
                 return RedirectToAction("Login", "Account");
             }
 
-            var result = await _notificationAppService.MarkAsReadAsync(id);
+            var result = await _notificationAppService.MarkAsReadAsync(id, userId);
             
             if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
             {
@@ -63,11 +59,9 @@ namespace CalendarApp.Web.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        // POST: Notifications/AcceptInvitation/5
         [HttpPost]
         public async Task<IActionResult> AcceptInvitation(int id)
         {
-            // Get current user ID from Identity claims
             var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             if (string.IsNullOrEmpty(userIdClaim) || !int.TryParse(userIdClaim, out var userId))
             {
@@ -94,11 +88,9 @@ namespace CalendarApp.Web.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        // POST: Notifications/DeclineInvitation/5
         [HttpPost]
         public async Task<IActionResult> DeclineInvitation(int id)
         {
-            // Get current user ID from Identity claims
             var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             if (string.IsNullOrEmpty(userIdClaim) || !int.TryParse(userIdClaim, out var userId))
             {
@@ -124,12 +116,9 @@ namespace CalendarApp.Web.Controllers
 
             return RedirectToAction(nameof(Index));
         }
-
-        // GET: Notifications/GetUnreadCount
         [HttpGet]
         public async Task<IActionResult> GetUnreadCount()
         {
-            // Get current user ID from Identity claims
             var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             if (string.IsNullOrEmpty(userIdClaim) || !int.TryParse(userIdClaim, out var userId))
             {
