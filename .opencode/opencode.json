@@ -1,0 +1,15 @@
+{
+	"$schema": "https://opencode.ai/config.json",
+	"plugin": [
+		"opencode-supabase"
+	]
+}
+
+// authenticate figma
+//> opencode mcp auth figma
+//"mcp": {
+//		"figma": {
+//			"type": "remote",
+//			"url": "https://mcp.figma.com/mcp"
+//		}
+//	}

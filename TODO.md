@@ -1,0 +1,16 @@
+# TODO
+
+- [ ] Rewrite the `toolkit-stocks` data-fetching pipeline to optimize the number of requests. `yahooquery` is deprecated, so replace it with a suitable alternative.
+- [ ] Remove hardcoded entries from the stock profile.
+- [ ] Check the sector/industry field mapping and verify that sector and industry values have not been swapped.
+- [ ] Add date and time timestamps to financial analysis data so its latency and freshness can be clarified.
+- [ ] Add a popup to each financial metric that appears on hover and explains what the metric means and how it is calculated.
+- [ ] Add a documentation page linked from the footer. 
+	- [ ] Document the intrinsic value and financial score calculations in detail. 
+	- [ ] Explain the financial score categories (profitability, stability, growth, etc.), why those categories are included, why each category has its specific weight, and where the categories and weights come from. Link the relevant values to this documentation for clarity.
+- [ ] When a financial metric is selected, update the graph to display that metric's historical timeline, with annual and quarterly views.
+- [ ] Fix Google sign-in and sign-up.
+- [ ] Run a controlled DDoS attack simulation to check whether user authorization is properly protected.
+- [ ] Add a page showing the difference in benefits between anonymous and logged-in users.
+- [ ] Add a panel to the financials page for comparing a company's score with scores of other companies in the same industry.
+- [ ] Create Excel versions of both calculations: intrinsic value and financial score.
